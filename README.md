@@ -26,10 +26,12 @@ No GitHub Actions workflow is required for this setup.
 - Daily deterministic weapon matchup with an animated canvas battle.
 - Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and spinning weapon sprites.
 - Gravity, wall/floor collisions, and continuous physical rebounds without scheduled jumps.
-- Lance damage ramp and Duplicator team replication: 1 → 2 → 4 → 8 → 16 balls during a fight.
+- Weapon clashes can trigger parries: a defender blocks the incoming strike, flashes gold, and briefly staggers the attacker. Weapon guards can also catch arrows.
+- Per-hit weapon growth is temporary for that fight; a new fight starts from each weapon's base combat values.
+- Every weapon has its own per-hit growth rule: Sword damage +1; Dagger attack speed +3.5% (compounding); Spear damage +0.5 and reach +0.5; Axe damage +0.75; Hammer damage +1; Scythe damage +0.5 and reach +0.25; Chakram spin speed +2.5% (compounding); Trident damage +0.5 and attack speed +1.5%; Bow arrow damage +0.5 and projectile speed +6; Lance damage +0.8 and reach +0.35; Duplicator adds one clone every 4 team hits, up to 16.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
 - Eleven weapon balls: Sword, Dagger, Spear, Axe, Hammer, Scythe, Chakram, Trident, Bow, Lance, and Duplicator.
-- Individual 50-coin contributions for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed. Each contribution gives a tiny permanent gain with harmonic diminishing returns.
+- Individual 50-coin contributions for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed. Each contribution gives a tiny permanent gain with harmonic diminishing returns; Scaling increases the size of that weapon's per-hit growth.
 - Fight records and a local developer test panel.
 - Sound toggle and 1× / 2× battle speed.
 
