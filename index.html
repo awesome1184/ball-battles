@@ -605,14 +605,34 @@ function draw(){
  for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
  for(const f of sim.fighters){if(f.hp>0&&f.weapon.id==='trident')drawWhirlpool(ctx,f);}for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
  }else{drawPreviewBall(ctx,leftWeapon,180,330,1);drawPreviewBall(ctx,rightWeapon,360,330,-1);}ctx.restore();
- const lead=sim&&sim.teams.left[0],rightLead=sim&&sim.teams.right[0],damageValue=lead?Math.floor(lead.combatDamage):Math.floor(leftWeapon.damage),speedValue=lead?lead.combatSpeed:10,leftDup=lead&&lead.weapon.duplicator,rightDup=rightLead&&rightLead.weapon.duplicator;
- ctx.fillStyle='#b32636';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('DAMAGE: '+damageValue,arena.x,712);
- ctx.fillStyle='#16893a';ctx.textAlign='right';
- const rightStatus=lead&&lead.weapon.id==='bow'?'PROJECTILES: '+lead.projectileShots:
-  lead&&lead.weapon.id==='axe'?'CRIT: '+Math.min(100,Math.floor(lead.combatDamage))+'%':
-  lead&&lead.weapon.id==='hammer'?'MAX SPIN: '+lead.hammerMaxSpin.toFixed(1)+'×':
-  lead&&lead.weapon.id==='lance'?'FULL DMG: '+Math.floor(lead.combatDamage):
-  (leftDup||rightDup)?'BALLS: '+sim.teams[leftDup?'left':'right'].filter(f=>f.hp>0).length:'ATTACK SPEED: '+speedValue;
+ const leftTeam=sim?sim.teams.left:[],rightTeam=sim?sim.teams.right:[];
+ function readout(team,opponents,fallback){
+  const fighter=team.length?(team.find(f=>f.hp>0)||team[0]):null,w=fighter?fighter.weapon:fallback;
+  const damage=fighter?fighter.combatDamage:w.damage;
+  const fixed=n=>Number(n).toFixed(1).replace(/\\.0$/,'');
+  let detail='';
+  switch(w.id){
+   case 'sword':detail='DMG '+fixed(damage);break;
+   case 'dagger':detail='SPEED ×'+(fighter?fighter.attackSpeedFactor:1).toFixed(2);break;
+   case 'spear':detail='DMG '+fixed(damage)+' / LEN '+fixed(fighter?fighter.reach:w.reach);break;
+   case 'axe':detail='CRIT '+Math.min(100,Math.floor(damage))+'% / DMG '+fixed(damage);break;
+   case 'hammer':detail='DMG '+fixed(damage)+' / MAX SPIN '+(fighter?fighter.hammerMaxSpin:1).toFixed(1)+'×';break;
+   case 'scythe':detail='POISON '+(opponents.reduce((sum,f)=>sum+(f.poisonDps||0),0))+' DPS';break;
+   case 'chakram':detail='SPIN ×'+(fighter?fighter.spinGrowth:1).toFixed(2);break;
+   case 'trident':detail='DMG '+fixed(damage)+' / WHIRLPOOL';break;
+   case 'bow':detail='ARROWS '+(fighter?fighter.projectileShots:1);break;
+   case 'lance':detail='FULL DMG '+fixed(damage)+(fighter&&fighter.lanceCharging?' / CHARGING':' / CHARGE');break;
+   case 'duplicator':detail='BALLS '+(team.length?team.filter(f=>f.hp>0).length:1)+'/16';break;
+   default:detail='DMG '+fixed(damage);
+  }
+  return w.name.toUpperCase()+' · '+detail;
+ }
+ const leftStatus=readout(leftTeam,rightTeam,leftWeapon),rightStatus=readout(rightTeam,leftTeam,rightWeapon);
+ ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillStyle='#b32636';
+ while(ctx.measureText(leftStatus).width>arena.w*.49&&parseInt(ctx.font,10)>9)ctx.font=(parseInt(ctx.font,10)-1)+'px system-ui';
+ ctx.fillText(leftStatus,arena.x,712);
+ ctx.font='900 13px system-ui';ctx.textAlign='right';ctx.fillStyle='#16893a';
+ while(ctx.measureText(rightStatus).width>arena.w*.49&&parseInt(ctx.font,10)>9)ctx.font=(parseInt(ctx.font,10)-1)+'px system-ui';
  ctx.fillText(rightStatus,arena.x+arena.w,712);
 }
 function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100};drawBall(c,f);}
