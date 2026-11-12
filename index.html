@@ -61,6 +61,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .stat-upgrade-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .stat-upgrade-name{font-weight:900;font-size:11px;letter-spacing:.04em}
 .stat-upgrade-level{font-size:9px;color:#f2bd57;font-weight:900;letter-spacing:.1em;white-space:nowrap}
+.stat-progress-track{height:7px;background:#0e151e;border:1px solid #354252;border-radius:8px;overflow:hidden;margin-top:9px}.stat-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#4da88c,#91e0ac);border-radius:8px;transition:width .25s ease}
 .stat-upgrade-desc{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}
 .stat-upgrade-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
 .stat-upgrade-value{font-size:10px;color:#c8d4e0;font-weight:750}
@@ -161,14 +162,14 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="stat-line"><span>Current base damage</span><strong id="training-damage">10</strong></div>
       <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
       <div class="stat-line"><span id="training-reach-label">Weapon reach</span><strong id="training-reach">68</strong></div>
-      <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
-      <p class="section-desc">Contribute 50 coins at a time. Every contribution is permanent, very small, and worth less than the previous one.</p>
+      <div class="stat-section-label">WEAPON STAT LEVELS</div>
+      <p class="section-desc">Each weapon has a separate level and progress bar for every stat. Add 50 coins per contribution; each next level requires quadratically more pooled coins.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
       <div class="tip">Simulation opponents are chosen randomly. Select the weapon you want to test, then run a simulation.</div>
       <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
       <button class="soft-btn wide" id="armory-practice-btn">SIMULATE THIS WEAPON</button>
       <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters rebound off the floor, walls, and each other with full velocity retention.</span></div>
-      <div class="tip">This browser prototype stores contributions locally. The planned Devvit version will use shared weapon pools, so contributing to a weapon strengthens it for everyone.</div>
+      <div class="tip">Each weapon and stat has its own pool. This prototype stores progress in this browser; true global progress shared by all players requires the Devvit backend.</div>
     </section>
   </div>
 </section>
@@ -396,25 +397,39 @@ document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('cl
 function renderArmoryDetails(){
  const w=weapon(selectedWeapon),st=statLevels(w.id);
  $('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
- const totalLevels=Object.values(st).reduce((a,b)=>a+Number(b||0),0),totalCoins=Object.values(save.statCoins[w.id]||{}).reduce((a,b)=>a+Number(b||0),0);
- $('training-level').textContent='Champion · '+money(totalCoins)+' coins contributed · '+totalLevels+' legacy levels';$('training-desc').textContent=w.desc;
+ const totalLevels=Object.values(st).reduce((a,b)=>a+Number(b||0),0),coins=totalStatCoins(w.id);
+ $('training-level').textContent='Weapon Level '+totalLevels+' · '+money(coins)+' coins pooled across its stats';
+ $('training-desc').textContent=w.desc;
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
- $('training-reach-label').textContent=w.id==='spear'?'Starting length':'Weapon reach';$('training-reach').textContent=w.id==='spear'?'1.00× base':(w.reach*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
+ $('training-reach-label').textContent=w.id==='spear'?'Starting length':'Weapon reach';
+ $('training-reach').textContent=w.id==='spear'?'1.00× base':(w.reach*1.12*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
  $('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
-  const available=def.available(w),coins=Number((save.statCoins[w.id]||{})[def.id]||0),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
-  const note=def.id==='projectileRate'?'Only affects ranged weapons.':def.desc;
-  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?'TOTAL +'+percentText(bonus):'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+note+'</div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?money(coins)+' coins contributed · next +'+percentText(gain):'Ranged weapons only')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'CONTRIBUTE 50 ◈':'NOT APPLICABLE')+'</button></div></div>';
+  const available=def.available(w),pool=statPool(w.id,def.id);
+  const cost=nextStatLevelCost(w.id,def.id),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
+  const percent=available?clamp(pool.progress/cost*100,0,100):0;
+  const label='LEVEL '+pool.level+' · TOTAL +'+percentText(bonus);
+  const progressLabel=money(pool.progress)+' / '+money(cost)+' coins toward next level';
+  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?label:'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-progress-track"><span style="width:'+percent.toFixed(1)+'%"></span></div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?progressLabel+' · next level +'+percentText(gain):'Not used by this weapon')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'CONTRIBUTE 50 ◈':'NOT APPLICABLE')+'</button></div></div>';
  }).join('');
- $('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';$('set-favorite-btn').disabled=save.favorite===w.id;
+ $('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';
+ $('set-favorite-btn').disabled=save.favorite===w.id;
 }
 function buyStat(statId){
- const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);if(!def||!def.available(w))return;
+ const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);
+ if(!def||!def.available(w))return;
  if(save.coins<STAT_CONTRIBUTION_COST){toast('You need 50 coins to contribute.');return;}
- const gain=nextStatContributionGain(w.id,statId);
- if(!save.statCoins[w.id])save.statCoins[w.id]={};
- save.coins-=STAT_CONTRIBUTION_COST;save.statCoins[w.id][statId]=Number(save.statCoins[w.id][statId]||0)+STAT_CONTRIBUTION_COST;
- persist();renderAll();toast('50 coins contributed. '+def.name+' increased by '+percentText(gain)+'.');
+ const pool=statPool(w.id,statId),before=pool.level;
+ save.coins-=STAT_CONTRIBUTION_COST;
+ pool.progress+=STAT_CONTRIBUTION_COST;
+ pool.totalContributed+=STAT_CONTRIBUTION_COST;
+ while(pool.progress>=STAT_CONTRIBUTION_COST*(pool.level+1)*(pool.level+1)){
+  pool.progress-=STAT_CONTRIBUTION_COST*(pool.level+1)*(pool.level+1);
+  pool.level++;
+ }
+ persist();renderAll();
+ if(pool.level>before)toast(w.name+' '+def.name+' reached Level '+pool.level+'! Next level costs '+money(nextStatLevelCost(w.id,statId))+' coins.');
+ else toast('50 coins added to '+w.name+' '+def.name+' progress.');
 }
 function setFavorite(){save.favorite=selectedWeapon;persist();renderAll();toast(weapon(selectedWeapon).name+' is now your champion.');}
 function switchView(next){
@@ -434,7 +449,7 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:Math.max(1,parent.damage*.43),combatDamage:Math.max(1,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
