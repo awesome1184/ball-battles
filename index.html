@@ -231,7 +231,7 @@ let soundOn=save.sound!==false;
 const canvas=$('arena-canvas');
 const ctx=canvas.getContext('2d');
 const W=540,H=740;
-const arena={x:34,y:48,w:472,h:625,r:5};
+const arena={x:55,y:78,w:430,h:565,r:5};
 let view='arena';
 
 function renderWallet(){$('coin-count').textContent=money(save.coins);}
@@ -545,7 +545,7 @@ function step(dt){
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
  updateBars();
  const leftAlive=sim.teams.left.filter(f=>f.hp>0),rightAlive=sim.teams.right.filter(f=>f.hp>0);
- if(!leftAlive.length||!rightAlive.length||sim.elapsed>68){
+ if(!leftAlive.length||!rightAlive.length){
   const leftHP=leftAlive.reduce((n,f)=>n+f.hp,0),rightHP=rightAlive.reduce((n,f)=>n+f.hp,0);
   const team=leftHP>=rightHP?sim.teams.left:sim.teams.right;
   finishFight(team.slice().sort((a,b)=>b.hp-a.hp)[0]);
@@ -566,166 +566,120 @@ function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
 function drawWeapon(c,f){
  if(f.weapon.id==='duplicator')return;
- c.save();c.translate(f.x,f.y);c.rotate(f.angle);
- const w=f.weapon,u=f.reach/27;
- c.scale(f.weaponScale||1,f.weaponScale||1);
- const palette={'.':null,'#':'#20242c','D':'#515966','M':'#aab6c2','L':'#f1f3e9','G':'#e6b85c','W':'#93633c','B':'#503a2b','C':w.color,'c':shade(w.color,-38),'l':shade(w.color,45)};
- const sprites={
-  sword:[
-   '............................',
-   '........................#...',
-   '.......................#M#..',
-   '......................#ML#...',
-   '...........#.........#ML#....',
-   '..B########G#........#ML#.....',
-   '..B########G#########ML#......',
-   '..B########G#........#ML#.....',
-   '...........#.........#ML#....',
-   '......................#ML#...',
-   '.......................#M#..',
-   '........................#...',
-   '............................'
-  ],
-  dagger:[
-   '............................',
-   '.......................#....',
-   '......................#M#...',
-   '.....................#ML#....',
-   '....#...............#ML#.....',
-   '..B#G#.............#ML#......',
-   '..B#G##############ML#.......',
-   '..B#G#.............#ML#......',
-   '....#...............#ML#.....',
-   '.....................#ML#....',
-   '......................#M#...',
-   '.......................#....',
-   '............................'
-  ],
-  spear:[
-   '............................',
-   '..........................#.',
-   '.........................#M#',
-   '........................#ML#.',
-   '.......................#ML#..',
-   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
-   '######################ML#....',
-   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
-   '.......................#ML#..',
-   '........................#ML#.',
-   '.........................#M#',
-   '..........................#.',
-   '............................'
-  ],
-  axe:[
-   '............................',
-   '......................###...',
-   '.....................#CMC#..',
-   '....................#CCcC#...',
-   '...................#CCcC#....',
-   'BBBBBBBBBBBBBBBB###CCcC#.....',
-   '###################G###......',
-   'BBBBBBBBBBBBBBBB###CCcC#.....',
-   '...................#CCcC#....',
-   '....................#CCcC#...',
-   '.....................#CMC#..',
-   '......................###...',
-   '............................'
-  ],
-  hammer:[
-   '............................',
-   '....................######..',
-   '....................#DMMMD#.',
-   '....................#MLLLD#.',
-   '....................#DMMMD#.',
-   'BBBBBBBBBBBBBBBBBBB##DMMMD#.',
-   '####################GGGGG##.',
-   'BBBBBBBBBBBBBBBBBBB##DMMMD#.',
-   '....................#DMMMD#.',
-   '....................#MLLLD#.',
-   '....................#DMMMD#.',
-   '....................######..',
-   '............................'
-  ],
-  scythe:[
-   '....................###.....',
-   '..................##CCl##...',
-   '.................#CclCC#.....',
-   '................#CclC#.......',
-   '...............#CclC#........',
-   '..............#CclC#.........',
-   'BBBBBBBBBBBBB#CclC#...........',
-   '#############G##..............',
-   'BBBBBBBBBBBBB#................',
-   '.............#................',
-   '.............#................',
-   '.............#................',
-   '..............................'
-  ],
-  chakram:[
-   '............................',
-   '..................#####.....',
-   '.................#CcccC#....',
-   '................#C#...#C#...',
-   '................#C#...#C#...',
-   'BBBBBBBBBBBBBBBB#C#...#C#...',
-   '#################C#...#C#...',
-   'BBBBBBBBBBBBBBBB#C#...#C#...',
-   '................#C#...#C#...',
-   '................#C#...#C#...',
-   '.................#CcccC#....',
-   '..................#####.....',
-   '............................'
-  ],
-  trident:[
-   '..........................#.',
-   '........................#M#..',
-   '.................#......#C#..',
-   '................#C#.....#C#..',
-   '................#C#.....#C#..',
-   'BBBBBBBBBBBBBBBB#C#.....#C#..',
-   '#################G######C#...',
-   'BBBBBBBBBBBBBBBB#C#.....#C#..',
-   '................#C#.....#C#..',
-   '................#C#.....#C#..',
-   '.................#......#C#..',
-   '........................#M#..',
-   '..........................#.'
-  ],
-  bow:[
-   '....................###.....',
-   '..................##C#......',
-   '.................#C#.........',
-   '................#C#..........',
-   '...............#C#...........',
-   'BBBBBBBBBBBBBB#C#.............',
-   '##############G#..............',
-   'BBBBBBBBBBBBBB#C#.............',
-   '...............#C#...........',
-   '................#C#..........',
-   '.................#C#.........',
-   '..................##C#......',
-   '....................###.....'
-  ],
-  lance:[
-   '............................',
-   '..........................#.',
-   '.........................#M#',
-   '........................#ML#.',
-   '.......................#ML#..',
-   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
-   '######################G#.....',
-   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
-   '.......................#ML#..',
-   '........................#ML#.',
-   '.........................#M#',
-   '..........................#.',
-   '............................'
-  ]
+ c.save();
+ c.translate(f.x,f.y);
+ c.rotate(f.angle);
+ const w=f.weapon;
+ const unit=(f.reach||w.reach)/32*(f.weaponScale||1);
+ c.scale(unit,unit);
+ const dark='#20242c',edge='#46515d',steel='#aebdca',bright='#edf3f1',
+       shadow='#657383',gold='#e1b45b',goldDark='#88602e',
+       wood='#765039',woodLight='#b47a4d',
+       main=w.color,deep=shade(w.color,-42),light=shade(w.color,42);
+ const p=(x,y,width,height,color)=>{
+  c.fillStyle=color;
+  c.fillRect(x,y,width,height);
  };
- const rows=sprites[w.id]||sprites.sword,cell=u;
- for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++){
-  const color=palette[rows[y][x]];
-  if(color){c.fillStyle=color;c.fillRect((x-2)*cell,(y-6)*cell,cell,cell);}
+ const grip=(from,to)=>{
+  p(from,-2,to-from+1,4,dark);
+  p(from+1,-1,to-from-1,2,wood);
+  for(let x=from+2;x<to;x+=4)p(x,-1,1,2,woodLight);
+  p(from,-2,1,4,edge);
+ };
+ switch(w.id){
+  case 'sword':
+   // Pommel, leather grip, crossguard, long double-edged blade.
+   p(0,-3,4,6,dark);p(1,-2,2,4,gold);p(1,-1,1,2,bright);
+   grip(4,9);
+   p(8,-6,3,12,dark);p(8,-5,2,10,goldDark);p(9,-4,1,8,gold);
+   p(10,-4,18,8,dark);p(11,-3,16,6,steel);
+   p(12,-3,14,1,bright);p(12,2,14,1,shadow);
+   p(27,-2,2,4,dark);p(29,-1,2,2,dark);
+   p(28,-1,2,2,bright);p(30,0,2,1,bright);
+   break;
+  case 'dagger':
+   // Short blade with a pronounced guard and compact wrapped grip.
+   p(1,-2,3,4,dark);p(2,-1,1,2,gold);
+   grip(4,10);
+   p(9,-4,3,8,dark);p(10,-3,1,6,gold);
+   p(12,-3,12,6,dark);p(13,-2,10,4,steel);
+   p(14,-2,8,1,bright);p(22,-1,3,2,steel);
+   p(25,0,3,1,bright);p(27,0,2,1,dark);
+   break;
+  case 'spear':
+   // Long wooden shaft and a diamond-shaped leaf spearhead.
+   p(1,-2,26,4,dark);p(2,-1,24,2,wood);
+   p(5,-1,1,1,woodLight);p(12,-1,1,1,woodLight);p(19,-1,1,1,woodLight);
+   p(25,-5,4,10,dark);p(27,-4,3,8,dark);p(30,-2,2,4,dark);p(32,-1,1,2,dark);
+   p(26,-4,3,8,deep);p(28,-3,3,6,main);p(30,-2,2,4,light);p(32,-1,1,2,bright);
+   p(27,-2,2,2,bright);p(27,2,2,2,deep);
+   break;
+  case 'axe':
+   // Heavy haft and a broad, flared crescent blade.
+   p(1,-2,25,4,dark);p(2,-1,23,2,wood);p(5,-1,2,1,woodLight);
+   p(22,-7,4,14,dark);p(24,-9,6,18,dark);
+   p(26,-8,4,16,deep);p(28,-6,4,12,main);p(30,-4,3,8,light);
+   p(31,-2,2,4,bright);
+   p(24,-5,2,10,edge);p(26,-4,2,8,main);p(28,-3,2,6,light);
+   p(22,-3,3,6,goldDark);
+   break;
+  case 'hammer':
+   // Thick handle with a square, reinforced striking head.
+   p(2,-2,25,4,dark);p(3,-1,23,2,wood);p(6,-1,2,1,woodLight);
+   p(23,-8,9,16,dark);p(25,-9,6,18,dark);
+   p(24,-7,7,14,edge);p(26,-6,5,12,steel);
+   p(27,-5,3,10,bright);p(24,-7,7,2,shadow);p(24,5,7,2,shadow);
+   p(23,-3,2,6,goldDark);p(29,-4,2,8,edge);
+   break;
+  case 'scythe':
+   // Long shaft and hooked, inward-curving blade.
+   p(1,-2,25,4,dark);p(2,-1,23,2,wood);p(6,-1,1,1,woodLight);
+   p(22,-3,5,6,dark);p(24,-6,4,4,dark);p(27,-8,4,4,dark);
+   p(30,-9,4,4,dark);p(32,-7,3,4,dark);p(29,-4,4,3,dark);
+   p(23,-2,3,4,deep);p(25,-5,3,3,main);p(28,-7,3,2,main);
+   p(30,-8,3,1,bright);p(32,-6,2,2,light);p(29,-3,3,1,bright);
+   p(25,-2,3,1,light);
+   break;
+  case 'chakram':
+   // Spinning ring on a short grip, with a hollow center.
+   grip(2,21);
+   for(let y=-7;y<=7;y++)for(let x=20;x<=34;x++){
+    const dx=x-27,dy=y;
+    const d=dx*dx+dy*dy;
+    if(d>=25&&d<=49)p(x,y,1,1,dark);
+   }
+   for(let y=-6;y<=6;y++)for(let x=21;x<=33;x++){
+    const dx=x-27,dy=y,d=dx*dx+dy*dy;
+    if(d>=25&&d<=42)p(x,y,1,1,(x<27?deep:main));
+   }
+   p(29,-4,2,1,bright);p(31,-2,1,1,light);p(23,4,2,1,shadow);
+   break;
+  case 'trident':
+   // Three distinct forward-facing tines on a long shaft.
+   p(1,-2,27,4,dark);p(2,-1,25,2,wood);p(7,-1,1,1,woodLight);
+   p(24,-7,3,14,dark);p(26,-8,3,16,dark);p(29,-1,4,2,dark);
+   p(25,-6,2,5,deep);p(27,-7,2,5,main);p(29,-1,4,2,bright);
+   p(25,2,2,5,deep);p(27,2,2,5,main);
+   p(29,-7,2,4,light);p(30,-6,2,2,bright);
+   p(29,3,2,4,light);p(30,4,2,2,bright);
+   break;
+  case 'bow':
+   // Curved wooden limbs, a taut string, and central grip.
+   p(18,-10,3,3,dark);p(20,-8,3,3,dark);p(22,-5,3,4,dark);
+   p(23,-1,3,3,dark);p(22,2,3,4,dark);p(20,6,3,3,dark);p(18,9,3,3,dark);
+   p(19,-9,2,2,wood);p(21,-6,2,3,wood);p(23,-3,2,3,woodLight);
+   p(24,0,1,2,goldDark);p(23,2,2,3,woodLight);p(21,5,2,3,wood);
+   p(19,8,2,2,wood);
+   p(18,-9,1,18,bright);p(17,-1,5,3,goldDark);p(18,0,3,1,gold);
+   break;
+  case 'lance':
+   // Long reinforced shaft, hand grip, and narrow armored point.
+   p(1,-2,28,4,dark);p(2,-1,26,2,steel);p(5,-1,1,1,bright);
+   p(8,-1,1,1,shadow);p(15,-1,1,1,bright);p(22,-1,1,1,shadow);
+   p(26,-5,3,10,dark);p(28,-3,3,6,dark);p(31,-1,2,2,dark);
+   p(27,-4,3,8,deep);p(29,-2,3,4,steel);p(31,-1,2,2,bright);
+   p(8,-3,4,6,goldDark);p(9,-2,2,4,gold);
+   break;
  }
  c.restore();
 }
