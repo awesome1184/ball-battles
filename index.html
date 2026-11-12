@@ -170,17 +170,17 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 (function(){
 'use strict';
 const WEAPONS=[
- {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:10,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
- {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit increases attack speed by 3.5%. The bonus compounds with every strike.',damage:6,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +3.5% / hit',hitDelay:.52},
- {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:12,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
- {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage doubles after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:13,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×2 / hit',hitDelay:.76},
- {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +1 damage, raises its maximum spin speed, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 · Max spin +0.25 / hit · Unparryable',hitDelay:.94},
- {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds one poison stack to the enemy. Every stack deals 1 damage per second. Poison does not scale.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Poison +1 DPS / hit',hitDelay:.68},
- {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 2.5%. The speed bonus compounds with every strike.',damage:7,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +2.5% / hit',hitDelay:.46},
- {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'Creates a whirlpool around its weapon that drags nearby balls toward it. Every hit adds +0.5 damage.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Whirlpool pull',hitDelay:.64},
- {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:8,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
+ {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
+ {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit increases attack speed by 3.5%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +3.5% / hit',hitDelay:.52},
+ {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
+ {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage doubles after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×2 / hit',hitDelay:.76},
+ {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +1 damage, raises its maximum spin speed, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 · Max spin +0.25 / hit · Unparryable',hitDelay:.94},
+ {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds one poison stack to the enemy. Every stack deals 1 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +1 DPS / hit',hitDelay:.68},
+ {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 2.5%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +2.5% / hit',hitDelay:.46},
+ {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A decorative whirlpool follows its weapon head. It does not pull balls. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Whirlpool effect',hitDelay:.64},
+ {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:4,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
+ {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
 ];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
@@ -309,10 +309,10 @@ function switchView(next){view=next;document.querySelectorAll('.tab').forEach(t=
 function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
- const baseDamage=w.damage*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ const baseDamage=1*trainedDamage;
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
-function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,combatDamage:Math.max(.5,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
+function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:Math.max(1,parent.damage*.43),combatDamage:Math.max(1,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemies=sim.teams[f.side==='left'?'right':'left'].filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
 function spawnDuplicates(side){
@@ -349,6 +349,7 @@ function segmentGap(a,b){
  if(segmentsIntersect(a,b))return 0;
  return Math.min(distPointSegment(a.x1,a.y1,b.x1,b.y1,b.x2,b.y2),distPointSegment(a.x2,a.y2,b.x1,b.y1,b.x2,b.y2),distPointSegment(b.x1,b.y1,a.x1,a.y1,a.x2,a.y2),distPointSegment(b.x2,b.y2,a.x1,a.y1,a.x2,a.y2));
 }
+function reverseWeaponRotation(f){if(f&&f.weapon.id!=='duplicator')f.spinDirection=-(f.spinDirection||1);}
 function tryParry(attacker,defender){
  if(defender.weapon.id==='duplicator'||attacker.weapon.id==='duplicator'||defender.parryCd>0||defender.hp<=0||defender.lanceCharging)return false;
  const a=weaponSegment(attacker),d=weaponSegment(defender);
@@ -356,6 +357,7 @@ function tryParry(attacker,defender){
  if(separation>attacker.reach+defender.reach*.85)return false;
  if(segmentGap(a,d)>(attacker.width+defender.width)*.5+8)return false;
  defender.parryCd=.82;defender.parryFlash=.3;attacker.parryCd=Math.max(attacker.parryCd,.3);
+ reverseWeaponRotation(attacker);reverseWeaponRotation(defender);
  attacker.stagger=Math.max(attacker.stagger,.28);attacker.hitCd=Math.max(attacker.hitCd,.3);
  const dx=attacker.x-defender.x,dy=attacker.y-defender.y,len=Math.hypot(dx,dy)||1;
  attacker.vx+=dx/len*115;attacker.vy+=dy/len*85;
@@ -372,6 +374,7 @@ function resolveWeaponClash(a,b){
  if(gap>(a.width+b.width)*.5+9)return false;
  a.weaponClashCd=b.weaponClashCd=.28;
  a.parryFlash=b.parryFlash=.34;
+ reverseWeaponRotation(a);reverseWeaponRotation(b);
  a.parryCd=Math.max(a.parryCd,.18);b.parryCd=Math.max(b.parryCd,.18);
  a.stagger=Math.max(a.stagger,.13);b.stagger=Math.max(b.stagger,.13);
  a.hitCd=Math.max(a.hitCd,.18);b.hitCd=Math.max(b.hitCd,.18);
@@ -480,8 +483,6 @@ function step(dt){
    f.vx=f.lanceChargeDirection*300;
    f.vy+=gravity*.45*dt;
   }else{
-   const desired=Math.abs(dx)>90?dir*115:dir*-30,accel=f.grounded?185:100;
-   f.vx+=(desired>f.vx?1:-1)*accel*dt;f.vx*=Math.pow(f.grounded?.984:.998,dt*60);
    f.vy+=gravity*dt;
   }
   f.vx=clamp(f.vx,-600,600);f.vy=clamp(f.vy,-420,420);f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
@@ -502,7 +503,7 @@ function step(dt){
    f.hammerSpin=Math.min(f.hammerMaxSpin,f.hammerSpin+dt*.9);
    f.spin=f.baseSpin*f.hammerSpin;
   }else f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1)*(f.weapon.id==='bow'?4:1);
-  if(!lance||!f.lanceCharging)f.angle+=f.spin*dt;
+  if(!lance||!f.lanceCharging)f.angle+=f.spin*dt*(f.spinDirection||1);
   f.hitCd=Math.max(0,f.hitCd-dt);f.contactHitCd=Math.max(0,(f.contactHitCd||0)-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.095;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
   f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
   if(f.stagger<=0){
@@ -514,17 +515,7 @@ function step(dt){
    }
   }
  }
- // The trident's rotating weapon head creates a moving pull field. It affects any ball in range.
- for(const vortex of fs){
-  if(vortex.hp<=0||vortex.weapon.id!=='trident')continue;
-  const tx=vortex.x+Math.cos(vortex.angle)*vortex.reach*vortex.weaponScale;
-  const ty=vortex.y+Math.sin(vortex.angle)*vortex.reach*vortex.weaponScale;
-  for(const ball of fs){
-   if(ball===vortex||ball.hp<=0)continue;
-   const dx=tx-ball.x,dy=ty-ball.y,d=Math.hypot(dx,dy)||1,radius=122;
-   if(d<radius){const pull=(1-d/radius)*310;ball.vx+=dx/d*pull*dt;ball.vy+=dy/d*pull*dt;}
-  }
- }
+ // Trident whirlpools are visual only; they exert no force on balls.
  const all=sim.fighters;
  for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){
   const a=all[i],b=all[j];if(a.hp<=0||b.hp<=0)continue;
@@ -543,7 +534,7 @@ function step(dt){
   if(target&&target.hp>0&&target.weapon.id!=='duplicator'&&!target.lanceCharging&&target.parryCd<=0){
    const guard=weaponSegment(target);
    if(distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2)<target.width*.5+5){
-    target.parryCd=.82;target.parryFlash=.3;p.owner.stagger=Math.max(p.owner.stagger,.2);
+    target.parryCd=.82;target.parryFlash=.3;reverseWeaponRotation(target);p.owner.stagger=Math.max(p.owner.stagger,.2);
     floatText(target.x,target.y-42,'PARRY!','#eac65e');burst(p.x,p.y,'#f3c65f',10);playTone(640,.09,'square');
     sim.projectiles.splice(i,1);continue;
    }
@@ -573,19 +564,171 @@ function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let
 function updateBars(){if(!sim)return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-function drawWeapon(c,f){if(f.weapon.id==='duplicator')return;c.save();c.translate(f.x,f.y);c.rotate(f.angle);c.scale(f.weaponScale||1,f.weaponScale||1);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
-if(w.id==='sword'){c.beginPath();c.moveTo(f.reach*.66,-10);c.lineTo(f.reach+13,0);c.lineTo(f.reach*.66,10);c.closePath();c.fill();c.stroke();c.fillStyle='#d9b77d';c.fillRect(f.reach*.61,-13,5,26);}
-else if(w.id==='dagger'){c.beginPath();c.moveTo(f.reach*.65,-7);c.lineTo(f.reach+7,0);c.lineTo(f.reach*.65,7);c.closePath();c.fill();c.stroke();}
-else if(w.id==='spear'){c.beginPath();c.moveTo(f.reach*.78,-9);c.lineTo(f.reach+17,0);c.lineTo(f.reach*.78,9);c.closePath();c.fill();c.stroke();}
-else if(w.id==='axe'){c.beginPath();c.moveTo(f.reach*.62,-18);c.quadraticCurveTo(f.reach+18,-20,f.reach+8,0);c.quadraticCurveTo(f.reach+18,20,f.reach*.62,18);c.closePath();c.fill();c.stroke();}
-else if(w.id==='hammer'){c.fillRect(f.reach*.65,-16,25,32);c.strokeRect(f.reach*.65,-16,25,32);c.fillStyle='#e9d8c5';c.fillRect(f.reach*.65,-16,25,5);}
-else if(w.id==='scythe'){c.beginPath();c.moveTo(f.reach*.55,-3);c.quadraticCurveTo(f.reach+20,-39,f.reach+9,-12);c.quadraticCurveTo(f.reach-1,7,f.reach*.63,13);c.strokeStyle=w.color;c.lineWidth=8;c.stroke();c.strokeStyle='#f3eadc';c.lineWidth=2;c.stroke();}
-else if(w.id==='chakram'){c.beginPath();c.arc(f.reach,0,13,0,Math.PI*2);c.strokeStyle=w.color;c.lineWidth=7;c.stroke();c.strokeStyle='#fff0bd';c.lineWidth=2;c.stroke();}
-else if(w.id==='trident'){c.strokeStyle=w.color;c.lineWidth=4;c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach+9,0);c.lineTo(f.reach-11,12);c.moveTo(f.reach-11,-12);c.lineTo(f.reach-4,0);c.lineTo(f.reach-11,12);c.stroke();c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach-19,-18);c.moveTo(f.reach-11,12);c.lineTo(f.reach-19,18);c.stroke();}
-else if(w.id==='lance'){c.strokeStyle='#171717';c.lineWidth=3;c.beginPath();c.moveTo(f.reach*.65,-4);c.lineTo(f.reach+15,0);c.lineTo(f.reach*.65,4);c.closePath();c.fillStyle='#fff';c.fill();c.stroke();c.beginPath();c.moveTo(-8,0);c.lineTo(f.reach*.72,0);c.stroke();}
-else if(w.id==='duplicator'){c.strokeStyle='#171717';c.lineWidth=2.5;c.beginPath();c.moveTo(f.reach*.55,-8);c.lineTo(f.reach+7,0);c.lineTo(f.reach*.55,8);c.stroke();c.beginPath();c.moveTo(f.reach*.64,-10);c.lineTo(f.reach*.64,10);c.stroke();}
-else if(w.id==='bow'){c.strokeStyle=w.color;c.lineWidth=7;c.beginPath();c.arc(f.reach*.55,0,24,-1.18,1.18);c.stroke();c.strokeStyle='#efe6f5';c.lineWidth=1.5;c.beginPath();c.moveTo(f.reach*.55+9,-22);c.lineTo(f.reach*.55+9,22);c.stroke();c.strokeStyle='#b9a18a';c.lineWidth=4;c.beginPath();c.moveTo(f.reach*.4,0);c.lineTo(f.reach*.55+7,0);c.stroke();c.fillStyle='#fff5d8';c.beginPath();c.arc(f.reach*.55+9,0,3.2,0,Math.PI*2);c.fill();}
-c.restore();}
+function drawWeapon(c,f){
+ if(f.weapon.id==='duplicator')return;
+ c.save();c.translate(f.x,f.y);c.rotate(f.angle);
+ const w=f.weapon,u=f.reach/27;
+ c.scale(f.weaponScale||1,f.weaponScale||1);
+ const palette={'.':null,'#':'#20242c','D':'#515966','M':'#aab6c2','L':'#f1f3e9','G':'#e6b85c','W':'#93633c','B':'#503a2b','C':w.color,'c':shade(w.color,-38),'l':shade(w.color,45)};
+ const sprites={
+  sword:[
+   '............................',
+   '........................#...',
+   '.......................#M#..',
+   '......................#ML#...',
+   '...........#.........#ML#....',
+   '..B########G#........#ML#.....',
+   '..B########G#########ML#......',
+   '..B########G#........#ML#.....',
+   '...........#.........#ML#....',
+   '......................#ML#...',
+   '.......................#M#..',
+   '........................#...',
+   '............................'
+  ],
+  dagger:[
+   '............................',
+   '.......................#....',
+   '......................#M#...',
+   '.....................#ML#....',
+   '....#...............#ML#.....',
+   '..B#G#.............#ML#......',
+   '..B#G##############ML#.......',
+   '..B#G#.............#ML#......',
+   '....#...............#ML#.....',
+   '.....................#ML#....',
+   '......................#M#...',
+   '.......................#....',
+   '............................'
+  ],
+  spear:[
+   '............................',
+   '..........................#.',
+   '.........................#M#',
+   '........................#ML#.',
+   '.......................#ML#..',
+   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
+   '######################ML#....',
+   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
+   '.......................#ML#..',
+   '........................#ML#.',
+   '.........................#M#',
+   '..........................#.',
+   '............................'
+  ],
+  axe:[
+   '............................',
+   '......................###...',
+   '.....................#CMC#..',
+   '....................#CCcC#...',
+   '...................#CCcC#....',
+   'BBBBBBBBBBBBBBBB###CCcC#.....',
+   '###################G###......',
+   'BBBBBBBBBBBBBBBB###CCcC#.....',
+   '...................#CCcC#....',
+   '....................#CCcC#...',
+   '.....................#CMC#..',
+   '......................###...',
+   '............................'
+  ],
+  hammer:[
+   '............................',
+   '....................######..',
+   '....................#DMMMD#.',
+   '....................#MLLLD#.',
+   '....................#DMMMD#.',
+   'BBBBBBBBBBBBBBBBBBB##DMMMD#.',
+   '####################GGGGG##.',
+   'BBBBBBBBBBBBBBBBBBB##DMMMD#.',
+   '....................#DMMMD#.',
+   '....................#MLLLD#.',
+   '....................#DMMMD#.',
+   '....................######..',
+   '............................'
+  ],
+  scythe:[
+   '....................###.....',
+   '..................##CCl##...',
+   '.................#CclCC#.....',
+   '................#CclC#.......',
+   '...............#CclC#........',
+   '..............#CclC#.........',
+   'BBBBBBBBBBBBB#CclC#...........',
+   '#############G##..............',
+   'BBBBBBBBBBBBB#................',
+   '.............#................',
+   '.............#................',
+   '.............#................',
+   '..............................'
+  ],
+  chakram:[
+   '............................',
+   '..................#####.....',
+   '.................#CcccC#....',
+   '................#C#...#C#...',
+   '................#C#...#C#...',
+   'BBBBBBBBBBBBBBBB#C#...#C#...',
+   '#################C#...#C#...',
+   'BBBBBBBBBBBBBBBB#C#...#C#...',
+   '................#C#...#C#...',
+   '................#C#...#C#...',
+   '.................#CcccC#....',
+   '..................#####.....',
+   '............................'
+  ],
+  trident:[
+   '..........................#.',
+   '........................#M#..',
+   '.................#......#C#..',
+   '................#C#.....#C#..',
+   '................#C#.....#C#..',
+   'BBBBBBBBBBBBBBBB#C#.....#C#..',
+   '#################G######C#...',
+   'BBBBBBBBBBBBBBBB#C#.....#C#..',
+   '................#C#.....#C#..',
+   '................#C#.....#C#..',
+   '.................#......#C#..',
+   '........................#M#..',
+   '..........................#.'
+  ],
+  bow:[
+   '....................###.....',
+   '..................##C#......',
+   '.................#C#.........',
+   '................#C#..........',
+   '...............#C#...........',
+   'BBBBBBBBBBBBBB#C#.............',
+   '##############G#..............',
+   'BBBBBBBBBBBBBB#C#.............',
+   '...............#C#...........',
+   '................#C#..........',
+   '.................#C#.........',
+   '..................##C#......',
+   '....................###.....'
+  ],
+  lance:[
+   '............................',
+   '..........................#.',
+   '.........................#M#',
+   '........................#ML#.',
+   '.......................#ML#..',
+   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
+   '######################G#.....',
+   'BBBBBBBBBBBBBBBBBBBBBB#ML#...',
+   '.......................#ML#..',
+   '........................#ML#.',
+   '.........................#M#',
+   '..........................#.',
+   '............................'
+  ]
+ };
+ const rows=sprites[w.id]||sprites.sword,cell=u;
+ for(let y=0;y<rows.length;y++)for(let x=0;x<rows[y].length;x++){
+  const color=palette[rows[y][x]];
+  if(color){c.fillStyle=color;c.fillRect((x-2)*cell,(y-6)*cell,cell,cell);}
+ }
+ c.restore();
+}
 function teamBallColor(f){if(f.weapon.id==='duplicator')return '#d52bbd';if(f.weapon.id==='lance')return '#e9cf55';return f.side==='left'?'#ee5265':'#35cd5d';}
 function drawWhirlpool(c,f){
  const x=f.x+Math.cos(f.angle)*f.reach*f.weaponScale,y=f.y+Math.sin(f.angle)*f.reach*f.weaponScale;
@@ -616,6 +759,7 @@ function shade(hex,percent){const n=parseInt(hex.slice(1),16),r=clamp((n>>16)+pe
 function draw(){
  const dpr=Math.min(2,window.devicePixelRatio||1),cw=canvas.width/dpr,ch=canvas.height/dpr,scale=Math.min(cw/W,ch/H),ox=(cw-W*scale)/2,oy=(ch-H*scale)/2;ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy);ctx.clearRect(0,0,W,H);ctx.fillStyle='#fbf8ef';ctx.fillRect(0,0,W,H);
  ctx.save();ctx.fillStyle='#fffefa';ctx.fillRect(arena.x,arena.y,arena.w,arena.h);ctx.strokeStyle='#191919';ctx.lineWidth=3;ctx.strokeRect(arena.x,arena.y,arena.w,arena.h);
+ ctx.beginPath();ctx.rect(arena.x,arena.y,arena.w,arena.h);ctx.clip();
  if(sim){for(const arrow of (sim.projectiles||[])){ctx.save();ctx.translate(arrow.x,arrow.y);ctx.rotate(Math.atan2(arrow.vy,arrow.vx));ctx.strokeStyle='#171717';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(10,0);ctx.stroke();ctx.fillStyle=arrow.color;ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(5,-5);ctx.lineTo(5,5);ctx.closePath();ctx.fill();ctx.restore();}
  for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
  for(const f of sim.fighters){if(f.hp>0&&f.weapon.id==='trident')drawWhirlpool(ctx,f);}for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
