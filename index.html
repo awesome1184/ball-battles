@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#11151b">
+<meta name="description" content="Ball Battles — daily weapon duels, predictions, and champion training.">
+<title>Ball Battles</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1016;--panel:#151c25;--panel2:#1b2430;--line:#293443;--muted:#8997a8;--text:#edf3fa;--gold:#f2bd57;--blue:#69b7ff;--red:#ff7478;--green:#65d5a0;--radius:18px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1000px 600px at 50% -200px,#273448 0%,transparent 65%),var(--bg);color:var(--text);min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+.app{max-width:1440px;margin:auto;padding:24px 28px 56px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:12px;min-width:210px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffce72,#dc8741);display:grid;place-items:center;box-shadow:0 8px 26px #e89a3d33;color:#20202a;font-weight:1000;font-size:23px;transform:rotate(-8deg)}.brand-name{font-weight:900;font-size:19px;letter-spacing:.12em}.brand-sub{color:var(--muted);font-size:10px;letter-spacing:.2em;margin-top:2px}
+.top-actions{display:flex;align-items:center;gap:10px}.wallet{border:1px solid var(--line);background:#151c25;border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:9px;font-weight:800}.coin{color:var(--gold);font-size:18px}.wallet small{font-size:10px;color:var(--muted);font-weight:600;display:block;letter-spacing:.12em}.wallet strong{font-variant-numeric:tabular-nums}
+.icon-btn,.soft-btn{border:1px solid var(--line);color:var(--text);background:#18212c;border-radius:11px;padding:10px 13px;font-weight:750}.icon-btn:hover,.soft-btn:hover{border-color:#52677e;background:#202c3a}
+.tabs{display:flex;gap:7px;border-bottom:1px solid var(--line);margin-bottom:22px}.tab{border:0;background:none;color:var(--muted);padding:0 16px 13px;font-weight:800;letter-spacing:.08em;font-size:11px;position:relative}.tab.active{color:var(--gold)}.tab.active:after{content:"";height:2px;background:var(--gold);position:absolute;bottom:-1px;left:12px;right:12px;border-radius:2px}
+.view{display:none}.view.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}.main-col,.side-col{display:grid;gap:16px;min-width:0}
+.match-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.2em;color:var(--gold)}h1,h2,h3,p{margin:0}h1{font-size:clamp(24px,3vw,34px);line-height:1.1;letter-spacing:-.04em;margin-top:6px}.subline{color:var(--muted);font-size:13px;margin-top:7px}.date-chip,.status-chip{border:1px solid var(--line);background:#171f29;padding:8px 11px;border-radius:999px;color:#b6c4d4;font-size:10px;font-weight:850;letter-spacing:.08em;white-space:nowrap}
+.card{background:linear-gradient(155deg,#18212c,#131a23 72%);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:0 16px 45px #00000020}.arena-card{padding:14px}.arena-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.versus{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:900;letter-spacing:.1em}.versus .red{color:#ff9290}.versus .blue{color:#85c8ff}.versus .vs{font-size:9px;color:#617286;border:1px solid #344252;border-radius:6px;padding:3px 5px}
+.arena-canvas-wrap{position:relative;border-radius:14px;overflow:hidden;background:#0c141c;border:1px solid #344151;min-height:250px}.arena-canvas-wrap:after{content:"";pointer-events:none;position:absolute;inset:0;box-shadow:inset 0 0 50px #0008}.arena-canvas{width:100%;height:clamp(300px,42vw,490px);display:block}
+.fighter-labels{position:absolute;z-index:1;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;pointer-events:none}.fighter-label{width:35%;min-width:0}.fighter-label.right{text-align:right}.fighter-name{font-size:11px;font-weight:950;letter-spacing:.12em;text-shadow:0 2px 5px #000}.fighter-weapon{font-size:10px;color:#aab8c7;margin-top:3px}.bar{height:7px;background:#27323e;border-radius:9px;overflow:hidden;margin-top:7px;border:1px solid #ffffff10}.bar-fill{height:100%;width:100%;border-radius:9px;transition:width .15s linear;background:linear-gradient(90deg,#ef6f74,#ff9c75)}.fighter-label.right .bar-fill{margin-left:auto;background:linear-gradient(90deg,#62b9ff,#85d4ed)}
+.arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 3px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:#adbac9;font-size:12px}.pulse{width:7px;height:7px;border-radius:50%;background:#64768a}.pulse.live{background:var(--green);box-shadow:0 0 0 5px #65d5a01c;animation:pulse 1.4s infinite}@keyframes pulse{50%{box-shadow:0 0 0 9px #65d5a000}}
+.controls{display:flex;align-items:center;gap:7px}.primary-btn{border:0;background:linear-gradient(135deg,#ffd27c,#e9a444);color:#26202a;font-weight:950;letter-spacing:.04em;border-radius:11px;padding:12px 17px;box-shadow:0 8px 20px #e9a44420}.primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.small-btn{border:1px solid #3b4b5d;background:#202b38;color:#e6edf6;border-radius:10px;padding:10px 12px;font-weight:800;font-size:11px}.speed-btn{min-width:44px}
+.bet-card{padding:18px}.section-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.section-title{font-size:14px;font-weight:900;letter-spacing:.03em}.section-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}.bet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.bet-side{border:1px solid #344252;background:#161f2a;color:var(--text);border-radius:13px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px}.bet-side.selected{border-color:var(--gold);background:#332a1c;box-shadow:inset 0 0 0 1px #f2bd5730}.bet-side strong{display:block;font-size:12px}.bet-side small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.bet-side .pct{font-weight:900;color:#f0c56e;font-size:14px}
+.bet-controls{display:flex;align-items:center;gap:10px;margin-top:12px}.bet-controls input{width:106px;min-width:70px;background:#0f151d;color:var(--text);border:1px solid #3a4756;border-radius:9px;padding:10px 11px;outline:none}.bet-controls input:focus{border-color:var(--gold)}.bet-controls .primary-btn{margin-left:auto}.bet-note{color:var(--muted);font-size:10px;margin-top:11px}
+.side-card{padding:16px}.side-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.side-heading h3{font-size:12px;letter-spacing:.1em}.muted-tag{font-size:9px;font-weight:900;letter-spacing:.12em;color:var(--muted)}
+.reward-amount{font-weight:1000;font-size:28px;color:var(--gold);letter-spacing:-.04em}.reward-copy{font-size:11px;color:var(--muted);line-height:1.45;margin-top:4px}.reward-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.claim-btn{margin-top:13px;width:100%;padding:10px}.claim-btn.done{border:1px solid #365847;background:#14251f;color:#78d8a8;box-shadow:none}
+.champ-row{display:flex;align-items:center;gap:12px}.mini-orb{width:55px;height:55px;flex:0 0 55px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,#e5ac63,#9c543b);box-shadow:inset -7px -10px 18px #351c2966,0 7px 20px #0005;border:2px solid #ffffff30;font-size:22px;color:#241b21}.champ-name{font-weight:950;font-size:14px}.champ-sub{font-size:10px;color:var(--muted);margin-top:4px}.power-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;font-size:10px;color:var(--muted)}.power-row strong{font-size:12px;color:var(--text)}.power-track{height:6px;background:#283441;border-radius:8px;overflow:hidden;margin-top:7px}.power-track span{height:100%;display:block;background:linear-gradient(90deg,#cb8847,#f2c875);border-radius:8px}.side-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.side-actions button{font-size:10px;padding:10px 6px}
+.odds-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #283441;font-size:11px}.odds-row:last-child{border-bottom:0}.odds-row span{color:var(--muted)}.odds-row strong{font-variant-numeric:tabular-nums}
+.view-head{margin-bottom:18px}.view-head h1{margin-top:4px}.armory-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px}.weapon-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.weapon-card{border:1px solid var(--line);background:linear-gradient(155deg,#1a2430,#131a23);border-radius:15px;padding:15px;text-align:left;color:var(--text);min-height:145px;position:relative;overflow:hidden}.weapon-card:hover{border-color:#647991;transform:translateY(-2px)}.weapon-card.selected{border-color:var(--gold);box-shadow:inset 0 0 0 1px #f2bd5738,0 8px 25px #f2bd5710}.weapon-glyph{width:47px;height:47px;border-radius:50%;display:grid;place-items:center;font-size:24px;margin-bottom:14px;background:radial-gradient(circle at 35% 25%,#ffffff35,transparent 40%),linear-gradient(145deg,var(--wc),#1b2029);box-shadow:inset 0 -7px 14px #0006;border:1px solid #ffffff30}.weapon-card strong{display:block;font-size:13px}.weapon-card small{display:block;color:var(--muted);font-size:10px;line-height:1.4;margin-top:4px}.weapon-card .fav-mark{position:absolute;right:11px;top:11px;color:var(--gold);font-size:9px;font-weight:950;letter-spacing:.1em}
+.training-card{padding:20px}.training-hero{display:flex;align-items:center;gap:15px;margin:8px 0 18px}.training-hero .mini-orb{width:66px;height:66px;flex-basis:66px;font-size:28px}.training-hero h2{font-size:20px}.training-hero p{font-size:11px;color:var(--muted);margin-top:5px}.stat-line{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:14px}.stat-line strong{color:var(--text)}.upgrade-cost{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:14px;margin-top:18px}.upgrade-cost strong{color:var(--gold);font-size:16px}.wide{width:100%;margin-top:13px}.tip{background:#111923;border:1px solid #293745;padding:12px;border-radius:11px;font-size:10px;color:#9baabc;line-height:1.55;margin-top:14px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat-card{padding:18px}.stat-card span{color:var(--muted);font-size:10px;letter-spacing:.12em;font-weight:850}.stat-card strong{display:block;font-size:27px;margin-top:8px;font-variant-numeric:tabular-nums}.history-card{padding:18px}.history-row{display:grid;grid-template-columns:1fr 110px 80px;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #293543;font-size:11px}.history-row:last-child{border:0}.history-row span{color:var(--muted)}.result-win{color:var(--green);font-weight:900}.result-loss{color:var(--red);font-weight:900}.empty-state{padding:25px;text-align:center;color:var(--muted);font-size:12px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e9b759;color:#231d16;border-radius:12px;padding:12px 17px;font-size:12px;font-weight:900;box-shadow:0 15px 40px #0007;transition:.22s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+.dev-toggle{position:fixed;right:14px;bottom:14px;border:1px solid #4b5969;color:#9aa8b9;background:#18212b;border-radius:9px;padding:7px 10px;font-size:9px;font-weight:900;letter-spacing:.12em;opacity:.65}.dev-toggle:hover{opacity:1}.dev-panel{display:none;position:fixed;z-index:30;right:14px;bottom:54px;width:min(310px,calc(100vw - 28px));background:#151e29;border:1px solid #526174;border-radius:14px;padding:16px;box-shadow:0 20px 60px #000b}.dev-panel.open{display:block}.dev-panel h3{font-size:12px;letter-spacing:.12em;margin-bottom:8px}.dev-panel p{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:12px}.dev-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.dev-actions button{padding:9px 7px;border:1px solid #3b4b5e;background:#202c3a;border-radius:8px;color:var(--text);font-size:10px;font-weight:800}.dev-actions button.danger{border-color:#75454a;color:#ffb2b0}
+.footer{margin-top:30px;border-top:1px solid #222e3b;padding-top:15px;color:#728193;font-size:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 280px}.armory-layout{grid-template-columns:minmax(0,1fr) 300px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:780px){.app{padding:17px 14px 46px}.layout,.armory-layout{grid-template-columns:1fr}.side-col{grid-template-columns:repeat(2,minmax(0,1fr))}.side-col .side-card:last-child{grid-column:1/-1}.weapon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:540px){.topbar{align-items:flex-start}.brand{min-width:0}.brand-name{font-size:16px}.brand-sub{font-size:8px}.top-actions{gap:6px}.wallet{padding:8px 10px}.wallet small{display:none}.top-actions .icon-btn{padding:9px}.tabs{margin-bottom:17px}.tab{padding-left:11px;padding-right:11px;font-size:10px}.match-head{align-items:flex-start}.date-chip{font-size:9px}.arena-card{padding:9px}.arena-canvas{height:330px}.arena-bottom{align-items:flex-start;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}.bet-card{padding:14px}.bet-controls{flex-wrap:wrap}.bet-controls .primary-btn{margin-left:0;flex:1}.side-col{grid-template-columns:1fr}.side-col .side-card:last-child{grid-column:auto}.weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.weapon-card{min-height:130px}.history-row{grid-template-columns:1fr 80px 55px}.footer{font-size:9px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">B</div><div><div class="brand-name">BALL BATTLES</div><div class="brand-sub">PICK A SIDE. BACK YOUR BALL.</div></div></div>
+  <div class="top-actions">
+    <div class="wallet"><span class="coin">◈</span><div><small>YOUR COINS</small><strong id="coin-count">350</strong></div></div>
+    <button class="icon-btn" id="sound-toggle" aria-label="Toggle sound">SFX ON</button>
+  </div>
+</header>
+<nav class="tabs">
+  <button class="tab active" data-view="arena">THE ARENA</button>
+  <button class="tab" data-view="armory">WEAPON LAB</button>
+  <button class="tab" data-view="records">RECORDS</button>
+</nav>
+
+<section class="view active" id="arena-view">
+  <div class="layout">
+    <div class="main-col">
+      <div class="match-head">
+        <div><div class="eyebrow">DAILY WEAPON SHOWDOWN</div><h1 id="match-title">Today's Main Event</h1><p class="subline" id="match-subtitle">One arena. Two weapons. One winner.</p></div>
+        <div class="date-chip" id="date-chip">NOV 12 · DAILY</div>
+      </div>
+      <section class="card arena-card">
+        <div class="arena-top"><div class="versus"><span class="red" id="left-name-top">SWORD</span><span class="vs">VS</span><span class="blue" id="right-name-top">DAGGER</span></div><span class="status-chip" id="fight-state-chip">MATCH READY</span></div>
+        <div class="arena-canvas-wrap">
+          <div class="fighter-labels">
+            <div class="fighter-label"><div class="fighter-name" id="left-label-name">RED CORNER</div><div class="fighter-weapon" id="left-label-weapon">Sword</div><div class="bar"><div class="bar-fill" id="left-hp-bar"></div></div></div>
+            <div class="fighter-label right"><div class="fighter-name" id="right-label-name">BLUE CORNER</div><div class="fighter-weapon" id="right-label-weapon">Dagger</div><div class="bar"><div class="bar-fill" id="right-hp-bar"></div></div></div>
+          </div>
+          <canvas id="arena-canvas" class="arena-canvas" aria-label="Animated weapon ball battle arena"></canvas>
+        </div>
+        <div class="arena-bottom">
+          <div class="arena-status"><span class="pulse" id="live-pulse"></span><span id="arena-status-text">The contenders are entering the arena.</span></div>
+          <div class="controls"><button class="small-btn speed-btn" id="speed-btn">1×</button><button class="small-btn" id="sound-hit-btn">SOUND: ON</button><button class="primary-btn" id="fight-btn">START DAILY FIGHT</button></div>
+        </div>
+      </section>
+      <section class="card bet-card">
+        <div class="section-top"><div><div class="section-title">PLACE YOUR PREDICTION</div><div class="section-desc" id="bet-desc">Back the weapon you think will take today's win.</div></div><span class="muted-tag" id="bet-lock-label">CLOSES AT FIGHT START</span></div>
+        <div class="bet-grid">
+          <button class="bet-side selected" id="bet-left"><span><strong id="bet-left-name">Sword</strong><small id="bet-left-caption">Red corner · 1.45× return</small></span><span class="pct" id="bet-left-share">58%</span></button>
+          <button class="bet-side" id="bet-right"><span><strong id="bet-right-name">Dagger</strong><small id="bet-right-caption">Blue corner · 1.82× return</small></span><span class="pct" id="bet-right-share">42%</span></button>
+        </div>
+        <div class="bet-controls"><label for="bet-amount" class="muted-tag">WAGER</label><input type="number" id="bet-amount" min="10" max="500" step="10" value="50"><button class="soft-btn" data-bet-amount="25">25</button><button class="soft-btn" data-bet-amount="50">50</button><button class="soft-btn" data-bet-amount="100">100</button><button class="primary-btn" id="place-bet-btn">PLACE BET · 50</button></div>
+        <div class="bet-note" id="bet-note">Game coins only. Payout includes your original wager. One prediction per daily match.</div>
+      </section>
+    </div>
+    <aside class="side-col">
+      <section class="card side-card">
+        <div class="side-heading"><h3>DAILY DROP</h3><span class="muted-tag">EVERY 24H</span></div>
+        <div class="reward-row"><div><div class="reward-amount">+100 ◈</div><div class="reward-copy">Claim your daily coins and put them to work.</div></div><div style="font-size:31px;color:#c38d48">✦</div></div>
+        <button class="primary-btn claim-btn" id="claim-btn">CLAIM DAILY COINS</button>
+      </section>
+      <section class="card side-card">
+        <div class="side-heading"><h3>YOUR CHAMPION</h3><span class="muted-tag">PERSONAL</span></div>
+        <div class="champ-row"><div class="mini-orb" id="champ-orb">⚔</div><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 · Favorite weapon</div></div></div>
+        <div class="power-row"><span>CHAMPION POWER</span><strong id="champ-power">100</strong></div><div class="power-track"><span id="champ-power-bar" style="width:12%"></span></div>
+        <div class="side-actions"><button class="small-btn" id="go-armory-btn">TRAIN CHAMPION</button><button class="small-btn" id="practice-btn">PRACTICE FIGHT</button></div>
+      </section>
+      <section class="card side-card">
+        <div class="side-heading"><h3>COMMUNITY ODDS</h3><span class="muted-tag">PREDICTIONS</span></div>
+        <div class="odds-row"><span id="odds-left-name">Sword support</span><strong id="odds-left-value">58%</strong></div>
+        <div class="odds-row"><span id="odds-right-name">Dagger support</span><strong id="odds-right-value">42%</strong></div>
+        <div class="odds-row"><span>Potential underdog return</span><strong id="underdog-value">1.82×</strong></div>
+        <div class="bet-note">Odds are simulated for this standalone demo. Your wager is saved in this browser.</div>
+      </section>
+    </aside>
+  </div>
+</section>
+
+<section class="view" id="armory-view">
+  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Pick a favorite, train it, then take it into a personal practice fight.</p></div>
+  <div class="armory-layout">
+    <div class="weapon-grid" id="weapon-grid"></div>
+    <section class="card training-card">
+      <div class="eyebrow">CHAMPION TRAINING</div>
+      <div class="training-hero"><div class="mini-orb" id="training-orb">⚔</div><div><h2 id="training-name">Sword</h2><p id="training-level">Level 1 champion</p></div></div>
+      <div class="section-desc" id="training-desc">A balanced weapon with reliable combos.</div>
+      <div class="stat-line"><span>Damage</span><strong id="training-damage">10</strong></div>
+      <div class="stat-line"><span>Attack speed</span><strong id="training-speed">3.2</strong></div>
+      <div class="stat-line"><span>Reach</span><strong id="training-reach">68</strong></div>
+      <div class="stat-line"><span>Vitality bonus</span><strong id="training-vitality">+0%</strong></div>
+      <div class="upgrade-cost"><span class="muted-tag">NEXT TRAINING</span><strong id="upgrade-cost">80 ◈</strong></div>
+      <button class="primary-btn wide" id="upgrade-btn">TRAIN WEAPON</button>
+      <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
+      <button class="soft-btn wide" id="armory-practice-btn">TEST THIS WEAPON</button>
+      <div class="tip">Training makes your champion stronger in personal practice fights. The official daily showdown stays standardized so every player sees the same fair result.</div>
+    </section>
+  </div>
+</section>
+
+<section class="view" id="records-view">
+  <div class="view-head"><div class="eyebrow">YOUR CAREER</div><h1>Fight Records</h1><p class="subline">A local record of your daily predictions and champion practice fights.</p></div>
+  <div class="stats-grid">
+    <div class="card stat-card"><span>FIGHTS WATCHED</span><strong id="stat-fights">0</strong></div>
+    <div class="card stat-card"><span>PREDICTIONS WON</span><strong id="stat-picks">0</strong></div>
+    <div class="card stat-card"><span>PREDICTION RATE</span><strong id="stat-rate">—</strong></div>
+    <div class="card stat-card"><span>BEST CHAMPION</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
+  </div>
+  <section class="card history-card"><div class="side-heading"><h3>MATCH HISTORY</h3><span class="muted-tag">LATEST FIRST</span></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
+</section>
+
+<div class="footer"><span>BALL BATTLES · DAILY SHOWDOWNS</span><span>Standalone demo · Progress is stored in this browser</span><span id="build-date">BUILD 01</span></div>
+</div>
+<button class="dev-toggle" id="dev-toggle">DEV LAB</button>
+<div class="dev-panel" id="dev-panel"><h3>DEVELOPER TEST LAB</h3><p>Local testing tools. These changes only affect this browser and do not change the official daily matchup.</p><div class="dev-actions"><button id="dev-coins">+1,000 COINS</button><button id="dev-reset-claim">RESET DAILY CLAIM</button><button id="dev-force-left">FORCE LEFT WIN</button><button id="dev-force-right">FORCE RIGHT WIN</button><button class="danger" id="dev-clear">CLEAR LOCAL SAVE</button><button id="dev-close">CLOSE</button></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+const WEAPONS=[
+{id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Balanced and dependable. Builds combo damage after consecutive hits.',damage:10,reach:69,width:14,spin:3.25,hp:118,special:'Combo'},
+{id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Fast and relentless. Quick strikes can leave a lingering bleed.',damage:6,reach:54,width:10,spin:5.15,hp:108,special:'Bleed'},
+{id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Long reach with powerful thrusts that shove opponents away.',damage:12,reach:91,width:8,spin:2.35,hp:112,special:'Lunge'},
+{id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Heavy chopping swings with a chance to land a critical hit.',damage:13,reach:66,width:22,spin:2.65,hp:120,special:'Critical'},
+{id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Slow, crushing impacts. Every few seconds it sends a shockwave.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Shockwave'},
+{id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Sweeping curved strikes. Landing a hit restores a little health.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Harvest'},
+{id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'A whirling ring with wide coverage and rapid attack cycles.',damage:7,reach:76,width:14,spin:4.45,hp:110,special:'Whirl'},
+{id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A precise three-pronged weapon with excellent reach and control.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Pierce'}
+];
+const SAVE_KEY='ball-battles-save-v1';
+const today= new Date().toISOString().slice(0,10);
+const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+const $=id=>document.getElementById(id);
+function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},bets:{},settled:{},results:{},history:[],sound:true};}
+function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();return Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});}catch(e){return defaultSave();}}
+let save=loadSave();
+function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
+function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
+function level(id){return Number(save.levels[id]||0);}
+function money(n){return Math.floor(n).toLocaleString();}
+function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n));}
+function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2300);}
+const dailyRng=mulberry32(hashString('ball-battles-'+today));
+let leftWeapon=WEAPONS[Math.floor(dailyRng()*WEAPONS.length)];
+let rightWeapon=WEAPONS[Math.floor(dailyRng()*WEAPONS.length)];
+while(rightWeapon.id===leftWeapon.id)rightWeapon=WEAPONS[Math.floor(dailyRng()*WEAPONS.length)];
+const leftShare=Math.round(43+dailyRng()*25);
+const rightShare=100-leftShare;
+const shares={left:leftShare,right:rightShare};
+function odds(side){return Math.max(1.12,Math.min(2.65,0.78/(shares[side]/100)));}
+let selectedBet='left';
+let speed=1;
+let selectedWeapon=save.favorite;
+let sim=null, raf=0, lastFrame=0, accumulator=0;
+let audio=null;
+let soundOn=save.sound!==false;
+const canvas=$('arena-canvas');
+const ctx=canvas.getContext('2d');
+const W=900,H=520;
+const arena={x:42,y:45,w:816,h:430,r:40};
+let view='arena';
+
+function renderWallet(){$('coin-count').textContent=money(save.coins);}
+function renderDaily(){
+$('date-chip').textContent=dayLabel+' · DAILY';
+$('left-name-top').textContent=leftWeapon.name.toUpperCase();$('right-name-top').textContent=rightWeapon.name.toUpperCase();
+$('left-label-name').textContent='RED CORNER';$('right-label-name').textContent='BLUE CORNER';
+$('left-label-weapon').textContent=leftWeapon.name;$('right-label-weapon').textContent=rightWeapon.name;
+$('bet-left-name').textContent=leftWeapon.name;$('bet-right-name').textContent=rightWeapon.name;
+$('bet-left-share').textContent=leftShare+'%';$('bet-right-share').textContent=rightShare+'%';
+$('bet-left-caption').textContent='Red corner · '+odds('left').toFixed(2)+'× return';$('bet-right-caption').textContent='Blue corner · '+odds('right').toFixed(2)+'× return';
+$('odds-left-name').textContent=leftWeapon.name+' support';$('odds-right-name').textContent=rightWeapon.name+' support';
+$('odds-left-value').textContent=leftShare+'%';$('odds-right-value').textContent=rightShare+'%';
+$('underdog-value').textContent=Math.max(odds('left'),odds('right')).toFixed(2)+'×';
+$('match-title').textContent=leftWeapon.name+' vs '+rightWeapon.name;
+$('match-subtitle').textContent='Daily weapon showdown · '+(leftWeapon.special+' meets '+rightWeapon.special);
+const claim=$('claim-btn');const claimed=save.claimedDay===today;claim.disabled=claimed;claim.classList.toggle('done',claimed);claim.textContent=claimed?'DAILY COINS CLAIMED':'CLAIM DAILY COINS';
+const old=save.results[today];if(old){$('fight-state-chip').textContent='RESULT SAVED';$('arena-status-text').textContent=weapon(old.winner).name+' won today. Replay the fight below.';$('fight-btn').textContent='REPLAY DAILY FIGHT';}
+const bet=save.bets[today];if(bet){$('bet-desc').textContent='Your prediction is locked for today.';$('bet-amount').disabled=true;$('bet-amount').value=bet.amount;$('place-bet-btn').disabled=true;$('place-bet-btn').textContent='PREDICTION LOCKED';$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-note').textContent='You backed '+weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).name+' with '+money(bet.amount)+' coins at '+bet.odds.toFixed(2)+'×.';}
+else if(old){$('bet-desc').textContent='Today’s showdown has already been decided.';$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='BETTING CLOSED';}
+else{$('bet-desc').textContent='Back the weapon you think will take today’s win.';$('bet-amount').disabled=false;$('place-bet-btn').disabled=false;$('bet-left').disabled=false;$('bet-right').disabled=false;$('bet-lock-label').textContent='CLOSES AT FIGHT START';}
+selectBet(selectedBet);renderChampion();renderWallet();
+}
+function selectBet(side){selectedBet=side;$('bet-left').classList.toggle('selected',side==='left');$('bet-right').classList.toggle('selected',side==='right');const val=Math.max(10,Number($('bet-amount').value)||10);$('place-bet-btn').textContent='PLACE BET · '+money(val);$('place-bet-btn').disabled=!!save.bets[today]||!!save.results[today]||val>save.coins;}
+function claimDaily(){if(save.claimedDay===today)return;const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);save.streak=save.lastClaim===yesterday?Math.min(30,save.streak+1):1;const reward=100+Math.max(0,save.streak-1)*10;save.coins+=reward;save.claimedDay=today;save.lastClaim=today;persist();renderDaily();toast('+'+reward+' coins claimed. Day '+save.streak+' streak!');}
+function placeBet(){if(save.bets[today]||save.results[today])return;const amount=Math.floor(Number($('bet-amount').value));if(!Number.isFinite(amount)||amount<10){toast('Minimum wager is 10 coins.');return;}if(amount>500){toast('Maximum wager is 500 coins.');return;}if(amount>save.coins){toast('Not enough coins for that wager.');return;}save.coins-=amount;save.bets[today]={side:selectedBet,amount:amount,odds:odds(selectedBet),day:today};persist();renderDaily();toast('Prediction locked. Good luck.');}
+function renderChampion(){
+const w=weapon(save.favorite),lv=level(w.id),power=100+lv*12;
+['champ-name','training-name'].forEach(id=>$(id).textContent=w.name);
+$('champ-level').textContent='Level '+(lv+1)+' · Favorite weapon';$('champ-power').textContent=power;
+$('champ-power-bar').style.width=clamp(12+lv*7,12,100)+'%';
+$('champ-orb').textContent=w.glyph;$('champ-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+renderArmoryDetails();
+}
+function renderArmory(){
+$('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">YOUR MAIN</span>':'')+'<span class="weapon-glyph">'+w.glyph+'</span><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
+document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('click',()=>{selectedWeapon=btn.dataset.weapon;renderArmory();}));
+renderArmoryDetails();
+}
+function renderArmoryDetails(){
+const w=weapon(selectedWeapon),lv=level(w.id),cost=Math.round(80*Math.pow(1.48,lv));
+$('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+$('training-level').textContent='Level '+(lv+1)+' champion';$('training-desc').textContent=w.desc;
+$('training-damage').textContent=(w.damage*(1+lv*.045)).toFixed(1);$('training-speed').textContent=w.spin.toFixed(2);$('training-reach').textContent=w.reach;
+$('training-vitality').textContent='+'+(lv*3)+'%';$('upgrade-cost').textContent=money(cost)+' ◈';
+$('upgrade-btn').textContent='TRAIN WEAPON · '+money(cost)+' ◈';$('upgrade-btn').disabled=save.coins<cost;
+$('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';$('set-favorite-btn').disabled=save.favorite===w.id;
+}
+function upgrade(){const w=weapon(selectedWeapon),lv=level(w.id),cost=Math.round(80*Math.pow(1.48,lv));if(save.coins<cost){toast('You need more coins.');return;}save.coins-=cost;save.levels[w.id]=lv+1;persist();renderAll();toast(w.name+' trained to level '+(lv+2)+'!');}
+function setFavorite(){save.favorite=selectedWeapon;persist();renderAll();toast(weapon(selectedWeapon).name+' is now your champion.');}
+function switchView(next){view=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===next));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===next+'-view'));if(next==='armory')renderArmory();if(next==='records')renderRecords();resizeCanvas();}
+function createFighter(w,side,rng,trained){
+const lv=trained?level(w.id):0;
+return {weapon:w,side,x:side==='left'?260:640,y:260,vx:(side==='left'?1:-1)*(32+rng()*20),vy:(rng()-.5)*55,r:31,hp:w.hp*(1+lv*.03),maxHp:w.hp*(1+lv*.03),damage:w.damage*(1+lv*.045),reach:w.reach,width:w.width,spin:w.spin,angle:rng()*Math.PI*2,hitCd:.5+rng()*.4,shockCd:3.2,combo:0,lastHit:-10,bleed:[],flash:0,knock:0,dead:false,level:lv,aiPhase:rng()*6.28,kills:0};
+}
+function startFight(mode,forced){if(sim&&sim.active){return;}if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random());const rng=mulberry32(seed);let a,b;
+if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}
+else{const main=weapon(save.favorite);let rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];while(rival.id===main.id)rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
+sim={mode:mode,active:true,elapsed:0,rng:rng,fighters:[a,b],particles:[],texts:[],result:null,forced:forced||null,seed:seed};lastFrame=0;accumulator=0;
+$('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'PRACTICE MATCH';$('arena-status-text').textContent='THE FIGHT IS ON';$('live-pulse').classList.add('live');$('fight-btn').textContent='FIGHT IN PROGRESS';$('fight-btn').disabled=true;
+if(mode==='daily'){ $('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
+updateBars();playTone(180,.12,'sawtooth');raf=requestAnimationFrame(loop);}
+function distPointSegment(px,py,x1,y1,x2,y2){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy;let t=l?((px-x1)*dx+(py-y1)*dy)/l:0;t=clamp(t,0,1);const x=x1+t*dx,y=y1+t*dy;return Math.hypot(px-x,py-y);}
+function burst(x,y,color,count){for(let i=0;i<count;i++){const a=sim.rng()*Math.PI*2,s=35+sim.rng()*190;sim.particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+sim.rng()*.55,max:.9,color:color,size:2+sim.rng()*4});}}
+function floatText(x,y,text,color){sim.texts.push({x:x,y:y,text:text,color:color,life:.8,max:.8});}
+function damage(attacker,target,dt){
+const w=attacker.weapon;let amount=attacker.damage*(.9+sim.rng()*.2),critical=false;
+if(w.id==='sword'){if(sim.elapsed-attacker.lastHit<2.3)attacker.combo++;else attacker.combo=1;if(attacker.combo>=3){amount*=1.55;attacker.combo=0;floatText(attacker.x,attacker.y-48,'COMBO!', '#ffd37a');burst(target.x,target.y,'#ffd37a',10);}}
+if(w.id==='axe'&&sim.rng()<.23){amount*=1.85;critical=true;}
+if(w.id==='dagger'){target.bleed.push({ttl:2.4,next:.55});}
+if(w.id==='spear'){target.knock+=170;}
+if(w.id==='hammer'){amount*=1.15;burst(target.x,target.y,'#c8a3ff',13);}
+if(w.id==='scythe'){attacker.hp=Math.min(attacker.maxHp,attacker.hp+3);floatText(attacker.x,attacker.y-38,'+3', '#8ce2a8');}
+if(w.id==='chakram'){amount*=.88;}
+if(w.id==='trident'){amount*=1.12;}
+target.hp=Math.max(0,target.hp-amount);target.flash=.16;target.hitCd=Math.max(target.hitCd,.08);attacker.lastHit=sim.elapsed;attacker.hitCd=(w.id==='chakram'?.46:w.id==='dagger'?.52:w.id==='hammer'?.94:.68)*(w.id==='sword'&&attacker.combo===0?.85:1);
+const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;target.vx+=dx/d*(w.id==='spear'?190:115);target.vy+=dy/d*(w.id==='spear'?190:115);target.knock+=w.id==='spear'?60:0;
+burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,critical?18:10);floatText(target.x,target.y-25,(critical?'CRIT ':'')+'-'+Math.round(amount),critical?'#ffd37a':'#fff1df');playTone(critical?510:290,.055,critical?'square':'triangle');
+if(w.id==='dagger')floatText(target.x+12,target.y-48,'BLEED','#e59aff');
+}
+function step(dt){
+if(!sim||!sim.active)return;sim.elapsed+=dt;const fs=sim.fighters;
+for(let i=0;i<2;i++){const f=fs[i],o=fs[1-i];if(f.hp<=0)continue;const dx=o.x-f.x,dy=o.y-f.y,d=Math.max(1,Math.hypot(dx,dy));const ux=dx/d,uy=dy/d;const orbit=Math.sin(sim.elapsed*1.15+f.aiPhase)*.38;const ax=ux*170-uy*orbit*85,ay=uy*170+ux*orbit*85;
+f.vx+=ax*dt;f.vy+=ay*dt;f.vx*=Math.pow(.986,dt*60);f.vy*=Math.pow(.986,dt*60);
+const max=155+f.level*1.3,sp=Math.hypot(f.vx,f.vy);if(sp>max){f.vx=f.vx/sp*max;f.vy=f.vy/sp*max;}
+f.x+=f.vx*dt;f.y+=f.vy*dt;f.x=clamp(f.x,arena.x+f.r,arena.x+arena.w-f.r);f.y=clamp(f.y,arena.y+f.r,arena.y+arena.h-f.r);
+if(f.x<=arena.x+f.r+1||f.x>=arena.x+arena.w-f.r-1)f.vx*=-.78;if(f.y<=arena.y+f.r+1||f.y>=arena.y+arena.h-f.r-1)f.vy*=-.78;
+f.angle+=f.spin*dt;f.hitCd=Math.max(0,f.hitCd-dt);f.flash=Math.max(0,f.flash-dt);f.shockCd-=dt;
+if(f.weapon.id==='hammer'&&f.shockCd<=0){f.shockCd=4.2;const dd=Math.hypot(o.x-f.x,o.y-f.y);if(dd<130){o.hp=Math.max(0,o.hp-5);o.flash=.15;burst(o.x,o.y,'#c4a6ed',12);floatText(o.x,o.y-48,'SHOCKWAVE -5','#d9baff');}}
+for(let j=f.bleed.length-1;j>=0;j--){const bl=f.bleed[j];bl.ttl-=dt;bl.next-=dt;if(bl.next<=0){bl.next=.65;o.hp=Math.max(0,o.hp-2.2);floatText(o.x,o.y-36,'-2','#dfa0ff');}if(bl.ttl<=0)f.bleed.splice(j,1);}
+if(f.hitCd<=0&&o.hp>0){const tx=f.x+Math.cos(f.angle)*f.reach,ty=f.y+Math.sin(f.angle)*f.reach;const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);if(distance<o.r+f.width*.5){damage(f,o,dt);}}
+}
+const dx=fs[1].x-fs[0].x,dy=fs[1].y-fs[0].y,d=Math.hypot(dx,dy)||1,min=fs[0].r+fs[1].r+2;if(d<min){const nx=dx/d,ny=dy/d,over=min-d;fs[0].x-=nx*over*.5;fs[0].y-=ny*over*.5;fs[1].x+=nx*over*.5;fs[1].y+=ny*over*.5;const rel=(fs[0].vx-fs[1].vx)*nx+(fs[0].vy-fs[1].vy)*ny;if(rel>0){fs[0].vx-=nx*rel*.86;fs[0].vy-=ny*rel*.86;fs[1].vx+=nx*rel*.86;fs[1].vy+=ny*rel*.86;}}
+for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.97;p.vy*=.97;if(p.life<=0)sim.particles.splice(i,1);}
+for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
+updateBars();
+if(fs[0].hp<=0||fs[1].hp<=0||sim.elapsed>68){let winner=fs[0].hp===fs[1].hp?(fs[0].hp>=fs[1].hp?fs[0]:fs[1]):(fs[0].hp>fs[1].hp?fs[0]:fs[1]);finishFight(winner);}
+}
+function finishFight(winner){if(!sim||!sim.active)return;sim.active=false;sim.result=winner.side;$('live-pulse').classList.remove('live');$('fight-state-chip').textContent='MATCH COMPLETE';$('arena-status-text').textContent=winner.weapon.name+' takes the win!';$('fight-btn').disabled=false;$('fight-btn').textContent='REPLAY '+(sim.mode==='daily'?'DAILY':'PRACTICE')+' FIGHT';burst(winner.x,winner.y,winner.weapon.color,35);playTone(640,.25,'sine');
+const mode=sim.mode;const summary={day:today,mode:mode,winner:winner.weapon.id,left:sim.fighters[0].weapon.id,right:sim.fighters[1].weapon.id,time:Math.round(sim.elapsed),date:Date.now()};
+if(mode==='daily'){
+save.results[today]={winner:winner.weapon.id,left:summary.left,right:summary.right,time:summary.time};
+if(!save.settled[today]){const bet=save.bets[today];if(bet){const won=(bet.side==='left'&&winner.side==='left')||(bet.side==='right'&&winner.side==='right');if(won){const payout=Math.floor(bet.amount*bet.odds);save.coins+=payout;toast('You called it! +'+money(payout)+' coins.');}else toast('Not this time. Your champion fought hard.');save.settled[today]=true;}}
+if(!save.history.some(h=>h.day===today&&h.mode==='daily'))save.history.unshift(summary);
+}else{save.history.unshift(summary);if(save.history.filter(h=>h.mode==='practice').length%3===0)toast('Practice complete. Keep training your main.');}
+save.history=save.history.slice(0,40);persist();renderAll();
+}
+function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let elapsed=Math.min(.05,(time-lastFrame)/1000);lastFrame=time;accumulator+=elapsed*speed;let n=0;while(accumulator>=1/60&&n<12&&sim&&sim.active){step(1/60);accumulator-=1/60;n++;}draw();if(sim&&sim.active)raf=requestAnimationFrame(loop);}
+function updateBars(){if(!sim)return;const a=sim.fighters[0],b=sim.fighters[1];$('left-hp-bar').style.width=clamp(a.hp/a.maxHp*100,0,100)+'%';$('right-hp-bar').style.width=clamp(b.hp/b.maxHp*100,0,100)+'%';}
+function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
+function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function drawWeapon(c,f){c.save();c.translate(f.x,f.y);c.rotate(f.angle);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
+if(w.id==='sword'){c.beginPath();c.moveTo(f.reach*.66,-10);c.lineTo(f.reach+13,0);c.lineTo(f.reach*.66,10);c.closePath();c.fill();c.stroke();c.fillStyle='#d9b77d';c.fillRect(f.reach*.61,-13,5,26);}
+else if(w.id==='dagger'){c.beginPath();c.moveTo(f.reach*.65,-7);c.lineTo(f.reach+7,0);c.lineTo(f.reach*.65,7);c.closePath();c.fill();c.stroke();}
+else if(w.id==='spear'){c.beginPath();c.moveTo(f.reach*.78,-9);c.lineTo(f.reach+17,0);c.lineTo(f.reach*.78,9);c.closePath();c.fill();c.stroke();}
+else if(w.id==='axe'){c.beginPath();c.moveTo(f.reach*.62,-18);c.quadraticCurveTo(f.reach+18,-20,f.reach+8,0);c.quadraticCurveTo(f.reach+18,20,f.reach*.62,18);c.closePath();c.fill();c.stroke();}
+else if(w.id==='hammer'){c.fillRect(f.reach*.65,-16,25,32);c.strokeRect(f.reach*.65,-16,25,32);c.fillStyle='#e9d8c5';c.fillRect(f.reach*.65,-16,25,5);}
+else if(w.id==='scythe'){c.beginPath();c.moveTo(f.reach*.55,-3);c.quadraticCurveTo(f.reach+20,-39,f.reach+9,-12);c.quadraticCurveTo(f.reach-1,7,f.reach*.63,13);c.strokeStyle=w.color;c.lineWidth=8;c.stroke();c.strokeStyle='#f3eadc';c.lineWidth=2;c.stroke();}
+else if(w.id==='chakram'){c.beginPath();c.arc(f.reach,0,13,0,Math.PI*2);c.strokeStyle=w.color;c.lineWidth=7;c.stroke();c.strokeStyle='#fff0bd';c.lineWidth=2;c.stroke();}
+else if(w.id==='trident'){c.strokeStyle=w.color;c.lineWidth=4;c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach+9,0);c.lineTo(f.reach-11,12);c.moveTo(f.reach-11,-12);c.lineTo(f.reach-4,0);c.lineTo(f.reach-11,12);c.stroke();c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach-19,-18);c.moveTo(f.reach-11,12);c.lineTo(f.reach-19,18);c.stroke();}
+c.restore();}
+function drawBall(c,f){drawWeapon(c,f);c.save();c.translate(f.x,f.y);c.shadowColor=f.weapon.color;c.shadowBlur=22;c.fillStyle='#0008';c.beginPath();c.ellipse(3,8,f.r+5,f.r*.7,0,0,Math.PI*2);c.fill();c.shadowBlur=0;
+const grad=c.createRadialGradient(-11,-14,3,0,0,f.r+4);grad.addColorStop(0,'#ffffff');grad.addColorStop(.12,f.weapon.color);grad.addColorStop(.65,shade(f.weapon.color,-25));grad.addColorStop(1,'#17212c');c.fillStyle=grad;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.strokeStyle='#ffffffaa';c.lineWidth=2;c.stroke();c.strokeStyle='#ffffff45';c.lineWidth=1;c.beginPath();c.arc(0,0,f.r-7,.3,Math.PI*1.7);c.stroke();
+c.fillStyle='#17202a';c.beginPath();c.arc(-8,-3,3.2,0,Math.PI*2);c.arc(8,-3,3.2,0,Math.PI*2);c.fill();c.strokeStyle='#ffffffbb';c.lineWidth=1.3;c.beginPath();c.arc(0,8,8,.2,Math.PI-.2);c.stroke();
+if(f.flash>0){c.fillStyle='rgba(255,255,255,'+Math.min(.65,f.flash*4)+')';c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();}
+c.restore();c.save();c.font='900 11px system-ui';c.textAlign='center';c.fillStyle='#eaf1f8';c.shadowColor='#000';c.shadowBlur=5;c.fillText(f.weapon.name.toUpperCase(),f.x,f.y+f.r+24);c.restore();}
+function shade(hex,percent){const n=parseInt(hex.slice(1),16),r=clamp((n>>16)+percent,0,255),g=clamp(((n>>8)&255)+percent,0,255),b=clamp((n&255)+percent,0,255);return '#'+(1<<24|r<<16|g<<8|b).toString(16).slice(1);}
+function draw(){const dpr=Math.min(2,window.devicePixelRatio||1),cw=canvas.width/dpr,ch=canvas.height/dpr,scale=Math.min(cw/W,ch/H),ox=(cw-W*scale)/2,oy=(ch-H*scale)/2;ctx.setTransform(dpr*scale,0,0,dpr*scale,dpr*ox,dpr*oy);ctx.clearRect(0,0,W,H);
+const bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#142331');bg.addColorStop(.6,'#0e1822');bg.addColorStop(1,'#121a26');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ctx.save();roundRect(ctx,arena.x,arena.y,arena.w,arena.h,arena.r);ctx.clip();
+ctx.fillStyle='#0d1721';ctx.fillRect(arena.x,arena.y,arena.w,arena.h);
+ctx.strokeStyle='#243646';ctx.lineWidth=1;for(let x=arena.x+20;x<arena.x+arena.w;x+=38){ctx.beginPath();ctx.moveTo(x,arena.y);ctx.lineTo(x,arena.y+arena.h);ctx.stroke();}for(let y=arena.y+20;y<arena.y+arena.h;y+=38){ctx.beginPath();ctx.moveTo(arena.x,y);ctx.lineTo(arena.x+arena.w,y);ctx.stroke();}
+ctx.strokeStyle='#345064';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(W/2,H/2,150,118,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#203849';ctx.beginPath();ctx.ellipse(W/2,H/2,95,75,0,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#1a3545';ctx.globalAlpha=.25;ctx.beginPath();ctx.arc(W/2,H/2,48,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+for(let i=0;i<4;i++){ctx.strokeStyle='rgba(104,163,190,.12)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(W/2,H/2,195+i*24,0,Math.PI*2);ctx.stroke();}
+if(sim){for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=9;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;ctx.shadowBlur=0;for(const f of sim.fighters)drawBall(ctx,f);for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='950 15px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.shadowColor='#000';ctx.shadowBlur=5;ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;ctx.shadowBlur=0;}
+else{drawPreviewBall(ctx,leftWeapon,270,260,1.0);drawPreviewBall(ctx,rightWeapon,630,260,-1.0);}
+ctx.restore();ctx.strokeStyle='#496075';ctx.lineWidth=3;roundRect(ctx,arena.x,arena.y,arena.w,arena.h,arena.r);ctx.stroke();
+}
+function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:31,weapon:w,angle:dir*.45,reach:w.reach,width:w.width,flash:0};drawBall(c,f);}
+function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(e){}}
+function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),picks=Object.keys(save.settled).length,wins=Object.keys(save.settled).filter(d=>{const b=save.bets[d],r=save.results[d];return b&&r&&((b.side==='left'&&r.winner===r.left)||(b.side==='right'&&r.winner===r.right));}).length;
+$('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;
+const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
+function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();updateBars();}
+function startPractice(){switchView('arena');startFight('practice');}
+function forceFinish(side){if(!sim||!sim.active){startFight('daily');}if(!sim||!sim.active)return;const winner=sim.fighters[side==='left'?0:1];winner.hp=1;sim.fighters[side==='left'?1:0].hp=0;finishFight(winner);draw();}
+$('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;startFight('daily');});
+$('claim-btn').addEventListener('click',claimDaily);
+$('place-bet-btn').addEventListener('click',placeBet);
+$('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').addEventListener('click',()=>selectBet('right'));
+$('bet-amount').addEventListener('input',()=>selectBet(selectedBet));
+document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('click',()=>{$('bet-amount').value=b.dataset.betAmount;selectBet(selectedBet);}));
+$('upgrade-btn').addEventListener('click',upgrade);$('set-favorite-btn').addEventListener('click',setFavorite);
+$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',startPractice);$('armory-practice-btn').addEventListener('click',startPractice);
+$('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
+function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
+$('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+$('dev-toggle').addEventListener('click',()=>$('dev-panel').classList.toggle('open'));$('dev-close').addEventListener('click',()=>$('dev-panel').classList.remove('open'));
+$('dev-coins').addEventListener('click',()=>{save.coins+=1000;persist();renderAll();toast('Added 1,000 test coins.');});
+$('dev-reset-claim').addEventListener('click',()=>{save.claimedDay='';persist();renderAll();toast('Daily claim reset for testing.');});
+$('dev-force-left').addEventListener('click',()=>forceFinish('left'));$('dev-force-right').addEventListener('click',()=>forceFinish('right'));
+$('dev-clear').addEventListener('click',()=>{if(sim&&sim.active){sim.active=false;cancelAnimationFrame(raf);}localStorage.removeItem(SAVE_KEY);save=defaultSave();selectedWeapon=save.favorite;renderAll();toast('Local save cleared.');});
+window.addEventListener('resize',resizeCanvas);
+renderDaily();renderWallet();renderChampion();renderArmory();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';$('build-date').textContent='BUILD '+today;
+resizeCanvas();draw();
+})();
+</script>
+</body>
+</html>
