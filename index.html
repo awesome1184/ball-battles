@@ -474,15 +474,15 @@ function step(dt){
   if(f.x<arena.x+f.r){
    f.x=arena.x+f.r;
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=0;floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=Math.abs(f.vx)*.94;
+   else f.vx=Math.abs(f.vx);
   }
   if(f.x>arena.x+arena.w-f.r){
    f.x=arena.x+arena.w-f.r;
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=0;floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=-Math.abs(f.vx)*.94;
+   else f.vx=-Math.abs(f.vx);
   }
-  if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.82;}
-  if(f.y+f.r>floor){f.y=floor-f.r;f.vy=-Math.max(220,Math.abs(f.vy)*.92);f.grounded=true;f.vx*=Math.pow(.993,dt*60);}
+  if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy);}
+  if(f.y+f.r>floor){f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;f.vx*=Math.pow(.993,dt*60);}
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
    f.hammerSpin=Math.min(f.hammerMaxSpin,f.hammerSpin+dt*.9);
@@ -518,7 +518,7 @@ function step(dt){
    const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,min=a.r+b.r+1;
   if(d<min){const nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;
    const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
-   if(rel>0){const impulse=Math.max(90,rel)*.96;a.vx-=nx*impulse;a.vy-=ny*impulse;b.vx+=nx*impulse;b.vy+=ny*impulse;}
+   if(rel>0){const impulse=rel;a.vx-=nx*impulse;a.vy-=ny*impulse;b.vx+=nx*impulse;b.vy+=ny*impulse;}
   }
  }
  for(let i=sim.projectiles.length-1;i>=0;i--){
