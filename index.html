@@ -213,11 +213,11 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
     <div class="card stat-card"><span>BEST CHAMPION</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
   </div>
   <section class="card history-card matchup-card">
-    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">5,500 SIMULATIONS</span></div>
+    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">2,750 SIMULATIONS</span></div>
     <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. Baseline stats only, with left/right starting sides balanced.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
-    <p class="matchup-foot">100 simulated fights per pairing · 50 from each starting side · Estimates, not live player statistics.</p>
+    <p class="matchup-foot">50 simulated fights per pairing · 25 from each starting side · Estimates, not live player statistics.</p>
   </section>
   <section class="card history-card"><div class="side-heading"><h3>MATCH HISTORY</h3><span class="muted-tag">LATEST FIRST</span></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
@@ -242,10 +242,10 @@ const WEAPONS=[
  {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
  {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
+ {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The main ball deals damage by direct contact and creates one full-health clone every 4 team hits, up to 16 balls total. Clones deal reduced damage. If the main ball dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,horizontalSpeedMin:150,horizontalSpeedRange:90,overtimeStart:40,overtimeDamageRate:6,maxDuration:50};
-const MATCHUP_WIN_RATES=[[null,100,97,46,6,1,100,52,4,67,2],[0,null,2,0,0,0,5,0,0,0,0],[3,98,null,2,0,2,71,9,0,19,2],[54,100,98,null,24,28,100,66,19,69,93],[94,100,100,76,null,19,100,99,19,76,4],[99,100,98,72,81,null,100,100,76,88,9],[0,95,29,0,0,0,null,0,0,15,4],[48,100,91,34,1,0,100,null,2,53,0],[96,100,100,81,81,24,100,98,null,81,1],[33,100,81,31,24,12,85,47,19,null,2],[98,100,98,7,96,91,96,100,99,98,null]];
+const MATCHUP_WIN_RATES=[[null,100,96,60,2,0,100,72,2,64,0],[0,null,8,0,0,0,6,0,0,2,0],[4,92,null,8,0,0,72,12,0,18,0],[40,100,92,null,38,20,100,60,18,58,98],[98,100,100,62,null,14,100,100,28,86,6],[100,100,100,80,86,null,100,100,84,86,72],[0,94,28,0,0,0,null,0,0,2,0],[28,100,88,40,0,0,100,null,2,66,0],[98,100,100,82,72,16,100,98,null,70,2],[36,98,82,42,14,14,98,34,30,null,34],[100,100,100,2,94,28,100,100,98,66,null]];
 const MATCHUP_SHORT=['SWD','DAG','SPR','AXE','HAM','SCY','CHK','TRI','BOW','LNC','DUP'];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
