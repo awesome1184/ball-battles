@@ -629,7 +629,7 @@ function draw(){
   switch(w.id){
    case 'sword':detail='DMG '+fixed(damage);break;
    case 'dagger':detail='SPEED ×'+(fighter?fighter.attackSpeedFactor:1).toFixed(2);break;
-   case 'spear':detail='DMG '+fixed(damage)+' / LEN '+(fighter?fighter.spearLength:1).toFixed(2)+'×';break;
+   case 'spear':detail='DAMAGE/LENGTH: '+fixed(damage);break;
    case 'axe':detail='CRIT '+Math.min(100,Math.floor(damage))+'% / DMG '+fixed(damage);break;
    case 'hammer':detail='DMG '+fixed(damage)+' / MAX SPIN '+(fighter?fighter.hammerMaxSpin:1).toFixed(1)+'×';break;
    case 'scythe':detail='POISON '+(opponents.reduce((sum,f)=>sum+(f.poisonDps||0),0))+' DPS';break;
