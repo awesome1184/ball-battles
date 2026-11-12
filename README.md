@@ -24,8 +24,11 @@ No GitHub Actions workflow is required for this setup.
 ## Prototype features
 
 - Daily deterministic weapon matchup with an animated canvas battle.
+- Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and spinning weapon sprites.
+- Gravity, wall/floor collisions, bouncing, and simple fighter movement.
+- Lance damage ramp and Duplicator team replication: 1 → 2 → 4 → 8 → 16 balls during a fight.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
-- Nine weapon types, including a ranged Bow with physical projectiles.
+- Ten weapon types, including a ranged Bow, Lance, and Duplicator.
 - Individual coin-funded upgrades for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed.
 - Gravity, jumping, floor bounce, wall collisions, and weapon hitboxes in the arena.
 - Fight records and a local developer test panel.
