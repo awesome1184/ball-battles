@@ -168,18 +168,18 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 (function(){
 'use strict';
 const WEAPONS=[
- {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every hit permanently adds +1 damage for the rest of the fight.',damage:10,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
- {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit makes the dagger attack 3.5% faster. Speed compounds with every strike.',damage:6,reach:54,width:10,spin:5.15,hp:108,special:'Speed +3.5% / hit',hitDelay:.52},
+ {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:10,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
+ {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit increases attack speed by 3.5%. The bonus compounds with every strike.',damage:6,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +3.5% / hit',hitDelay:.52},
  {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Every hit adds +0.5 damage and +0.5 weapon length.',damage:12,reach:91,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Reach +0.5',hitDelay:.74},
- {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Every hit adds +0.75 damage. The axe becomes steadily more punishing.',damage:13,reach:66,width:22,spin:2.65,hp:120,special:'Damage +0.75 / hit',hitDelay:.76},
- {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Every hit adds +1 damage. Its slow swings become increasingly dangerous.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 / hit',hitDelay:.94},
- {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Every hit adds +0.5 damage and +0.25 reach.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Damage +0.5 · Reach +0.25',hitDelay:.68},
- {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 2.5%, compounding over time.',damage:7,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +2.5% / hit',hitDelay:.46},
- {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'Every hit adds +0.5 damage and increases attack speed by 1.5%.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 · Speed +1.5%',hitDelay:.64},
- {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow hit adds +0.5 damage and +6 projectile speed.',damage:8,reach:142,width:7,spin:.7,hp:104,special:'Arrow damage +0.5 · Speed +6',projectile:true,hitDelay:1.65},
- {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Every hit adds +0.8 damage and +0.35 weapon length.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage +0.8 · Reach +0.35',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Every 4 team hits creates one smaller fighter, up to 16 balls total.',damage:4,reach:55,width:10,spin:3.0,hp:100,special:'+1 clone / 4 team hits',duplicator:true,hitDelay:.68}
-];;
+ {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage doubles after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:13,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×2 / hit',hitDelay:.76},
+ {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +1 damage, raises its maximum spin speed, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 · Max spin +0.25 / hit · Unparryable',hitDelay:.94},
+ {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds one poison stack to the enemy. Every stack deals 1 damage per second. Poison does not scale.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Poison +1 DPS / hit',hitDelay:.68},
+ {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 2.5%. The speed bonus compounds with every strike.',damage:7,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +2.5% / hit',hitDelay:.46},
+ {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'Creates a whirlpool around its weapon that drags nearby balls toward it. Every hit adds +0.5 damage.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Whirlpool pull',hitDelay:.64},
+ {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:8,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
+ {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
+ {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Every 4 team hits creates one additional ball, up to 16 balls total.',damage:4,reach:55,width:10,spin:3.0,hp:100,special:'+1 clone / 4 team hits',duplicator:true,hitDelay:.68}
+];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
@@ -199,7 +199,7 @@ const STAT_DEFS=[
 {id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly your weapon rotates around the ball.',display:lv=>'+'+(lv*9)+'% rotation speed',available:w=>true}
 ];
 function statLevels(id){return Object.assign({baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0},save.stats[id]||{});}
-const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.0001;
+const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.01;
 function statContributionCount(id,key){return Math.floor(Number((save.statCoins[id]||{})[key]||0)/STAT_CONTRIBUTION_COST);}
 function statContributionBonus(id,key){const n=statContributionCount(id,key);if(!n)return 0;const gamma=.5772156649015329;return STAT_BASE_GAIN*(Math.log(n)+gamma+1/(2*n)-1/(12*n*n));}
 function nextStatContributionGain(id,key){return STAT_BASE_GAIN/(statContributionCount(id,key)+1);}
@@ -297,7 +297,7 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=w.damage*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,parryCd:.2+rng()*.3,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,combatDamage:Math.max(.5,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,parryFlash:0,stagger:0,flash:0,grounded:false,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -351,47 +351,63 @@ function tryParry(attacker,defender){
 }
 function burst(x,y,color,count){for(let i=0;i<count;i++){const a=sim.rng()*Math.PI*2,s=35+sim.rng()*190;sim.particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+sim.rng()*.55,max:.9,color:color,size:2+sim.rng()*4});}}
 function floatText(x,y,text,color){sim.texts.push({x:x,y:y,text:text,color:color,life:.8,max:.8});}
-function applyHitGrowth(f){
+function applyHitGrowth(f,target){
  const w=f.weapon,m=(f.growthMultiplier||1)*(f.clone?.43:1);
  let notice='';
  switch(w.id){
   case 'sword':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
-  case 'dagger':f.attackSpeedFactor=Math.min(8,f.attackSpeedFactor*(1+.035*(f.growthMultiplier||1)));notice='SPEED UP';break;
+  case 'dagger':f.attackSpeedFactor*=1+.035*(f.growthMultiplier||1);notice='ATTACK SPEED +3.5%';break;
   case 'spear':f.combatDamage+=.5*m;f.reach+=.5*m;notice='+0.5 DMG · +0.5 REACH';break;
-  case 'axe':f.combatDamage+=.75*m;notice='+0.75 DAMAGE';break;
-  case 'hammer':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
-  case 'scythe':f.combatDamage+=.5*m;f.reach+=.25*m;notice='+0.5 DMG · +0.25 REACH';break;
-  case 'chakram':f.spinGrowth=Math.min(7,f.spinGrowth*(1+.025*(f.growthMultiplier||1)));notice='SPIN FASTER';break;
-  case 'trident':f.combatDamage+=.5*m;f.attackSpeedFactor=Math.min(5,f.attackSpeedFactor*(1+.015*(f.growthMultiplier||1)));notice='+0.5 DMG · SPEED UP';break;
-  case 'bow':f.combatDamage+=.5*m;f.projectileSpeed+=6*m;notice='+0.5 ARROW DMG · +6 SPEED';break;
-  case 'lance':f.combatDamage+=.8*m;f.reach+=.35*m;notice='+0.8 DMG · +0.35 REACH';break;
+  case 'axe':f.combatDamage*=2*(f.growthMultiplier||1);notice='DAMAGE DOUBLED';break;
+  case 'hammer':f.combatDamage+=1*m;f.hammerMaxSpin+=.25*(f.growthMultiplier||1);f.hammerSpin=1;notice='+1 DAMAGE · MAX SPIN UP';break;
+  case 'scythe':target.poisonDps=(target.poisonDps||0)+1;notice='+1 POISON DPS';floatText(target.x,target.y-39,notice,'#7ccf75');break;
+  case 'chakram':f.spinGrowth*=1+.025*(f.growthMultiplier||1);notice='SPIN SPEED +2.5%';break;
+  case 'trident':f.combatDamage+=.5*m;notice='+0.5 DAMAGE';break;
+  case 'bow':f.projectileShots=Math.min(64,(f.projectileShots||1)+1);notice='+1 PROJECTILE · '+f.projectileShots+' SHOTS';break;
+  case 'lance':f.combatDamage*=2*(f.growthMultiplier||1);notice='FULL DAMAGE DOUBLED';break;
   case 'duplicator':
    sim.duplicateHits[f.side]=(sim.duplicateHits[f.side]||0)+1;
    if(sim.duplicateHits[f.side]%4===0&&sim.teams[f.side].length<16)spawnDuplicates(f.side);
    notice=sim.teams[f.side].length<16?'CLONE CHARGE':'SWARM MAX';
    break;
  }
- if(notice)floatText(f.x,f.y-38,notice,w.color);
+ if(notice&&w.id!=='scythe')floatText(f.x,f.y-38,notice,w.color);
 }
 function damage(attacker,target,dt){
- if(tryParry(attacker,target))return false;
+ if(target.lanceCharging){attacker.hitCd=Math.max(attacker.hitCd,.18);return false;}
+ if(attacker.weapon.id!=='hammer'&&tryParry(attacker,target))return false;
  const w=attacker.weapon;
- let amount=Math.max(.5,attacker.combatDamage||attacker.damage)*(w.projectile?1.1:1)*(.94+sim.rng()*.12);
+ let amount,crit=false;
+ if(w.id==='axe'){
+  crit=sim.rng()*100<clamp(attacker.combatDamage,0,100);
+  amount=crit?attacker.combatDamage:1;
+ }else if(w.id==='lance'){
+  amount=attacker.lanceCharging?Math.max(1,attacker.combatDamage):1;
+ }else{
+  amount=Math.max(.5,attacker.combatDamage||attacker.damage)*(w.projectile?1.1:1)*(.94+sim.rng()*.12);
+ }
  target.hp=Math.max(0,target.hp-amount);target.flash=.16;
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
- applyHitGrowth(attacker);
+ applyHitGrowth(attacker,target);
  const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;
  target.vx+=dx/d*105;target.vy+=dy/d*80;
  burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,10);
- floatText(target.x,target.y-25,'-'+Math.round(amount),'#fff1df');
- playTone(290,.055,'triangle');
+ floatText(target.x,target.y-25,'-'+(Number.isInteger(amount)?amount:amount.toFixed(1)),'#fff1df');
+ if(crit)floatText(target.x,target.y-48,'CRITICAL HIT!','#d78e72');
+ playTone(crit?520:290,.055,crit?'square':'triangle');
  return true;
 }
 function fireArrow(f,target){
- const dx=target.x-f.x,dy=target.y-f.y,leadX=target.x+target.vx*.18,leadY=target.y+target.vy*.18;
+ const leadX=target.x+target.vx*.18,leadY=target.y+target.vy*.18;
  const ax=leadX-f.x,ay=leadY-f.y,aim=Math.max(1,Math.hypot(ax,ay)),speed=f.projectileSpeed||455;
- sim.projectiles.push({x:f.x+ax/aim*(f.r+9),y:f.y+ay/aim*(f.r+9),vx:ax/aim*speed,vy:ay/aim*speed-65,life:2.5,owner:f,target:target,color:f.weapon.color});
+ const baseAngle=Math.atan2(ay,ax),shots=Math.max(1,Math.min(64,Math.floor(f.projectileShots||1)));
+ const spread=Math.min(.65,(shots-1)*.018);
+ for(let i=0;i<shots;i++){
+  const offset=shots===1?0:((i-(shots-1)/2)/((shots-1)/2))*spread;
+  const angle=baseAngle+offset;
+  sim.projectiles.push({x:f.x+Math.cos(angle)*(f.r+9),y:f.y+Math.sin(angle)*(f.r+9),vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:2.5,owner:f,target:target,color:f.weapon.color});
+ }
  f.projectileCd=1.65*Math.max(.2,1-f.projectileRateLevel*.08-f.projectileRateBonus)*f.delayMultiplier/Math.max(1,f.attackSpeedFactor||1);
  burst(f.x+ax/aim*(f.r+5),f.y+ay/aim*(f.r+5),f.weapon.color,3);playTone(390,.045,'triangle');
 }
@@ -401,15 +417,49 @@ function step(dt){
  syncFighters();const fs=sim.fighters;
  for(const f of fs){
   if(f.hp<=0)continue;
+  if(f.poisonDps>0){
+   f.hp=Math.max(0,f.hp-f.poisonDps*dt);
+   f.poisonPulse=(f.poisonPulse||0)+dt;
+   if(f.poisonPulse>=1){floatText(f.x,f.y-40,'-'+Math.floor(f.poisonDps)+' POISON DPS','#70b96b');f.poisonPulse%=1;}
+  }
+  if(f.hp<=0)continue;
   const o=nearestEnemy(f);if(!o)continue;
-  const dx=o.x-f.x,dir=Math.sign(dx)||(f.side==='left'?1:-1),desired=Math.abs(dx)>90?dir*115:dir*-30,accel=f.grounded?185:100;
-  f.vx+=(desired>f.vx?1:-1)*accel*dt;f.vx*=Math.pow(f.grounded?.984:.998,dt*60);f.vy+=gravity*dt;
-  f.vx=clamp(f.vx,-165,165);f.vy=clamp(f.vy,-420,420);f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
-  if(f.x<arena.x+f.r){f.x=arena.x+f.r;f.vx=Math.abs(f.vx)*.78;}
-  if(f.x>arena.x+arena.w-f.r){f.x=arena.x+arena.w-f.r;f.vx=-Math.abs(f.vx)*.78;}
+  const dx=o.x-f.x,dir=Math.sign(dx)||(f.side==='left'?1:-1),lance=f.weapon.id==='lance';
+  if(lance&&!f.lanceCharging){
+   f.lanceChargeCooldown-=dt;
+   if(f.lanceChargeCooldown<=0){
+    f.lanceCharging=true;f.lanceChargeDirection=dir;f.lanceChargeCooldown=4.2;
+    f.vx=dir*560;f.vy=Math.min(0,f.vy);
+    floatText(f.x,f.y-48,'CHARGING!','#e9cf55');burst(f.x,f.y,'#e9cf55',8);
+   }
+  }
+  if(lance&&f.lanceCharging){
+   f.vx=f.lanceChargeDirection*560;
+   f.vy+=gravity*.45*dt;
+  }else{
+   const desired=Math.abs(dx)>90?dir*115:dir*-30,accel=f.grounded?185:100;
+   f.vx+=(desired>f.vx?1:-1)*accel*dt;f.vx*=Math.pow(f.grounded?.984:.998,dt*60);
+   f.vy+=gravity*dt;
+  }
+  f.vx=clamp(f.vx,-600,600);f.vy=clamp(f.vy,-420,420);f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
+  if(f.x<arena.x+f.r){
+   f.x=arena.x+f.r;
+   if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=0;floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
+   else f.vx=Math.abs(f.vx)*.78;
+  }
+  if(f.x>arena.x+arena.w-f.r){
+   f.x=arena.x+arena.w-f.r;
+   if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=0;floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
+   else f.vx=-Math.abs(f.vx)*.78;
+  }
   if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.42;}
   if(f.y+f.r>floor){f.y=floor-f.r;f.vy=-Math.max(105,Math.abs(f.vy)*.62);f.grounded=true;f.vx*=Math.pow(.993,dt*60);}
-  f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1);f.angle+=f.spin*dt;
+  f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
+  if(f.weapon.id==='hammer'){
+   f.hammerSpin=Math.min(f.hammerMaxSpin,f.hammerSpin+dt*.9);
+   f.spin=f.baseSpin*f.hammerSpin;
+  }else f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1);
+  f.angle+=f.spin*dt;
   f.hitCd=Math.max(0,f.hitCd-dt);f.projectileCd-=f.weapon.projectile?dt:0;
   f.parryCd=Math.max(0,f.parryCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
   if(f.stagger<=0){
@@ -419,6 +469,17 @@ function step(dt){
     const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);
     if(distance<o.r+f.width*f.weaponScale*.5)damage(f,o,dt);
    }
+  }
+ }
+ // The trident's rotating weapon head creates a moving pull field. It affects any ball in range.
+ for(const vortex of fs){
+  if(vortex.hp<=0||vortex.weapon.id!=='trident')continue;
+  const tx=vortex.x+Math.cos(vortex.angle)*vortex.reach*vortex.weaponScale;
+  const ty=vortex.y+Math.sin(vortex.angle)*vortex.reach*vortex.weaponScale;
+  for(const ball of fs){
+   if(ball===vortex||ball.hp<=0)continue;
+   const dx=tx-ball.x,dy=ty-ball.y,d=Math.hypot(dx,dy)||1,radius=122;
+   if(d<radius){const pull=(1-d/radius)*310;ball.vx+=dx/d*pull*dt;ball.vy+=dy/d*pull*dt;}
   }
  }
  const all=sim.fighters;
@@ -434,7 +495,7 @@ function step(dt){
   const p=sim.projectiles[i];p.life-=dt;p.vy+=gravity*.42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
   if(p.life<=0||p.x<arena.x||p.x>arena.x+arena.w||p.y>floor+18){sim.projectiles.splice(i,1);continue;}
   const target=nearestEnemy(p.owner);
-  if(target&&target.hp>0&&target.parryCd<=0){
+  if(target&&target.hp>0&&!target.lanceCharging&&target.parryCd<=0){
    const guard=weaponSegment(target);
    if(distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2)<target.width*.5+5){
     target.parryCd=.82;target.parryFlash=.3;p.owner.stagger=Math.max(p.owner.stagger,.2);
@@ -481,12 +542,25 @@ else if(w.id==='duplicator'){c.strokeStyle='#171717';c.lineWidth=2.5;c.beginPath
 else if(w.id==='bow'){c.strokeStyle=w.color;c.lineWidth=7;c.beginPath();c.arc(f.reach*.55,0,24,-1.18,1.18);c.stroke();c.strokeStyle='#efe6f5';c.lineWidth=1.5;c.beginPath();c.moveTo(f.reach*.55+9,-22);c.lineTo(f.reach*.55+9,22);c.stroke();c.strokeStyle='#b9a18a';c.lineWidth=4;c.beginPath();c.moveTo(f.reach*.4,0);c.lineTo(f.reach*.55+7,0);c.stroke();}
 c.restore();}
 function teamBallColor(f){if(f.weapon.id==='duplicator')return '#d52bbd';if(f.weapon.id==='lance')return '#e9cf55';return f.side==='left'?'#ee5265':'#35cd5d';}
+function drawWhirlpool(c,f){
+ const x=f.x+Math.cos(f.angle)*f.reach*f.weaponScale,y=f.y+Math.sin(f.angle)*f.reach*f.weaponScale;
+ const t=sim?sim.elapsed:0;
+ c.save();c.translate(x,y);c.rotate(-t*2.2);c.strokeStyle='#42bdb5';c.lineWidth=2;c.globalAlpha=.28;
+ c.beginPath();c.arc(0,0,122,0,Math.PI*2);c.stroke();
+ c.globalAlpha=.45;c.lineWidth=3;
+ for(let i=0;i<3;i++){const a=i*Math.PI*2/3;c.beginPath();c.arc(0,0,82+i*13,a+t*.35,a+1.35+t*.35);c.stroke();}
+ c.globalAlpha=.14;c.fillStyle='#59d8cb';c.beginPath();c.arc(0,0,48,0,Math.PI*2);c.fill();
+ c.restore();
+}
 function drawBall(c,f){
  drawWeapon(c,f);c.save();c.translate(f.x,f.y);const color=teamBallColor(f);
  c.shadowColor='#0002';c.shadowBlur=3;c.shadowOffsetY=2;
  const g=c.createRadialGradient(-7,-9,2,0,0,f.r+2);g.addColorStop(0,'#fff');g.addColorStop(.12,color);g.addColorStop(1,shade(color,-15));
  c.fillStyle=g;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.shadowBlur=0;c.shadowOffsetY=0;
  c.strokeStyle='#171717';c.lineWidth=2.2;c.stroke();
+ if(f.poisonDps>0){c.strokeStyle='#75c86c';c.lineWidth=3;c.globalAlpha=.65;c.beginPath();c.arc(0,0,f.r+5,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
+ if(f.lanceCharging){c.strokeStyle='#f0d15b';c.lineWidth=4;c.globalAlpha=.8;c.beginPath();c.arc(0,0,f.r+9,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
+
  if(f.parryFlash>0){c.strokeStyle='#f4cf67';c.lineWidth=4;c.globalAlpha=Math.min(1,f.parryFlash*4);c.beginPath();c.arc(0,0,f.r+7,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
  c.fillStyle='#101010';c.font='900 '+(f.r>23?'16':'13')+'px system-ui';c.textAlign='center';c.textBaseline='middle';
  c.fillText(Math.max(0,Math.ceil(f.hp)),0,1);
@@ -499,11 +573,17 @@ function draw(){
  ctx.save();ctx.fillStyle='#fffefa';ctx.fillRect(arena.x,arena.y,arena.w,arena.h);ctx.strokeStyle='#191919';ctx.lineWidth=3;ctx.strokeRect(arena.x,arena.y,arena.w,arena.h);
  if(sim){for(const arrow of (sim.projectiles||[])){ctx.save();ctx.translate(arrow.x,arrow.y);ctx.rotate(Math.atan2(arrow.vy,arrow.vx));ctx.strokeStyle='#171717';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(10,0);ctx.stroke();ctx.fillStyle=arrow.color;ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(5,-5);ctx.lineTo(5,5);ctx.closePath();ctx.fill();ctx.restore();}
  for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
- for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
+ for(const f of sim.fighters){if(f.hp>0&&f.weapon.id==='trident')drawWhirlpool(ctx,f);}for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
  }else{drawPreviewBall(ctx,leftWeapon,180,330,1);drawPreviewBall(ctx,rightWeapon,360,330,-1);}ctx.restore();
  const lead=sim&&sim.teams.left[0],rightLead=sim&&sim.teams.right[0],damageValue=lead?Math.floor(lead.combatDamage):Math.floor(leftWeapon.damage),speedValue=lead?lead.combatSpeed:10,leftDup=lead&&lead.weapon.duplicator,rightDup=rightLead&&rightLead.weapon.duplicator;
  ctx.fillStyle='#b32636';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('DAMAGE: '+damageValue,arena.x,712);
- ctx.fillStyle='#16893a';ctx.textAlign='right';ctx.fillText((leftDup||rightDup)?'BALLS: '+sim.teams[leftDup?'left':'right'].filter(f=>f.hp>0).length:'ATTACK SPEED: '+speedValue,arena.x+arena.w,712);
+ ctx.fillStyle='#16893a';ctx.textAlign='right';
+ const rightStatus=lead&&lead.weapon.id==='bow'?'PROJECTILES: '+lead.projectileShots:
+  lead&&lead.weapon.id==='axe'?'CRIT: '+Math.min(100,Math.floor(lead.combatDamage))+'%':
+  lead&&lead.weapon.id==='hammer'?'MAX SPIN: '+lead.hammerMaxSpin.toFixed(1)+'×':
+  lead&&lead.weapon.id==='lance'?'FULL DMG: '+Math.floor(lead.combatDamage):
+  (leftDup||rightDup)?'BALLS: '+sim.teams[leftDup?'left':'right'].filter(f=>f.hp>0).length:'ATTACK SPEED: '+speedValue;
+ ctx.fillText(rightStatus,arena.x+arena.w,712);
 }
 function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100};drawBall(c,f);}
 function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(e){}}
