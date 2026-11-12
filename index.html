@@ -486,8 +486,8 @@ function step(dt){
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
    f.hammerSpin=Math.min(f.hammerMaxSpin,f.hammerSpin+dt*.9);
-   f.spin=f.baseSpin*f.hammerSpin*4;
-  }else f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1)*4;
+   f.spin=f.baseSpin*f.hammerSpin;
+  }else f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1)*(f.weapon.id==='bow'?4:1);
   f.angle+=f.spin*dt;
   f.hitCd=Math.max(0,f.hitCd-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.095;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
   f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
