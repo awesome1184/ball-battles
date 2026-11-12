@@ -23,9 +23,9 @@ No GitHub Actions workflow is required for this setup.
 
 ## Prototype features
 
-- Daily deterministic weapon matchup with an animated canvas battle.
-- Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and distinct pixel-art weapon sprites. Sprites are clipped to the arena boundaries.
-- Bouncy physics inspired by the supplied Earclacks reference: floor, ceiling, and wall rebounds retain 100% of velocity, while ball-to-ball impacts use fully elastic normal impulses. Bow alone rotates 4× faster; all other weapons retain their own rotation speeds.
+- Daily deterministic weapon matchup with an animated canvas battle. Fights are knockout-only and do not end at a fixed time limit.
+- Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and redesigned, distinct pixel-art weapon silhouettes. The arena box is slightly smaller, and sprites are clipped to its boundaries.
+- Bouncy physics inspired by the supplied Earclacks reference: floor, ceiling, and wall rebounds retain 100% of velocity, while ball-to-ball impacts use fully elastic normal impulses. Fighters do not home toward opponents; they move independently and collide naturally. Bow alone rotates 4× faster; all other weapons retain their own rotation speeds.
 - Opposing pixel-art weapons physically clash as they rotate. Parries trigger a gold flash, sparks, brief stagger, knockback, and reverse the rotation direction of the involved weapons. Weapon guards can also catch arrows; Hammer attacks remain unparryable.
 - Per-hit weapon growth is temporary for that fight; a new fight starts from each weapon's base combat values.
 - Every weapon begins each fight at 1 base damage before any purchased stat bonuses or per-hit growth. There is no automatic ball-to-ball pursuit; fighters move through momentum, gravity, and collisions. Trident's whirlpool is visual only and does not pull balls.
