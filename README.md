@@ -33,7 +33,8 @@ No GitHub Actions workflow is required for this setup.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
 - Eleven weapon balls: Sword, Dagger, Spear, Axe, Hammer, Scythe, Chakram, Trident, Bow, Lance, and Duplicator. Duplicator has no weapon: its ball deals damage by body contact, while its team still gains one clone every 4 hits up to 16.
 - Individual 50-coin contributions for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed. The first contribution gives +5%, the next +2.5%, then +1.667% and so on, with harmonic diminishing returns; Scaling increases eligible per-hit growth.
-- Practice fights let you choose the opposing weapon in Weapon Lab instead of selecting a random rival.
+- The daily path is: watch the current daily fight, receive the previous day's bet payout on the next daily visit with a one-time animated win/loss reveal, then upgrade the weapon you backed or open Simulations.
+- Simulations use your trained favorite weapon against a randomly selected opponent. Opponents cannot be chosen; simulations use the same battle engine, hide daily betting controls, and are recorded separately from daily showdowns.
 - Fight records and a local developer test panel.
 - Sound toggle and 1× / 2× battle speed.
 
