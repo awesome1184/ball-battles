@@ -136,7 +136,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="section-desc" id="training-desc">A balanced weapon with reliable combos.</div>
       <div class="stat-line"><span>Current base damage</span><strong id="training-damage">10</strong></div>
       <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
-      <div class="stat-line"><span>Weapon reach</span><strong id="training-reach">68</strong></div>
+      <div class="stat-line"><span id="training-reach-label">Weapon reach</span><strong id="training-reach">68</strong></div>
       <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
       <p class="section-desc">Contribute 50 coins at a time. Every contribution is permanent, very small, and worth less than the previous one.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
@@ -172,7 +172,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 const WEAPONS=[
  {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:10,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
  {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit increases attack speed by 3.5%. The bonus compounds with every strike.',damage:6,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +3.5% / hit',hitDelay:.52},
- {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Every hit adds +0.5 damage and +0.5 weapon length.',damage:12,reach:91,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Reach +0.5',hitDelay:.74},
+ {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:12,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
  {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage doubles after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:13,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×2 / hit',hitDelay:.76},
  {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +1 damage, raises its maximum spin speed, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 · Max spin +0.25 / hit · Unparryable',hitDelay:.94},
  {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds one poison stack to the enemy. Every stack deals 1 damage per second. Poison does not scale.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Poison +1 DPS / hit',hitDelay:.68},
@@ -288,7 +288,7 @@ function renderArmoryDetails(){
  $('training-level').textContent='Champion · '+money(totalCoins)+' coins contributed · '+totalLevels+' legacy levels';$('training-desc').textContent=w.desc;
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
- $('training-reach').textContent=(w.reach*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
+ $('training-reach-label').textContent=w.id==='spear'?'Starting length':'Weapon reach';$('training-reach').textContent=w.id==='spear'?'1.00× base':(w.reach*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
  $('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
   const available=def.available(w),coins=Number((save.statCoins[w.id]||{})[def.id]||0),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
   const note=def.id==='projectileRate'?'Only affects ranged weapons.':def.desc;
@@ -310,7 +310,7 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=w.damage*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,combatDamage:Math.max(.5,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -391,7 +391,7 @@ function applyHitGrowth(f,target){
  switch(w.id){
   case 'sword':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
   case 'dagger':f.attackSpeedFactor*=1+.035*(f.growthMultiplier||1);notice='ATTACK SPEED +3.5%';break;
-  case 'spear':f.combatDamage+=.5*m;f.reach+=.5*m;notice='+0.5 DMG · +0.5 REACH';break;
+  case 'spear':f.combatDamage+=.5*m;f.spearLength*=(1+.08*m);f.reach=f.weapon.reach*f.spearLength;notice='+0.5 DMG · LENGTH '+f.spearLength.toFixed(2)+'×';break;
   case 'axe':f.combatDamage*=2*(f.growthMultiplier||1);notice='DAMAGE DOUBLED';break;
   case 'hammer':f.combatDamage+=1*m;f.hammerMaxSpin+=.25*(f.growthMultiplier||1);f.hammerSpin=1;notice='+1 DAMAGE · MAX SPIN UP';break;
   case 'scythe':target.poisonDps=(target.poisonDps||0)+1;notice='+1 POISON DPS';floatText(target.x,target.y-39,notice,'#7ccf75');break;
@@ -629,7 +629,7 @@ function draw(){
   switch(w.id){
    case 'sword':detail='DMG '+fixed(damage);break;
    case 'dagger':detail='SPEED ×'+(fighter?fighter.attackSpeedFactor:1).toFixed(2);break;
-   case 'spear':detail='DMG '+fixed(damage)+' / LEN '+fixed(fighter?fighter.reach:w.reach);break;
+   case 'spear':detail='DMG '+fixed(damage)+' / LEN '+(fighter?fighter.spearLength:1).toFixed(2)+'×';break;
    case 'axe':detail='CRIT '+Math.min(100,Math.floor(damage))+'% / DMG '+fixed(damage);break;
    case 'hammer':detail='DMG '+fixed(damage)+' / MAX SPIN '+(fighter?fighter.hammerMaxSpin:1).toFixed(1)+'×';break;
    case 'scythe':detail='POISON '+(opponents.reduce((sum,f)=>sum+(f.poisonDps||0),0))+' DPS';break;
