@@ -482,13 +482,25 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier,maxHp:w.hp*MATCH_RULES.healthMultiplier,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier,maxHp:w.hp*MATCH_RULES.healthMultiplier,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
-function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:Math.max(1,parent.damage*.43),combatDamage:Math.max(1,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
+function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:Math.max(1,parent.damage*.43),combatDamage:Math.max(1,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemies=sim.teams[f.side==='left'?'right':'left'].filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
+function collapseDuplicatorSwarm(side){
+ if(!sim||sim.swarmCollapsed[side])return false;
+ const team=sim.teams[side],main=team.find(f=>f.mainBall);
+ if(!main||main.weapon.id!=='duplicator'||main.hp>0)return false;
+ sim.swarmCollapsed[side]=true;
+ for(const f of team){
+  if(f!==main&&f.hp>0){f.hp=0;burst(f.x,f.y,'#df50c5',7);}
+ }
+ floatText(main.x,main.y-46,'MAIN BALL DOWN · SWARM ELIMINATED','#c52eaa');
+ updateBars();
+ return true;
+}
 function spawnDuplicates(side){
- const team=sim.teams[side];if(team.length>=16)return;
+ const team=sim.teams[side],main=team.find(f=>f.mainBall);if(!main||main.hp<=0||team.length>=16)return;
  const living=team.filter(f=>f.hp>0);if(!living.length)return;
  const parent=living[Math.floor(sim.rng()*living.length)];
  const clone=cloneFighter(parent,sim.rng,team.length);team.push(clone);
@@ -503,7 +515,7 @@ function startFight(mode,forced,practiceId,opponentId){
   const rival=rivals[Math.floor(rng()*rivals.length)];
   a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);
  }
- sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,playerWeaponId:a.weapon.id,duplicateHits:{left:0,right:0}};
+ sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,playerWeaponId:a.weapon.id,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false}};
  $('match-title').textContent=a.weapon.name+' vs '+b.weapon.name;
  $('match-subtitle').textContent=mode==='daily'?'Daily weapon showdown · '+a.weapon.special+' meets '+b.weapon.special:'Random simulation · your trained '+a.weapon.name+' against '+b.weapon.name;
  $('left-name-top').textContent=a.weapon.name.toUpperCase();$('right-name-top').textContent=b.weapon.name.toUpperCase();
@@ -608,7 +620,7 @@ function damage(attacker,target,dt){
  }else{
   amount=Math.max(.5,attacker.combatDamage||attacker.damage)*(w.projectile?1.1:1)*(.94+sim.rng()*.12);
  }
- target.hp=Math.max(0,target.hp-amount);target.flash=.16;
+ target.hp=Math.max(0,target.hp-amount);if(target.hp<=0&&target.mainBall)collapseDuplicatorSwarm(target.side);target.flash=.16;
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
  applyHitGrowth(attacker,target);
@@ -649,7 +661,7 @@ function step(dt){
  for(const f of fs){
   if(f.hp<=0)continue;
   if(f.poisonDps>0&&!f.lanceCharging){
-   f.hp=Math.max(0,f.hp-f.poisonDps*dt);
+   f.hp=Math.max(0,f.hp-f.poisonDps*dt);if(f.hp<=0&&f.mainBall)collapseDuplicatorSwarm(f.side);
    f.poisonPulse=(f.poisonPulse||0)+dt;
    if(f.poisonPulse>=1){floatText(f.x,f.y-40,'-'+Math.floor(f.poisonDps)+' POISON DPS','#70b96b');f.poisonPulse%=1;}
   }
@@ -756,6 +768,7 @@ function step(dt){
    const living=sim.teams[side].filter(f=>f.hp>0);
    const share=overtimeDps*dt/Math.max(1,living.length);
    for(const fighter of living)fighter.hp=Math.max(0,fighter.hp-share);
+   const main=sim.teams[side].find(f=>f.mainBall);if(main&&main.hp<=0)collapseDuplicatorSwarm(side);
   }
  }
  updateBars();
@@ -1088,6 +1101,10 @@ function drawBall(c,f){
  const g=c.createRadialGradient(-7,-9,2,0,0,f.r+2);g.addColorStop(0,'#fff');g.addColorStop(.12,color);g.addColorStop(1,shade(color,-15));
  c.fillStyle=g;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.shadowBlur=0;c.shadowOffsetY=0;
  c.strokeStyle='#171717';c.lineWidth=2.2;c.stroke();
+ if(f.weapon.id==='duplicator'&&f.mainBall){
+  c.strokeStyle='#ffd86e';c.lineWidth=4;c.beginPath();c.arc(0,0,f.r+7,0,Math.PI*2);c.stroke();
+  c.fillStyle='#5a3912';c.font='1000 8px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('MAIN',0,-f.r-13);
+ }
  if(f.poisonDps>0){c.strokeStyle='#75c86c';c.lineWidth=3;c.globalAlpha=.65;c.beginPath();c.arc(0,0,f.r+5,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
  if(f.lanceCharging){c.strokeStyle='#f0d15b';c.lineWidth=4;c.globalAlpha=.8;c.beginPath();c.arc(0,0,f.r+9,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
 
