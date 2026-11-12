@@ -30,7 +30,6 @@ No GitHub Actions workflow is required for this setup.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
 - Eleven weapon types, including a ranged Bow, Lance, and Duplicator.
 - Individual coin-funded upgrades for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed.
-- Gravity, jumping, floor bounce, wall collisions, and weapon hitboxes in the arena.
 - Fight records and a local developer test panel.
 - Sound toggle and 1× / 2× battle speed.
 
