@@ -296,10 +296,10 @@ function createFighter(w,side,rng,trained){
 function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,reach:parent.reach*.86,weaponScale:parent.weaponScale*.88,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,damageGrowth:1,combatDamage:parent.combatDamage,combatSpeed:parent.combatSpeed,bleed:[],flash:0,knock:0,grounded:false,hopCooldown:.5+rng()*1.1,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemies=sim.teams[f.side==='left'?'right':'left'].filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
-function spawnDuplicates(side){const team=sim.teams[side];if(!team.length)return;const target=Math.min(16,team.length*2),old=team.filter(f=>f.hp>0);if(!old.length)return;let idx=team.length;while(team.length<target){const parent=old[(team.length-team.length%old.length)%old.length],clone=cloneFighter(parent,sim.rng,idx++);team.push(clone);burst(clone.x,clone.y,'#e65ad2',8);}syncFighters();updateBars();floatText(arena.x+arena.w/2,arena.y+42,'DUPLICATED · '+team.length,'#cb31b9');}
-function startFight(mode,forced){
+function spawnDuplicates(side){const team=sim.teams[side];if(!team.length)return;const target=Math.min(16,team.length*2),startCount=team.length,old=team.filter(f=>f.hp>0);if(!old.length)return;let idx=startCount;while(team.length<target){const parent=old[(team.length-startCount)%old.length],clone=cloneFighter(parent,sim.rng,idx++);team.push(clone);burst(clone.x,clone.y,'#e65ad2',8);}syncFighters();updateBars();floatText(arena.x+arena.w/2,arena.y+42,'DUPLICATED · '+team.length,'#cb31b9');}
+function startFight(mode,forced,practiceId){
  if(sim&&sim.active)return;if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
- if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{const main=weapon(save.favorite);let rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];while(rival.id===main.id)rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
+ if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{const main=weapon(practiceId||save.favorite);let rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];while(rival.id===main.id)rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
  sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,nextDuplicateAt:{left:10,right:10}};
  $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'PRACTICE MATCH';$('arena-status-text').textContent='THE FIGHT IS ON';$('live-pulse').classList.add('live');$('fight-btn').textContent='FIGHT IN PROGRESS';$('fight-btn').disabled=true;
  if(mode==='daily'){$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
@@ -319,7 +319,7 @@ if(w.id==='scythe'){attacker.hp=Math.min(attacker.maxHp,attacker.hp+3);floatText
 if(w.id==='chakram'){amount*=.88;}
 if(w.id==='trident'){amount*=1.12;}
 target.hp=Math.max(0,target.hp-amount);target.flash=.16;target.hitCd=Math.max(target.hitCd,.08);attacker.lastHit=sim.elapsed;attacker.hitCd=(w.id==='chakram'?.46:w.id==='dagger'?.52:w.id==='hammer'?.94:w.id==='lance'?.78:.68)*attacker.delayMultiplier*(1/(1+sim.elapsed*.025))*(w.id==='sword'&&attacker.combo===0?.85:1);
-if(w.id==='lance'){attacker.damageGrowth=Math.min(220,attacker.damageGrowth*1.045);attacker.combatDamage=Math.max(1,attacker.combatDamage+1);}
+if(w.id==='lance'){attacker.damageGrowth=Math.min(220,attacker.damageGrowth*(1.045+attacker.scalingLevel*.001));attacker.combatDamage=Math.max(1,attacker.combatDamage+1);}
 else{attacker.damageGrowth=Math.min(3.2,attacker.damageGrowth+.012+attacker.scalingLevel*.005);attacker.combatDamage=Math.min(attacker.damage*2.5,attacker.combatDamage+.13+attacker.scalingLevel*.025);}
 const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;target.vx+=dx/d*(w.id==='spear'?190:115);target.vy+=dy/d*(w.id==='spear'?190:115);target.knock+=w.id==='spear'?60:0;
 burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,critical?18:10);floatText(target.x,target.y-25,(critical?'CRIT ':'')+'-'+Math.round(amount),critical?'#ffd37a':'#fff1df');playTone(critical?510:290,.055,critical?'square':'triangle');
@@ -405,7 +405,7 @@ function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),pi
 $('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;
 const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
 function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();updateBars();}
-function startPractice(){switchView('arena');startFight('practice');}
+function startPractice(weaponId){switchView('arena');startFight('practice',null,typeof weaponId==='string'?weaponId:save.favorite);}
 function forceFinish(side){if(!sim||!sim.active){startFight('daily');}if(!sim||!sim.active)return;const winner=sim.teams[side].find(f=>f.hp>0)||sim.teams[side][0];for(const f of sim.teams[side==='left'?'right':'left'])f.hp=0;winner.hp=Math.max(1,winner.hp);finishFight(winner);draw();}
 $('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;startFight('daily');});
 $('claim-btn').addEventListener('click',claimDaily);
@@ -414,7 +414,7 @@ $('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').add
 $('bet-amount').addEventListener('input',()=>selectBet(selectedBet));
 document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('click',()=>{$('bet-amount').value=b.dataset.betAmount;selectBet(selectedBet);}));
 $('stat-upgrades').addEventListener('click',event=>{const button=event.target.closest('[data-stat]');if(button&&!button.disabled)buyStat(button.dataset.stat);});$('set-favorite-btn').addEventListener('click',setFavorite);
-$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',startPractice);$('armory-practice-btn').addEventListener('click',startPractice);
+$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
 function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
