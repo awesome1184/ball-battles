@@ -23,9 +23,9 @@ No GitHub Actions workflow is required for this setup.
 
 ## Prototype features
 
-- Daily deterministic weapon matchup with an animated canvas battle. Fights are knockout-only and do not end at a fixed time limit.
-- Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and redesigned, distinct pixel-art weapon silhouettes. The arena box is slightly smaller, and sprites are clipped to its boundaries.
-- Bouncy, energy-preserving physics inspired by the supplied Earclacks reference: floor, ceiling, and wall rebounds retain 100% of velocity, with no floor friction or velocity clipping. Ball-to-ball impacts use fully elastic normal impulses. Fighters do not home toward opponents; they move independently and collide naturally. Lance charges also rebound from walls without losing horizontal momentum. Bow alone rotates 4× faster; all other weapons retain their own rotation speeds.
+- Daily deterministic weapon matchup with an animated canvas battle. All fights use 1.5× faster weapon rotation, 1.6× base health, escalating arena overtime from 40 seconds, and a 50-second maximum with remaining-health tiebreaks.
+- Clean portrait arena with solid red/green/magenta balls, readable per-ball health, and redesigned, distinct pixel-art weapon silhouettes. Weapon artwork is clipped to the outside of each ball so every weapon visibly meets the orb's surface; arena sprites are also clipped to the arena boundaries.
+- Bouncy, energy-preserving physics inspired by the supplied Earclacks reference: floor, ceiling, and wall rebounds retain 100% of velocity, with no floor friction or velocity clipping. Ball-to-ball impacts use fully elastic normal impulses. Fighters do not home toward opponents; they move independently and collide naturally. Lance charges also rebound from walls without losing horizontal momentum. All weapons rotate 1.5× faster than the previous tuning; Bow retains its additional 4× rotation multiplier.
 - Opposing pixel-art weapons physically clash as they rotate. Parries trigger a gold flash, sparks, brief stagger, knockback, and reverse the rotation direction of the involved weapons. Weapon guards can also catch arrows; Hammer attacks remain unparryable.
 - Per-hit weapon growth is temporary for that fight; a new fight starts from each weapon's base combat values.
 - Every weapon begins each fight at 1 base damage before any purchased stat bonuses or per-hit growth. There is no automatic ball-to-ball pursuit; fighters move through momentum, gravity, and collisions. Trident's whirlpool follows its rotating weapon head and actively pulls every nearby living ball toward it.
@@ -35,7 +35,7 @@ No GitHub Actions workflow is required for this setup.
 - Per-weapon, per-stat level pools for base damage, scaling, weapon size, projectile rate, attack speed, and spin speed. Each contribution adds 50 coins to that stat's progress bar; the next level costs 50 × (level + 1)² coins. Stat gains start at 1% or 2% per level, and the gain per new level increases linearly (for example, a 2% stat gains +2%, then +4%, then +6%). The prototype stores these pools locally; global cross-player sharing requires the Devvit backend.
 - The daily path is: watch the current daily fight, receive the previous day's bet payout on the next daily visit with a one-time animated win/loss reveal, then upgrade the weapon you backed or open Simulations.
 - Simulations use your trained favorite weapon against a randomly selected opponent. Opponents cannot be chosen; simulations use the same battle engine, hide daily betting controls, and are recorded separately from daily showdowns.
-- Fight records and a local developer test panel.
+- Fight records, a matchup win-rate matrix (100 neutral simulations per pairing, with starting sides balanced), and a local developer test panel. Current baseline simulation rankings put Duplicator first and Dagger last; the matrix is a balance estimate, not live player data.
 - Sound toggle and 1× / 2× battle speed.
 
 ## Current prototype boundaries
