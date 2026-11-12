@@ -24,6 +24,24 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .fighter-labels{display:none}.fighter-label{width:35%;min-width:0}.fighter-label.right{text-align:right}.fighter-name{font-size:11px;font-weight:950;letter-spacing:.12em;text-shadow:0 2px 5px #000}.fighter-weapon{font-size:10px;color:#aab8c7;margin-top:3px}.bar{height:7px;background:#27323e;border-radius:9px;overflow:hidden;margin-top:7px;border:1px solid #ffffff10}.bar-fill{height:100%;width:100%;border-radius:9px;transition:width .15s linear;background:linear-gradient(90deg,#ef6f74,#ff9c75)}.fighter-label.right .bar-fill{margin-left:auto;background:linear-gradient(90deg,#62b9ff,#85d4ed)}
 .arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 3px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:#adbac9;font-size:12px}.pulse{width:7px;height:7px;border-radius:50%;background:#64768a}.pulse.live{background:var(--green);box-shadow:0 0 0 5px #65d5a01c;animation:pulse 1.4s infinite}@keyframes pulse{50%{box-shadow:0 0 0 9px #65d5a000}}
 .controls{display:flex;align-items:center;gap:7px}.primary-btn{border:0;background:linear-gradient(135deg,#ffd27c,#e9a444);color:#26202a;font-weight:950;letter-spacing:.04em;border-radius:11px;padding:12px 17px;box-shadow:0 8px 20px #e9a44420}.primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.small-btn{border:1px solid #3b4b5d;background:#202b38;color:#e6edf6;border-radius:10px;padding:10px 12px;font-weight:800;font-size:11px}.speed-btn{min-width:44px}
+.payout-card{padding:17px;position:relative;overflow:hidden;border-color:#5b4930;background:linear-gradient(125deg,#2c261d,#171d25 64%);isolation:isolate}
+.payout-card:before{content:"";position:absolute;inset:-60% auto -60% -45%;width:35%;background:linear-gradient(90deg,transparent,#fff5b866,transparent);transform:rotate(18deg);opacity:0;pointer-events:none;z-index:-1}
+.payout-card.reveal{animation:payoutEnter .7s cubic-bezier(.2,.9,.25,1.15) both}
+.payout-card.win.reveal:before{opacity:1;animation:payoutSweep 1.15s ease-out .15s both}
+.payout-card.win{border-color:#9d793e;box-shadow:0 0 0 1px #d9aa4b22,0 12px 34px #e6b44a18}
+.payout-card.loss{border-color:#46515e;background:linear-gradient(125deg,#202630,#171d25 64%)}
+.payout-top,.payout-main,.payout-actions{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.payout-main{margin-top:12px;align-items:flex-end}
+.payout-title{font-size:15px;font-weight:950;letter-spacing:-.01em}
+.payout-copy{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.payout-amount{font-size:clamp(27px,4vw,36px);font-weight:1000;letter-spacing:-.05em;color:#f4c86b;white-space:nowrap;text-shadow:0 0 22px #eab94a55}
+.payout-card.loss .payout-amount{color:#aeb8c5;text-shadow:none}
+.payout-actions{justify-content:flex-start;margin-top:15px;flex-wrap:wrap}
+@keyframes payoutEnter{0%{opacity:0;transform:translateY(14px) scale(.985)}65%{opacity:1;transform:translateY(-2px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes payoutSweep{0%{left:-45%;opacity:0}15%{opacity:1}100%{left:130%;opacity:0}}
+.simulation-launch{margin-bottom:16px}
+.simulation-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.simulation-actions button{flex:1;min-width:180px}
 .bet-card{padding:18px}.section-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.section-title{font-size:14px;font-weight:900;letter-spacing:.03em}.section-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}.bet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.bet-side{border:1px solid #344252;background:#161f2a;color:var(--text);border-radius:13px;padding:12px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px}.bet-side.selected{border-color:var(--gold);background:#332a1c;box-shadow:inset 0 0 0 1px #f2bd5730}.bet-side strong{display:block;font-size:12px}.bet-side small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.bet-side .pct{font-weight:900;color:#f0c56e;font-size:14px}
 .bet-controls{display:flex;align-items:center;gap:10px;margin-top:12px}.bet-controls input{width:106px;min-width:70px;background:#0f151d;color:var(--text);border:1px solid #3a4756;border-radius:9px;padding:10px 11px;outline:none}.bet-controls input:focus{border-color:var(--gold)}.bet-controls .primary-btn{margin-left:auto}.bet-note{color:var(--muted);font-size:10px;margin-top:11px}
 .side-card{padding:16px}.side-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.side-heading h3{font-size:12px;letter-spacing:.1em}.muted-tag{font-size:9px;font-weight:900;letter-spacing:.12em;color:var(--muted)}
@@ -67,8 +85,9 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
   </div>
 </header>
 <nav class="tabs">
-  <button class="tab active" data-view="arena">THE ARENA</button>
-  <button class="tab" data-view="armory">WEAPON LAB</button>
+  <button class="tab active" data-view="arena">DAILY FIGHT</button>
+  <button class="tab" data-view="armory">UPGRADE</button>
+  <button class="tab" data-view="simulations">SIMULATIONS</button>
   <button class="tab" data-view="records">RECORDS</button>
 </nav>
 
@@ -93,7 +112,12 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
           <div class="controls"><button class="small-btn speed-btn" id="speed-btn">1×</button><button class="small-btn" id="sound-hit-btn">SOUND: ON</button><button class="primary-btn" id="fight-btn">START DAILY FIGHT</button></div>
         </div>
       </section>
-      <section class="card bet-card">
+      <section class="card payout-card" id="payout-card" aria-live="polite">
+        <div class="payout-top"><div class="section-title">YESTERDAY'S BET PAYOUT</div><span class="muted-tag" id="payout-day">NO PREVIOUS BET</span></div>
+        <div class="payout-main"><div><div class="payout-title" id="payout-title">Your last prediction will appear here.</div><div class="section-desc" id="payout-copy">Watch the daily fight and make a prediction to earn a payout tomorrow.</div></div><strong class="payout-amount" id="payout-amount">—</strong></div>
+        <div class="payout-actions"><button class="soft-btn" id="upgrade-from-payout">UPGRADE A BALL</button><button class="soft-btn" id="sim-from-payout">VIEW SIMULATIONS</button></div>
+      </section>
+      <section class="card bet-card" id="bet-card">
         <div class="section-top"><div><div class="section-title">PLACE YOUR PREDICTION</div><div class="section-desc" id="bet-desc">Back the weapon you think will take today's win.</div></div><span class="muted-tag" id="bet-lock-label">CLOSES AT FIGHT START</span></div>
         <div class="bet-grid">
           <button class="bet-side selected" id="bet-left"><span><strong id="bet-left-name">Sword</strong><small id="bet-left-caption">Red corner · 1.45× return</small></span><span class="pct" id="bet-left-share">58%</span></button>
@@ -113,7 +137,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
         <div class="side-heading"><h3>YOUR CHAMPION</h3><span class="muted-tag">PERSONAL</span></div>
         <div class="champ-row"><div class="mini-orb" id="champ-orb">⚔</div><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 · Favorite weapon</div></div></div>
         <div class="power-row"><span>CHAMPION POWER</span><strong id="champ-power">100</strong></div><div class="power-track"><span id="champ-power-bar" style="width:12%"></span></div>
-        <div class="side-actions"><button class="small-btn" id="go-armory-btn">TRAIN CHAMPION</button><button class="small-btn" id="practice-btn">PRACTICE FIGHT</button></div>
+        <div class="side-actions"><button class="small-btn" id="go-armory-btn">TRAIN CHAMPION</button><button class="small-btn" id="practice-btn">SIMULATE MATCH</button></div>
       </section>
       <section class="card side-card">
         <div class="side-heading"><h3>COMMUNITY ODDS</h3><span class="muted-tag">PREDICTIONS</span></div>
@@ -127,7 +151,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 </section>
 
 <section class="view" id="armory-view">
-  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Pick a favorite, choose its opponent, and test the matchup in practice.</p></div>
+  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Choose the ball you want to strengthen. Simulations will find a random opponent.</p></div>
   <div class="armory-layout">
     <div class="weapon-grid" id="weapon-grid"></div>
     <section class="card training-card">
@@ -140,13 +164,24 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
       <p class="section-desc">Contribute 50 coins at a time. Every contribution is permanent, very small, and worth less than the previous one.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
-      <div class="opponent-picker"><label for="practice-opponent">PRACTICE OPPONENT</label><select id="practice-opponent" class="opponent-select"></select></div>
+      <div class="tip">Simulation opponents are chosen randomly. Select the weapon you want to test, then run a simulation.</div>
       <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
-      <button class="soft-btn wide" id="armory-practice-btn">FIGHT SELECTED OPPONENT</button>
+      <button class="soft-btn wide" id="armory-practice-btn">SIMULATE THIS WEAPON</button>
       <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters rebound off the floor, walls, and each other with full velocity retention.</span></div>
       <div class="tip">This browser prototype stores contributions locally. The planned Devvit version will use shared weapon pools, so contributing to a weapon strengthens it for everyone.</div>
     </section>
   </div>
+</section>
+
+<section class="view" id="simulations-view">
+  <div class="view-head"><div class="eyebrow">UNPREDICTABLE MATCHUPS</div><h1>Simulations</h1><p class="subline">Test your champion against a randomly selected weapon. You choose your ball, never its opponent.</p></div>
+  <section class="card side-card simulation-launch">
+    <div class="side-heading"><h3>YOUR SIMULATION CHAMPION</h3><span class="muted-tag">TRAINED STATS</span></div>
+    <div class="champ-row"><div class="mini-orb" id="simulation-orb">⚔</div><div><div class="champ-name" id="simulation-champion">Sword</div><div class="champ-sub">Your current favorite weapon</div></div></div>
+    <p class="section-desc">Simulations use your champion's upgrades and the normal combat physics. The opponent is selected randomly every time. Simulation results never affect daily predictions.</p>
+    <div class="simulation-actions"><button class="primary-btn" id="run-simulation-btn">RUN RANDOM SIMULATION</button><button class="soft-btn" id="choose-champion-btn">CHOOSE / UPGRADE CHAMPION</button></div>
+  </section>
+  <section class="card history-card"><div class="side-heading"><h3>RECENT SIMULATIONS</h3><span class="muted-tag">LATEST FIRST</span></div><div id="simulation-history"><div class="empty-state">No simulations yet. Run your first random matchup.</div></div></section>
 </section>
 
 <section class="view" id="records-view">
@@ -186,7 +221,7 @@ const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
 const $=id=>document.getElementById(id);
-function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},statCoins:{},bets:{},settled:{},results:{},history:[],sound:true};}
+function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},statCoins:{},bets:{},settled:{},results:{},lastPayout:null,history:[],sound:true};}
 function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),statCoins:Object.assign({},d.statCoins||v.statCoins||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});for(const id of Object.keys(out.levels)){if(!out.stats[id])out.stats[id]={};out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));}return out;}catch(e){return defaultSave();}}
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
@@ -224,7 +259,7 @@ function odds(side){return Math.max(1.12,Math.min(2.65,0.78/(shares[side]/100)))
 let selectedBet='left';
 let speed=1;
 let selectedWeapon=save.favorite;
-let selectedOpponent=WEAPONS.find(w=>w.id!==selectedWeapon)?.id||'dagger';
+let payoutAnimationDay='';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
 let audio=null;
 let soundOn=save.sound!==false;
@@ -235,7 +270,56 @@ const arena={x:55,y:78,w:430,h:565,r:5};
 let view='arena';
 
 function renderWallet(){$('coin-count').textContent=money(save.coins);}
+function settlePreviousBet(){
+ const previous=new Date(today+'T00:00:00Z');
+ previous.setUTCDate(previous.getUTCDate()-1);
+ const previousDay=previous.toISOString().slice(0,10);
+ const bet=save.bets[previousDay],result=save.results[previousDay];
+ if(!bet||!result||save.settled[previousDay])return;
+ const pick=bet.side==='left'?result.left:result.right;
+ const won=pick===result.winner;
+ const payout=won?Math.floor(bet.amount*bet.odds):0;
+ if(won)save.coins+=payout;
+ save.settled[previousDay]=true;
+ save.lastPayout={day:previousDay,wager:bet.amount,pick:pick,winner:result.winner,won:won,payout:payout,odds:bet.odds,seen:false};
+ persist();
+}
+function renderPayout(){
+ const card=$('payout-card'),p=save.lastPayout;
+ card.classList.remove('win','loss');
+ if(p){
+  card.classList.add(p.won?'win':'loss');
+  $('payout-day').textContent=new Date(p.day+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric'}).toUpperCase();
+  $('payout-title').textContent=p.won?'YOU WON YOUR PREDICTION':'YOUR PREDICTION DIDN’T HIT';
+  $('payout-copy').textContent='You backed '+weapon(p.pick).name+'. '+weapon(p.winner).name+' won. Wager: '+money(p.wager)+' coins at '+Number(p.odds).toFixed(2)+'×.';
+  $('payout-amount').textContent=p.won?'+'+money(p.payout)+' ◈':'0 ◈';
+  $('upgrade-from-payout').textContent='UPGRADE '+weapon(p.pick).name.toUpperCase();
+  if(!p.seen){
+   card.classList.add('reveal');
+   if(payoutAnimationDay!==p.day){
+    payoutAnimationDay=p.day;
+    setTimeout(()=>{if(save.lastPayout&&save.lastPayout.day===p.day){save.lastPayout.seen=true;persist();}},1900);
+   }
+  }
+ }else if(save.bets[today]&&save.results[today]){
+  card.classList.remove('reveal');
+  $('payout-day').textContent='SETTLES TOMORROW';
+  $('payout-title').textContent='TODAY’S RESULT IS LOCKED IN';
+  $('payout-copy').textContent='Your '+weapon(save.bets[today].side==='left'?leftWeapon.id:rightWeapon.id).name+' prediction will be paid on your next daily visit.';
+  $('payout-amount').textContent='PENDING';
+  $('upgrade-from-payout').textContent='UPGRADE A BALL';
+ }else{
+  card.classList.remove('reveal');
+  $('payout-day').textContent='NO PREVIOUS BET';
+  $('payout-title').textContent='No payout waiting today.';
+  $('payout-copy').textContent='Watch the daily showdown, place a prediction, and come back for its payout on the next daily visit.';
+  $('payout-amount').textContent='—';
+  $('upgrade-from-payout').textContent='UPGRADE A BALL';
+ }
+}
 function renderDaily(){
+$('bet-card').style.display='';
+renderPayout();
 $('date-chip').textContent=dayLabel+' · DAILY';
 $('left-name-top').textContent=leftWeapon.name.toUpperCase();$('right-name-top').textContent=rightWeapon.name.toUpperCase();
 $('left-label-name').textContent='RED CORNER';$('right-label-name').textContent='BLUE CORNER';
@@ -269,17 +353,7 @@ renderArmoryDetails();
 function renderArmory(){
 $('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">YOUR MAIN</span>':'')+'<span class="weapon-glyph">'+w.glyph+'</span><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
 document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('click',()=>{selectedWeapon=btn.dataset.weapon;renderArmory();}));
- renderPracticeOpponent();
  renderArmoryDetails();
-}
-function renderPracticeOpponent(){
- const picker=$('practice-opponent');
- if(!picker)return;
- if(selectedOpponent===selectedWeapon||!WEAPONS.some(w=>w.id===selectedOpponent)){
-  selectedOpponent=(WEAPONS.find(w=>w.id!==selectedWeapon)||WEAPONS[0]).id;
- }
- picker.innerHTML=WEAPONS.filter(w=>w.id!==selectedWeapon).map(w=>'<option value="'+w.id+'">'+w.name+'</option>').join('');
- picker.value=selectedOpponent;
 }
 function renderArmoryDetails(){
  const w=weapon(selectedWeapon),st=statLevels(w.id);
@@ -305,7 +379,19 @@ function buyStat(statId){
  persist();renderAll();toast('50 coins contributed. '+def.name+' increased by '+percentText(gain)+'.');
 }
 function setFavorite(){save.favorite=selectedWeapon;persist();renderAll();toast(weapon(selectedWeapon).name+' is now your champion.');}
-function switchView(next){view=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===next));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===next+'-view'));if(next==='armory')renderArmory();if(next==='records')renderRecords();resizeCanvas();}
+function switchView(next){
+ view=next;
+ document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===next));
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===next+'-view'));
+ if(next==='armory')renderArmory();
+ if(next==='records')renderRecords();
+ if(next==='simulations')renderSimulations();
+ if(next==='arena'&&!(sim&&sim.active&&sim.mode==='practice')){
+  if(sim&&sim.mode==='practice'&&!sim.active){sim=null;draw();}
+  renderDaily();
+ }
+ resizeCanvas();
+}
 function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
@@ -325,9 +411,22 @@ function spawnDuplicates(side){
 }
 function startFight(mode,forced,practiceId,opponentId){
  if(sim&&sim.active)return;if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
- if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{const main=weapon(practiceId||save.favorite);let rival=weapon(opponentId||selectedOpponent);if(rival.id===main.id)rival=WEAPONS.find(w=>w.id!==main.id);a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
- sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,duplicateHits:{left:0,right:0}};
- $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'PRACTICE MATCH';$('arena-status-text').textContent='THE FIGHT IS ON';$('live-pulse').classList.add('live');$('fight-btn').textContent='FIGHT IN PROGRESS';$('fight-btn').disabled=true;
+ if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{
+  const main=weapon(practiceId||save.favorite);
+  const rivals=WEAPONS.filter(w=>w.id!==main.id);
+  const rival=rivals[Math.floor(rng()*rivals.length)];
+  a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);
+ }
+ sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,playerWeaponId:a.weapon.id,duplicateHits:{left:0,right:0}};
+ $('match-title').textContent=a.weapon.name+' vs '+b.weapon.name;
+ $('match-subtitle').textContent=mode==='daily'?'Daily weapon showdown · '+a.weapon.special+' meets '+b.weapon.special:'Random simulation · your trained '+a.weapon.name+' against '+b.weapon.name;
+ $('left-name-top').textContent=a.weapon.name.toUpperCase();$('right-name-top').textContent=b.weapon.name.toUpperCase();
+ $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'SIMULATION LIVE';
+ $('arena-status-text').textContent=mode==='daily'?'THE DAILY FIGHT IS ON':'RANDOM SIMULATION IN PROGRESS';
+ $('live-pulse').classList.add('live');
+ $('fight-btn').textContent=mode==='daily'?'FIGHT IN PROGRESS':'SIMULATION IN PROGRESS';
+ $('fight-btn').disabled=true;
+ $('bet-card').style.display=mode==='daily'?'':'none';
  if(mode==='daily'){$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
  updateBars();playTone(180,.12,'sawtooth');raf=requestAnimationFrame(loop);
 }
@@ -551,14 +650,34 @@ function step(dt){
   finishFight(team.slice().sort((a,b)=>b.hp-a.hp)[0]);
  }
 }
-function finishFight(winner){if(!sim||!sim.active)return;sim.active=false;sim.result=winner.side;$('live-pulse').classList.remove('live');$('fight-state-chip').textContent='MATCH COMPLETE';$('arena-status-text').textContent=winner.weapon.name+' takes the win!';$('fight-btn').disabled=false;$('fight-btn').textContent='REPLAY '+(sim.mode==='daily'?'DAILY':'PRACTICE')+' FIGHT';burst(winner.x,winner.y,winner.weapon.color,35);playTone(640,.25,'sine');
-const mode=sim.mode;const summary={day:today,mode:mode,winner:winner.weapon.id,left:sim.teams.left[0].weapon.id,right:sim.teams.right[0].weapon.id,time:Math.round(sim.elapsed),date:Date.now()};
-if(mode==='daily'){
-save.results[today]={winner:winner.weapon.id,left:summary.left,right:summary.right,time:summary.time};
-if(!save.settled[today]){const bet=save.bets[today];if(bet){const won=(bet.side==='left'&&winner.side==='left')||(bet.side==='right'&&winner.side==='right');if(won){const payout=Math.floor(bet.amount*bet.odds);save.coins+=payout;toast('You called it! +'+money(payout)+' coins.');}else toast('Not this time. Your champion fought hard.');save.settled[today]=true;}}
-if(!save.history.some(h=>h.day===today&&h.mode==='daily'))save.history.unshift(summary);
-}else{save.history.unshift(summary);if(save.history.filter(h=>h.mode==='practice').length%3===0)toast('Practice complete. Keep training your main.');}
-save.history=save.history.slice(0,40);persist();renderAll();
+function finishFight(winner){
+ if(!sim||!sim.active)return;
+ sim.active=false;sim.result=winner.side;
+ $('live-pulse').classList.remove('live');
+ $('fight-state-chip').textContent='MATCH COMPLETE';
+ $('arena-status-text').textContent=winner.weapon.name+' takes the win!';
+ $('fight-btn').disabled=false;
+ $('fight-btn').textContent=sim.mode==='daily'?'REPLAY DAILY FIGHT':'SIMULATE AGAIN';
+ burst(winner.x,winner.y,winner.weapon.color,35);playTone(640,.25,'sine');
+ const mode=sim.mode;
+ const summary={day:today,mode:mode,winner:winner.weapon.id,left:sim.teams.left[0].weapon.id,right:sim.teams.right[0].weapon.id,time:Math.round(sim.elapsed),date:Date.now()};
+ if(mode==='daily'){
+  save.results[today]={winner:winner.weapon.id,left:summary.left,right:summary.right,time:summary.time};
+  if(!save.history.some(h=>h.day===today&&h.mode==='daily'))save.history.unshift(summary);
+ }else{
+  summary.day=today;
+  save.history.unshift(summary);
+ }
+ save.history=save.history.slice(0,40);persist();
+ if(mode==='daily'){
+  renderAll();
+ }else{
+  $('bet-card').style.display='none';
+  $('fight-state-chip').textContent='SIMULATION COMPLETE';
+  $('arena-status-text').textContent=summary.left+' vs '+summary.right+' · '+winner.weapon.name+' wins';
+  $('match-subtitle').textContent='Simulation complete · Random opponent · No daily wager was involved.';
+  renderWallet();renderChampion();renderArmory();renderSimulationHistory();renderRecords();
+ }
 }
 function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let elapsed=Math.min(.05,(time-lastFrame)/1000);lastFrame=time;accumulator+=elapsed*speed;let n=0;while(accumulator>=1/60&&n<12&&sim&&sim.active){step(1/60);accumulator-=1/60;n++;}draw();if(sim&&sim.active)raf=requestAnimationFrame(loop);}
 function updateBars(){if(!sim)return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
@@ -904,17 +1023,37 @@ function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (w
 function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),picks=Object.keys(save.settled).length,wins=Object.keys(save.settled).filter(d=>{const b=save.bets[d],r=save.results[d];return b&&r&&((b.side==='left'&&r.winner===r.left)||(b.side==='right'&&r.winner===r.right));}).length;
 $('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;
 const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
-function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();updateBars();}
-function startPractice(weaponId){switchView('arena');startFight('practice',null,typeof weaponId==='string'?weaponId:save.favorite,selectedOpponent);}
+function renderSimulationHistory(){
+ const rows=save.history.filter(h=>h.mode==='practice').slice(0,12);
+ $('simulation-history').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">SIMULATION · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No simulations yet. Run your first random matchup.</div>';
+}
+function renderSimulations(){
+ const w=weapon(save.favorite);
+ $('simulation-champion').textContent=w.name;
+ $('simulation-orb').textContent=w.glyph;
+ $('simulation-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+ renderSimulationHistory();
+}
+function openUpgradeFromDaily(){
+ const bet=save.bets[today];
+ selectedWeapon=bet?weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).id:(save.lastPayout?.pick||save.favorite);
+ switchView('armory');
+}
+function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();if(view==='simulations')renderSimulationHistory();updateBars();}
+function startPractice(weaponId){switchView('arena');startFight('practice',null,typeof weaponId==='string'?weaponId:save.favorite);}
 function forceFinish(side){if(!sim||!sim.active){startFight('daily');}if(!sim||!sim.active)return;const winner=sim.teams[side].find(f=>f.hp>0)||sim.teams[side][0];for(const f of sim.teams[side==='left'?'right':'left'])f.hp=0;winner.hp=Math.max(1,winner.hp);finishFight(winner);draw();}
-$('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;startFight('daily');});
+$('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;if(sim&&sim.mode==='practice')startPractice(sim.playerWeaponId||save.favorite);else startFight('daily');});
 $('claim-btn').addEventListener('click',claimDaily);
 $('place-bet-btn').addEventListener('click',placeBet);
 $('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').addEventListener('click',()=>selectBet('right'));
 $('bet-amount').addEventListener('input',()=>selectBet(selectedBet));
 document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('click',()=>{$('bet-amount').value=b.dataset.betAmount;selectBet(selectedBet);}));
 $('stat-upgrades').addEventListener('click',event=>{const button=event.target.closest('[data-stat]');if(button&&!button.disabled)buyStat(button.dataset.stat);});$('set-favorite-btn').addEventListener('click',setFavorite);
-$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));$('practice-opponent').addEventListener('change',()=>{selectedOpponent=$('practice-opponent').value;});
+$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));
+$('run-simulation-btn').addEventListener('click',()=>startPractice(save.favorite));
+$('choose-champion-btn').addEventListener('click',()=>switchView('armory'));
+$('upgrade-from-payout').addEventListener('click',openUpgradeFromDaily);
+$('sim-from-payout').addEventListener('click',()=>switchView('simulations'));
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
 function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
@@ -925,7 +1064,8 @@ $('dev-reset-claim').addEventListener('click',()=>{save.claimedDay='';persist();
 $('dev-force-left').addEventListener('click',()=>forceFinish('left'));$('dev-force-right').addEventListener('click',()=>forceFinish('right'));
 $('dev-clear').addEventListener('click',()=>{if(sim&&sim.active){sim.active=false;cancelAnimationFrame(raf);}localStorage.removeItem(SAVE_KEY);save=defaultSave();selectedWeapon=save.favorite;renderAll();toast('Local save cleared.');});
 window.addEventListener('resize',resizeCanvas);
-renderDaily();renderWallet();renderChampion();renderArmory();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';$('build-date').textContent='BUILD '+today;
+settlePreviousBet();
+renderDaily();renderWallet();renderChampion();renderArmory();renderSimulations();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';$('build-date').textContent='BUILD '+today;
 resizeCanvas();draw();
 })();
 </script>
