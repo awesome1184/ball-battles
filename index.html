@@ -248,7 +248,11 @@ function loadSave(){
   }
   for(const id of Object.keys(out.levels)){
    if(!out.stats[id])out.stats[id]={};
-   out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));
+   const oldLevel=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));
+   out.stats[id].baseDamage=oldLevel;
+   if(!out.statPools[id])out.statPools[id]={};
+   if(!out.statPools[id].baseDamage)out.statPools[id].baseDamage={level:oldLevel,progress:0,totalContributed:0};
+   else out.statPools[id].baseDamage.level=Math.max(Number(out.statPools[id].baseDamage.level||0),oldLevel);
   }
   return out;
  }catch(e){return defaultSave();}
