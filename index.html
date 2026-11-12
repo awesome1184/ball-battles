@@ -70,6 +70,25 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .stat-upgrade-btn:disabled{opacity:.4;cursor:not-allowed}
 .stat-section-label{font-size:9px;color:#aab8c7;font-weight:950;letter-spacing:.16em;margin-top:18px}
 .physics-note{display:flex;align-items:center;gap:8px;color:#a6b4c3;font-size:10px;margin-top:11px}
+.matchup-card{margin-top:16px}
+.matchup-desc,.matchup-foot{font-size:10px;color:var(--muted);line-height:1.5}
+.matchup-summary{font-size:11px;font-weight:800;color:#dce6ef;margin:12px 0}
+.matchup-summary strong{color:var(--gold)}
+.matchup-scroll{overflow-x:auto;border:1px solid #2b3948;border-radius:10px}
+.matchup-table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;font-size:10px;text-align:center}
+.matchup-table th,.matchup-table td{padding:9px 7px;border-bottom:1px solid #293543;white-space:nowrap}
+.matchup-table thead th{background:#111923;color:#9eafc0;font-size:9px;letter-spacing:.08em;position:sticky;top:0}
+.matchup-table th:first-child{position:sticky;left:0;background:#151d27;text-align:left;min-width:102px;z-index:2}
+.matchup-table thead th:first-child{z-index:3}
+.matchup-table tbody tr:last-child th,.matchup-table tbody tr:last-child td{border-bottom:0}
+.matchup-table td{font-variant-numeric:tabular-nums;font-weight:800}
+.matchup-table .rate-high{background:#173629;color:#8bdfb2}
+.matchup-table .rate-low{background:#382126;color:#f19a9e}
+.matchup-table .rate-mid{color:#dce5ee}
+.matchup-table .diagonal{color:#617184;font-weight:500}
+.matchup-table .matchup-average{border-left:1px solid #485667;color:var(--gold);font-weight:950}
+.matchup-foot{margin-top:10px}
+
 .physics-note strong{color:#e8c276}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 280px}.armory-layout{grid-template-columns:minmax(0,1fr) 300px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:780px){.app{padding:17px 14px 46px}.layout,.armory-layout{grid-template-columns:1fr}.side-col{grid-template-columns:repeat(2,minmax(0,1fr))}.side-col .side-card:last-child{grid-column:1/-1}.weapon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
@@ -193,6 +212,13 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
     <div class="card stat-card"><span>PREDICTION RATE</span><strong id="stat-rate">—</strong></div>
     <div class="card stat-card"><span>BEST CHAMPION</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
   </div>
+  <section class="card history-card matchup-card">
+    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">5,500 SIMULATIONS</span></div>
+    <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. Baseline stats only, with left/right starting sides balanced.</p>
+    <p class="matchup-summary" id="matchup-summary"></p>
+    <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
+    <p class="matchup-foot">100 simulated fights per pairing · 50 from each starting side · Estimates, not live player statistics.</p>
+  </section>
   <section class="card history-card"><div class="side-heading"><h3>MATCH HISTORY</h3><span class="muted-tag">LATEST FIRST</span></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
 
@@ -218,6 +244,9 @@ const WEAPONS=[
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
 ];
+const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,overtimeStart:40,overtimeDamageRate:6,maxDuration:50};
+const MATCHUP_WIN_RATES=[[null,100,97,46,6,1,100,52,4,67,2],[0,null,2,0,0,0,5,0,0,0,0],[3,98,null,2,0,2,71,9,0,19,2],[54,100,98,null,24,28,100,66,19,69,93],[94,100,100,76,null,19,100,99,19,76,4],[99,100,98,72,81,null,100,100,76,88,9],[0,95,29,0,0,0,null,0,0,15,4],[48,100,91,34,1,0,100,null,2,53,0],[96,100,100,81,81,24,100,98,null,81,1],[33,100,81,31,24,12,85,47,19,null,2],[98,100,98,7,96,91,96,100,99,98,null]];
+const MATCHUP_SHORT=['SWD','DAG','SPR','AXE','HAM','SCY','CHK','TRI','BOW','LNC','DUP'];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
@@ -453,7 +482,7 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(85+rng()*65),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier,maxHp:w.hp*MATCH_RULES.healthMultiplier,damage:baseDamage,combatDamage:baseDamage,reach:w.reach*1.12,width:w.width*1.12,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:Math.max(1,parent.damage*.43),combatDamage:Math.max(1,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -714,9 +743,24 @@ function step(dt){
  }
  for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=gravity*.2*dt;p.vx*=.97;if(p.life<=0)sim.particles.splice(i,1);}
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
+ if(sim.elapsed>=MATCH_RULES.overtimeStart){
+  if(!sim.overtimeAnnounced){
+   sim.overtimeAnnounced=true;
+   $('fight-state-chip').textContent='SUDDEN DEATH';
+   $('arena-status-text').textContent='SUDDEN DEATH · Arena pressure is rising.';
+   floatText(arena.x+arena.w/2,arena.y+24,'SUDDEN DEATH','#d94b50');
+   playTone(150,.18,'sawtooth');
+  }
+  const overtimeDps=(sim.elapsed-(MATCH_RULES.overtimeStart-1))*MATCH_RULES.overtimeDamageRate;
+  for(const side of ['left','right']){
+   const living=sim.teams[side].filter(f=>f.hp>0);
+   const share=overtimeDps*dt/Math.max(1,living.length);
+   for(const fighter of living)fighter.hp=Math.max(0,fighter.hp-share);
+  }
+ }
  updateBars();
  const leftAlive=sim.teams.left.filter(f=>f.hp>0),rightAlive=sim.teams.right.filter(f=>f.hp>0);
- if(!leftAlive.length||!rightAlive.length){
+ if(!leftAlive.length||!rightAlive.length||sim.elapsed>=MATCH_RULES.maxDuration){
   const leftHP=leftAlive.reduce((n,f)=>n+f.hp,0),rightHP=rightAlive.reduce((n,f)=>n+f.hp,0);
   const team=leftHP>=rightHP?sim.teams.left:sim.teams.right;
   finishFight(team.slice().sort((a,b)=>b.hp-a.hp)[0]);
@@ -1010,6 +1054,8 @@ function drawWeapon(c,f){
  c.save();
  c.translate(f.x,f.y);
  c.rotate(f.angle);
+ // Only draw the part of the weapon outside the orb; the handle meets the surface cleanly.
+ c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
  c.scale(unit*(f.weaponScale||1),unit*(f.weaponScale||1));
  // Spear growth lengthens its shaft and head without making the pixels thicker.
  if(w.id==='spear')c.scale(f.spearLength||1,1);
@@ -1037,7 +1083,7 @@ function drawWhirlpool(c,f){
  c.restore();
 }
 function drawBall(c,f){
- drawWeapon(c,f);c.save();c.translate(f.x,f.y);const color=teamBallColor(f);
+ c.save();c.translate(f.x,f.y);const color=teamBallColor(f);
  c.shadowColor='#0002';c.shadowBlur=3;c.shadowOffsetY=2;
  const g=c.createRadialGradient(-7,-9,2,0,0,f.r+2);g.addColorStop(0,'#fff');g.addColorStop(.12,color);g.addColorStop(1,shade(color,-15));
  c.fillStyle=g;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.shadowBlur=0;c.shadowOffsetY=0;
@@ -1049,7 +1095,7 @@ function drawBall(c,f){
  c.fillStyle='#101010';c.font='900 '+(f.r>23?'16':'13')+'px system-ui';c.textAlign='center';c.textBaseline='middle';
  c.fillText(Math.max(0,Math.ceil(f.hp)),0,1);
  if(f.flash>0){c.fillStyle='rgba(255,255,255,'+Math.min(.72,f.flash*4)+')';c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();}
- c.restore();
+ c.restore();drawWeapon(c,f);
 }
 function shade(hex,percent){const n=parseInt(hex.slice(1),16),r=clamp((n>>16)+percent,0,255),g=clamp(((n>>8)&255)+percent,0,255),b=clamp((n&255)+percent,0,255);return '#'+(1<<24|r<<16|g<<8|b).toString(16).slice(1);}
 function draw(){
@@ -1092,8 +1138,23 @@ function draw(){
 }
 function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100};drawBall(c,f);}
 function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(e){}}
+function renderMatchupTable(){
+ const labels=WEAPONS.map((w,i)=>'<th scope="col" title="'+w.name+'">'+MATCHUP_SHORT[i]+'</th>').join('');
+ $('matchup-head').innerHTML='<tr><th scope="col">BALL</th>'+labels+'<th scope="col">AVG</th></tr>';
+ const averages=MATCHUP_WIN_RATES.map((row,i)=>row.reduce((sum,value,j)=>sum+(j===i?0:value),0)/(WEAPONS.length-1));
+ const order=averages.map((rate,i)=>({name:WEAPONS[i].name,rate:rate})).sort((a,b)=>b.rate-a.rate);
+ $('matchup-summary').innerHTML='Best overall: <strong>'+order[0].name+' · '+order[0].rate.toFixed(1)+'%</strong> average win rate. Lowest: <strong>'+order[order.length-1].name+' · '+order[order.length-1].rate.toFixed(1)+'%</strong>.';
+ $('matchup-body').innerHTML=WEAPONS.map((w,i)=>{
+  const cells=MATCHUP_WIN_RATES[i].map((rate,j)=>{
+   if(i===j)return '<td class="diagonal" aria-label="Same weapon">—</td>';
+   const cls=rate>=70?'rate-high':rate<=30?'rate-low':'rate-mid';
+   return '<td class="'+cls+'" title="'+w.name+' win rate vs '+WEAPONS[j].name+'">'+rate+'%</td>';
+  }).join('');
+  return '<tr><th scope="row">'+w.name+'</th>'+cells+'<td class="matchup-average">'+averages[i].toFixed(1)+'%</td></tr>';
+ }).join('');
+}
 function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),picks=Object.keys(save.settled).length,wins=Object.keys(save.settled).filter(d=>{const b=save.bets[d],r=save.results[d];return b&&r&&((b.side==='left'&&r.winner===r.left)||(b.side==='right'&&r.winner===r.right));}).length;
-$('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;
+$('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;renderMatchupTable();
 const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
 function renderSimulationHistory(){
  const rows=save.history.filter(h=>h.mode==='practice').slice(0,12);
