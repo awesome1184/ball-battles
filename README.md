@@ -28,10 +28,10 @@ No GitHub Actions workflow is required for this setup.
 - Gravity, wall/floor collisions, and continuous physical rebounds without scheduled jumps.
 - Weapon clashes can trigger parries: a defender blocks the incoming strike, flashes gold, and briefly staggers the attacker. Weapon guards can also catch arrows.
 - Per-hit weapon growth is temporary for that fight; a new fight starts from each weapon's base combat values.
-- Every weapon has its own per-hit growth rule: Sword damage +1; Dagger attack speed +3.5% (compounding); Spear damage +0.5 and reach +0.5; Axe damage +0.75; Hammer damage +1; Scythe damage +0.5 and reach +0.25; Chakram spin speed +2.5% (compounding); Trident damage +0.5 and attack speed +1.5%; Bow arrow damage +0.5 and projectile speed +6; Lance damage +0.8 and reach +0.35; Duplicator adds one clone every 4 team hits, up to 16.
+- Each weapon has its own fight-specific mechanic: Sword gains +1 damage per hit; Dagger gains 3.5% compounding attack speed; Spear gains +0.5 damage and +0.5 reach; Axe doubles its damage per hit, uses damage as its crit percentage, and deals 1 on normal hits or full damage on critical hits; Hammer gains +1 damage and +0.25 maximum spin per hit, resets to 1× spin after a hit, starts very slowly, and cannot be parried; Scythe adds one stack of 1 DPS poison per hit; Chakram gains 2.5% compounding spin speed; Trident gains +0.5 damage per hit and drags nearby balls toward its moving whirlpool; Bow adds one arrow to future volleys for each arrow hit (up to 64 per volley); Lance deals 1 on normal hits, doubles its stored damage per hit, and periodically charges to a wall while invulnerable, dealing its full stored damage; Duplicator adds one clone every 4 team hits, up to 16 balls.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
 - Eleven weapon balls: Sword, Dagger, Spear, Axe, Hammer, Scythe, Chakram, Trident, Bow, Lance, and Duplicator.
-- Individual 50-coin contributions for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed. Each contribution gives a tiny permanent gain with harmonic diminishing returns; Scaling increases the size of that weapon's per-hit growth.
+- Individual 50-coin contributions for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed. The first contribution gives +1%, the next +0.5%, then +0.333% and so on, with harmonic diminishing returns; Scaling increases eligible per-hit growth.
 - Fight records and a local developer test panel.
 - Sound toggle and 1× / 2× battle speed.
 
