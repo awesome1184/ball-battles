@@ -15,6 +15,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .brand{display:flex;align-items:center;gap:12px;min-width:210px}.brand-mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffce72,#dc8741);display:grid;place-items:center;box-shadow:0 8px 26px #e89a3d33;color:#20202a;font-weight:1000;font-size:23px;transform:rotate(-8deg)}.brand-name{font-weight:900;font-size:19px;letter-spacing:.12em}.brand-sub{color:var(--muted);font-size:10px;letter-spacing:.2em;margin-top:2px}
 .top-actions{display:flex;align-items:center;gap:10px}.wallet{border:1px solid var(--line);background:#151c25;border-radius:13px;padding:10px 14px;display:flex;align-items:center;gap:9px;font-weight:800}.coin{color:var(--gold);font-size:18px}.wallet small{font-size:10px;color:var(--muted);font-weight:600;display:block;letter-spacing:.12em}.wallet strong{font-variant-numeric:tabular-nums}
 .icon-btn,.soft-btn{border:1px solid var(--line);color:var(--text);background:#18212c;border-radius:11px;padding:10px 13px;font-weight:750}.icon-btn:hover,.soft-btn:hover{border-color:#52677e;background:#202c3a}
+.opponent-picker{display:grid;gap:7px;margin:16px 0 4px}.opponent-picker label{font-size:9px;font-weight:950;letter-spacing:.14em;color:#aebdcc}.opponent-select{width:100%;border:1px solid #3b4b5d;background:#111923;color:var(--text);border-radius:10px;padding:11px 12px;font:inherit;font-weight:800;font-size:12px;outline:none}.opponent-select:focus{border-color:var(--gold)}
 .tabs{display:flex;gap:7px;border-bottom:1px solid var(--line);margin-bottom:22px}.tab{border:0;background:none;color:var(--muted);padding:0 16px 13px;font-weight:800;letter-spacing:.08em;font-size:11px;position:relative}.tab.active{color:var(--gold)}.tab.active:after{content:"";height:2px;background:var(--gold);position:absolute;bottom:-1px;left:12px;right:12px;border-radius:2px}
 .view{display:none}.view.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px;align-items:start}.main-col,.side-col{display:grid;gap:16px;min-width:0}
 .match-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.2em;color:var(--gold)}h1,h2,h3,p{margin:0}h1{font-size:clamp(24px,3vw,34px);line-height:1.1;letter-spacing:-.04em;margin-top:6px}.subline{color:var(--muted);font-size:13px;margin-top:7px}.date-chip,.status-chip{border:1px solid var(--line);background:#171f29;padding:8px 11px;border-radius:999px;color:#b6c4d4;font-size:10px;font-weight:850;letter-spacing:.08em;white-space:nowrap}
@@ -126,7 +127,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 </section>
 
 <section class="view" id="armory-view">
-  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Pick a favorite, train it, then take it into a personal practice fight.</p></div>
+  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Pick a favorite, choose its opponent, and test the matchup in practice.</p></div>
   <div class="armory-layout">
     <div class="weapon-grid" id="weapon-grid"></div>
     <section class="card training-card">
@@ -139,10 +140,11 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
       <p class="section-desc">Contribute 50 coins at a time. Every contribution is permanent, very small, and worth less than the previous one.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
+      <div class="opponent-picker"><label for="practice-opponent">PRACTICE OPPONENT</label><select id="practice-opponent" class="opponent-select"></select></div>
       <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
-      <button class="soft-btn wide" id="armory-practice-btn">TEST THIS WEAPON</button>
-      <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters fall, bounce off the floor, and can jump back into the fight.</span></div>
-      <div class="tip">Your investments strengthen your champion in practice fights. Daily showdowns use standardized weapons so everyone competes on equal terms.</div>
+      <button class="soft-btn wide" id="armory-practice-btn">FIGHT SELECTED OPPONENT</button>
+      <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters rebound off the floor, walls, and each other with full velocity retention.</span></div>
+      <div class="tip">This browser prototype stores contributions locally. The planned Devvit version will use shared weapon pools, so contributing to a weapon strengthens it for everyone.</div>
     </section>
   </div>
 </section>
@@ -178,7 +180,7 @@ const WEAPONS=[
  {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'Creates a whirlpool around its weapon that drags nearby balls toward it. Every hit adds +0.5 damage.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Whirlpool pull',hitDelay:.64},
  {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:8,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Every 4 team hits creates one additional ball, up to 16 balls total.',damage:4,reach:55,width:10,spin:3.0,hp:100,special:'+1 clone / 4 team hits',duplicator:true,hitDelay:.68}
+ {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:4,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
 ];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
@@ -222,6 +224,7 @@ function odds(side){return Math.max(1.12,Math.min(2.65,0.78/(shares[side]/100)))
 let selectedBet='left';
 let speed=1;
 let selectedWeapon=save.favorite;
+let selectedOpponent=WEAPONS.find(w=>w.id!==selectedWeapon)?.id||'dagger';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
 let audio=null;
 let soundOn=save.sound!==false;
@@ -266,7 +269,17 @@ renderArmoryDetails();
 function renderArmory(){
 $('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">YOUR MAIN</span>':'')+'<span class="weapon-glyph">'+w.glyph+'</span><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
 document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('click',()=>{selectedWeapon=btn.dataset.weapon;renderArmory();}));
-renderArmoryDetails();
+ renderPracticeOpponent();
+ renderArmoryDetails();
+}
+function renderPracticeOpponent(){
+ const picker=$('practice-opponent');
+ if(!picker)return;
+ if(selectedOpponent===selectedWeapon||!WEAPONS.some(w=>w.id===selectedOpponent)){
+  selectedOpponent=(WEAPONS.find(w=>w.id!==selectedWeapon)||WEAPONS[0]).id;
+ }
+ picker.innerHTML=WEAPONS.filter(w=>w.id!==selectedWeapon).map(w=>'<option value="'+w.id+'">'+w.name+'</option>').join('');
+ picker.value=selectedOpponent;
 }
 function renderArmoryDetails(){
  const w=weapon(selectedWeapon),st=statLevels(w.id);
@@ -297,9 +310,9 @@ function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=w.damage*trainedDamage;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:baseDamage,combatDamage:baseDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:w.hitDelay||.68,angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),growthMultiplier:1+st.scaling*.025+totalStatBonus(w.id,'scaling')*8,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
-function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,combatDamage:Math.max(.5,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
+function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,combatDamage:Math.max(.5,parent.combatDamage*.43),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemies=sim.teams[f.side==='left'?'right':'left'].filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
 function spawnDuplicates(side){
@@ -310,9 +323,9 @@ function spawnDuplicates(side){
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
 }
-function startFight(mode,forced,practiceId){
+function startFight(mode,forced,practiceId,opponentId){
  if(sim&&sim.active)return;if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
- if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{const main=weapon(practiceId||save.favorite);let rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];while(rival.id===main.id)rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
+ if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{const main=weapon(practiceId||save.favorite);let rival=weapon(opponentId||selectedOpponent);if(rival.id===main.id)rival=WEAPONS.find(w=>w.id!==main.id);a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
  sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,duplicateHits:{left:0,right:0}};
  $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'PRACTICE MATCH';$('arena-status-text').textContent='THE FIGHT IS ON';$('live-pulse').classList.add('live');$('fight-btn').textContent='FIGHT IN PROGRESS';$('fight-btn').disabled=true;
  if(mode==='daily'){$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
@@ -320,6 +333,7 @@ function startFight(mode,forced,practiceId){
 }
 function distPointSegment(px,py,x1,y1,x2,y2){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy;let t=l?((px-x1)*dx+(py-y1)*dy)/l:0;t=clamp(t,0,1);const x=x1+t*dx,y=y1+t*dy;return Math.hypot(px-x,py-y);}
 function weaponSegment(f){
+ if(f.weapon.id==='duplicator')return {x1:f.x,y1:f.y,x2:f.x,y2:f.y};
  const ux=Math.cos(f.angle),uy=Math.sin(f.angle),reach=f.reach*(f.weaponScale||1);
  const inner=Math.min(reach*.58,f.r*.95),outer=reach+12;
  return {x1:f.x+ux*inner,y1:f.y+uy*inner,x2:f.x+ux*outer,y2:f.y+uy*outer};
@@ -336,7 +350,7 @@ function segmentGap(a,b){
  return Math.min(distPointSegment(a.x1,a.y1,b.x1,b.y1,b.x2,b.y2),distPointSegment(a.x2,a.y2,b.x1,b.y1,b.x2,b.y2),distPointSegment(b.x1,b.y1,a.x1,a.y1,a.x2,a.y2),distPointSegment(b.x2,b.y2,a.x1,a.y1,a.x2,a.y2));
 }
 function tryParry(attacker,defender){
- if(defender.parryCd>0||defender.hp<=0||defender.lanceCharging)return false;
+ if(defender.weapon.id==='duplicator'||attacker.weapon.id==='duplicator'||defender.parryCd>0||defender.hp<=0||defender.lanceCharging)return false;
  const a=weaponSegment(attacker),d=weaponSegment(defender);
  const separation=Math.hypot(attacker.x-defender.x,attacker.y-defender.y);
  if(separation>attacker.reach+defender.reach*.85)return false;
@@ -350,7 +364,7 @@ function tryParry(attacker,defender){
  playTone(640,.09,'square');return true;
 }
 function resolveWeaponClash(a,b){
- if(a.side===b.side||a.hp<=0||b.hp<=0||a.weapon.id==='hammer'||b.weapon.id==='hammer'||a.lanceCharging||b.lanceCharging)return false;
+ if(a.side===b.side||a.hp<=0||b.hp<=0||a.weapon.id==='duplicator'||b.weapon.id==='duplicator'||a.weapon.id==='hammer'||b.weapon.id==='hammer'||a.lanceCharging||b.lanceCharging)return false;
  if(a.weaponClashCd>0||b.weaponClashCd>0)return false;
  const reachA=a.reach*(a.weaponScale||1),reachB=b.reach*(b.weaponScale||1);
  if(Math.hypot(a.x-b.x,a.y-b.y)>reachA+reachB+28)return false;
@@ -395,7 +409,7 @@ function applyHitGrowth(f,target){
 }
 function damage(attacker,target,dt){
  if(target.lanceCharging){attacker.hitCd=Math.max(attacker.hitCd,.18);return false;}
- if(attacker.weapon.id!=='hammer'&&tryParry(attacker,target))return false;
+ if(attacker.weapon.id!=='hammer'&&attacker.weapon.id!=='duplicator'&&target.weapon.id!=='duplicator'&&tryParry(attacker,target))return false;
  const w=attacker.weapon;
  let amount,crit=false;
  if(w.id==='axe'){
@@ -489,11 +503,11 @@ function step(dt){
    f.spin=f.baseSpin*f.hammerSpin;
   }else f.spin=f.baseSpin*(f.spinGrowth||1)*(f.attackSpeedFactor||1)*(f.weapon.id==='bow'?4:1);
   f.angle+=f.spin*dt;
-  f.hitCd=Math.max(0,f.hitCd-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.095;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
+  f.hitCd=Math.max(0,f.hitCd-dt);f.contactHitCd=Math.max(0,(f.contactHitCd||0)-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.095;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
   f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
   if(f.stagger<=0){
    if(f.weapon.projectile){if((f.projectileQueue||0)<=0&&f.projectileCd<=0&&o.hp>0)fireArrow(f,o);}
-   else if(f.hitCd<=0&&o.hp>0){
+   else if(f.weapon.id!=='duplicator'&&f.hitCd<=0&&o.hp>0){
     const reach=f.reach*f.weaponScale,tx=f.x+Math.cos(f.angle)*reach,ty=f.y+Math.sin(f.angle)*reach;
     const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);
     if(distance<o.r+f.width*f.weaponScale*.5)damage(f,o,dt);
@@ -517,6 +531,7 @@ function step(dt){
   resolveWeaponClash(a,b);
    const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,min=a.r+b.r+1;
   if(d<min){const nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;
+   if(a.side!==b.side){if(a.weapon.id==='duplicator'&&a.contactHitCd<=0){damage(a,b,dt);a.contactHitCd=a.hitDelay;}if(b.weapon.id==='duplicator'&&b.contactHitCd<=0){damage(b,a,dt);b.contactHitCd=b.hitDelay;}}
    const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
    if(rel>0){const impulse=rel;a.vx-=nx*impulse;a.vy-=ny*impulse;b.vx+=nx*impulse;b.vy+=ny*impulse;}
   }
@@ -525,7 +540,7 @@ function step(dt){
   const p=sim.projectiles[i];p.life-=dt;p.vy+=gravity*.42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
   if(p.life<=0||p.x<arena.x||p.x>arena.x+arena.w||p.y>floor+18){sim.projectiles.splice(i,1);continue;}
   const target=nearestEnemy(p.owner);
-  if(target&&target.hp>0&&!target.lanceCharging&&target.parryCd<=0){
+  if(target&&target.hp>0&&target.weapon.id!=='duplicator'&&!target.lanceCharging&&target.parryCd<=0){
    const guard=weaponSegment(target);
    if(distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2)<target.width*.5+5){
     target.parryCd=.82;target.parryFlash=.3;p.owner.stagger=Math.max(p.owner.stagger,.2);
@@ -558,7 +573,7 @@ function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let
 function updateBars(){if(!sim)return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-function drawWeapon(c,f){c.save();c.translate(f.x,f.y);c.rotate(f.angle);c.scale(f.weaponScale||1,f.weaponScale||1);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
+function drawWeapon(c,f){if(f.weapon.id==='duplicator')return;c.save();c.translate(f.x,f.y);c.rotate(f.angle);c.scale(f.weaponScale||1,f.weaponScale||1);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
 if(w.id==='sword'){c.beginPath();c.moveTo(f.reach*.66,-10);c.lineTo(f.reach+13,0);c.lineTo(f.reach*.66,10);c.closePath();c.fill();c.stroke();c.fillStyle='#d9b77d';c.fillRect(f.reach*.61,-13,5,26);}
 else if(w.id==='dagger'){c.beginPath();c.moveTo(f.reach*.65,-7);c.lineTo(f.reach+7,0);c.lineTo(f.reach*.65,7);c.closePath();c.fill();c.stroke();}
 else if(w.id==='spear'){c.beginPath();c.moveTo(f.reach*.78,-9);c.lineTo(f.reach+17,0);c.lineTo(f.reach*.78,9);c.closePath();c.fill();c.stroke();}
@@ -641,7 +656,7 @@ function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),pi
 $('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;
 const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
 function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();updateBars();}
-function startPractice(weaponId){switchView('arena');startFight('practice',null,typeof weaponId==='string'?weaponId:save.favorite);}
+function startPractice(weaponId){switchView('arena');startFight('practice',null,typeof weaponId==='string'?weaponId:save.favorite,selectedOpponent);}
 function forceFinish(side){if(!sim||!sim.active){startFight('daily');}if(!sim||!sim.active)return;const winner=sim.teams[side].find(f=>f.hp>0)||sim.teams[side][0];for(const f of sim.teams[side==='left'?'right':'left'])f.hp=0;winner.hp=Math.max(1,winner.hp);finishFight(winner);draw();}
 $('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;startFight('daily');});
 $('claim-btn').addEventListener('click',claimDaily);
@@ -650,7 +665,7 @@ $('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').add
 $('bet-amount').addEventListener('input',()=>selectBet(selectedBet));
 document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('click',()=>{$('bet-amount').value=b.dataset.betAmount;selectBet(selectedBet);}));
 $('stat-upgrades').addEventListener('click',event=>{const button=event.target.closest('[data-stat]');if(button&&!button.disabled)buyStat(button.dataset.stat);});$('set-favorite-btn').addEventListener('click',setFavorite);
-$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));
+$('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));$('practice-opponent').addEventListener('change',()=>{selectedOpponent=$('practice-opponent').value;});
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
 function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
