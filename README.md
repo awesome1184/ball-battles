@@ -28,7 +28,7 @@ No GitHub Actions workflow is required for this setup.
 - Gravity, wall/floor collisions, bouncing, and simple fighter movement.
 - Lance damage ramp and Duplicator team replication: 1 → 2 → 4 → 8 → 16 balls during a fight.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
-- Ten weapon types, including a ranged Bow, Lance, and Duplicator.
+- Eleven weapon types, including a ranged Bow, Lance, and Duplicator.
 - Individual coin-funded upgrades for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed.
 - Gravity, jumping, floor bounce, wall collisions, and weapon hitboxes in the arena.
 - Fight records and a local developer test panel.
