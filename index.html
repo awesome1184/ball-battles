@@ -221,27 +221,65 @@ const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
 const $=id=>document.getElementById(id);
-function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},statCoins:{},bets:{},settled:{},results:{},lastPayout:null,history:[],sound:true};}
-function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),statCoins:Object.assign({},d.statCoins||v.statCoins||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});for(const id of Object.keys(out.levels)){if(!out.stats[id])out.stats[id]={};out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));}return out;}catch(e){return defaultSave();}}
+function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},statCoins:{},statPools:{},bets:{},settled:{},results:{},lastPayout:null,history:[],sound:true};}
+function loadSave(){
+ try{
+  const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+  if(!v||typeof v!=='object')return defaultSave();
+  const d=defaultSave();
+  const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),statCoins:Object.assign({},d.statCoins||v.statCoins||{}),statPools:Object.assign({},d.statPools||v.statPools||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[],lastPayout:v.lastPayout||null});
+  for(const wid of Object.keys(out.statCoins)){
+   if(!out.statPools[wid])out.statPools[wid]={};
+   for(const statId of Object.keys(out.statCoins[wid]||{})){
+    if(out.statPools[wid][statId])continue;
+    let remaining=Math.floor(Number(out.statCoins[wid][statId]||0)/50)*50,lv=0;
+    while(remaining>=50*(lv+1)*(lv+1)&&lv<10000){remaining-=50*(lv+1)*(lv+1);lv++;}
+    out.statPools[wid][statId]={level:lv,progress:remaining,totalContributed:Math.floor(Number(out.statCoins[wid][statId]||0)/50)*50};
+   }
+  }
+  for(const wid of Object.keys(out.stats)){
+   if(!out.statPools[wid])out.statPools[wid]={};
+   for(const statId of Object.keys(out.stats[wid]||{})){
+    const oldLevel=Math.max(0,Math.floor(Number(out.stats[wid][statId]||0)));
+    if(!out.statPools[wid][statId])out.statPools[wid][statId]={level:oldLevel,progress:0,totalContributed:0};
+    else out.statPools[wid][statId].level=Math.max(Number(out.statPools[wid][statId].level||0),oldLevel);
+   }
+  }
+  for(const id of Object.keys(out.levels)){
+   if(!out.stats[id])out.stats[id]={};
+   out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));
+  }
+  return out;
+ }catch(e){return defaultSave();}
+}
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
-function level(id){return Number(save.levels[id]||0);}
+function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
-{id:'baseDamage',name:'Base damage',desc:'Raises the damage dealt by every successful hit.',display:lv=>'+'+(lv*10)+'% damage',available:w=>true},
-{id:'scaling',name:'Scaling',desc:'Increases how much your weapon gains from each successful hit. Applies to that weapon’s unique growth rule.',display:lv=>'+'+(lv*.5).toFixed(1)+'% growth per hit',available:w=>true},
-{id:'weaponSize',name:'Weapon size',desc:'Increases the weapon length and its physical hitbox.',display:lv=>'+'+(lv*6)+'% size and reach',available:w=>true},
-{id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between shots. Only ranged weapons can use this.',display:lv=>'-'+(lv*8)+'% shot interval',available:w=>!!w.projectile},
-{id:'delay',name:'Delay',desc:'Reduces recovery time between attacks so you can strike sooner.',display:lv=>'-'+(lv*6)+'% attack delay',available:w=>true},
-{id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly your weapon rotates around the ball.',display:lv=>'+'+(lv*9)+'% rotation speed',available:w=>true}
+{id:'baseDamage',name:'Base damage',desc:'Raises damage dealt by every successful hit.',baseGain:.02,available:w=>true},
+{id:'scaling',name:'Scaling',desc:'Increases the strength of each weapon’s unique per-hit growth.',baseGain:.01,available:w=>true},
+{id:'weaponSize',name:'Weapon size',desc:'Increases weapon reach and hitbox size.',baseGain:.02,available:w=>w.id!=='duplicator'},
+{id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between ranged attacks.',baseGain:.01,available:w=>!!w.projectile},
+{id:'delay',name:'Attack speed',desc:'Reduces recovery time between attacks.',baseGain:.01,available:w=>true},
+{id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly the weapon rotates.',baseGain:.02,available:w=>true}
 ];
-function statLevels(id){return Object.assign({baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0},save.stats[id]||{});}
-const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.05;
-function statContributionCount(id,key){return Math.floor(Number((save.statCoins[id]||{})[key]||0)/STAT_CONTRIBUTION_COST);}
-function statContributionBonus(id,key){const n=statContributionCount(id,key);if(!n)return 0;const gamma=.5772156649015329;return STAT_BASE_GAIN*(Math.log(n)+gamma+1/(2*n)-1/(12*n*n));}
-function nextStatContributionGain(id,key){return STAT_BASE_GAIN/(statContributionCount(id,key)+1);}
-function legacyStatBonus(id,key){const st=statLevels(id),rates={baseDamage:.10,scaling:.005,weaponSize:.06,projectileRate:.08,delay:.06,spinSpeed:.09};return Number(st[key]||0)*(rates[key]||0);}
-function totalStatBonus(id,key){return legacyStatBonus(id,key)+statContributionBonus(id,key);}
+const STAT_CONTRIBUTION_COST=50;
+function statPool(id,key){
+ if(!save.statPools[id])save.statPools[id]={};
+ if(!save.statPools[id][key])save.statPools[id][key]={level:0,progress:0,totalContributed:0};
+ const p=save.statPools[id][key];
+ p.level=Math.max(0,Math.floor(Number(p.level)||0));
+ p.progress=Math.max(0,Number(p.progress)||0);
+ p.totalContributed=Math.max(0,Number(p.totalContributed)||0);
+ return p;
+}
+function statLevels(id){const levels={};for(const def of STAT_DEFS)levels[def.id]=statPool(id,def.id).level;return levels;}
+function nextStatLevelCost(id,key){const lv=statPool(id,key).level;return STAT_CONTRIBUTION_COST*(lv+1)*(lv+1);}
+function statContributionBonus(id,key){const def=STAT_DEFS.find(x=>x.id===key),lv=statPool(id,key).level;return def?def.baseGain*lv*(lv+1)/2:0;}
+function nextStatContributionGain(id,key){const def=STAT_DEFS.find(x=>x.id===key),lv=statPool(id,key).level;return def?def.baseGain*(lv+1):0;}
+function totalStatBonus(id,key){return statContributionBonus(id,key);}
+function totalStatCoins(id){return Object.values(save.statPools[id]||{}).reduce((n,p)=>n+Number(p.totalContributed||0),0);}
 function percentText(value){return (value*100).toFixed(4)+'%';}
 function money(n){return Math.floor(n).toLocaleString();}
 function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
