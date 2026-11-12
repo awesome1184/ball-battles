@@ -137,7 +137,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
       <div class="stat-line"><span>Weapon reach</span><strong id="training-reach">68</strong></div>
       <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
-      <p class="section-desc">Spend coins on exactly the attribute you want. Each stat has its own level and increasing price.</p>
+      <p class="section-desc">Contribute 50 coins at a time. Every contribution is permanent, very small, and worth less than the previous one.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
       <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
       <button class="soft-btn wide" id="armory-practice-btn">TEST THIS WEAPON</button>
@@ -184,8 +184,8 @@ const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
 const $=id=>document.getElementById(id);
-function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},bets:{},settled:{},results:{},history:[],sound:true};}
-function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});for(const id of Object.keys(out.levels)){if(!out.stats[id])out.stats[id]={};out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));}return out;}catch(e){return defaultSave();}}
+function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},statCoins:{},bets:{},settled:{},results:{},history:[],sound:true};}
+function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),statCoins:Object.assign({},d.statCoins||v.statCoins||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});for(const id of Object.keys(out.levels)){if(!out.stats[id])out.stats[id]={};out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));}return out;}catch(e){return defaultSave();}}
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
@@ -199,8 +199,13 @@ const STAT_DEFS=[
 {id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly your weapon rotates around the ball.',display:lv=>'+'+(lv*9)+'% rotation speed',available:w=>true}
 ];
 function statLevels(id){return Object.assign({baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0},save.stats[id]||{});}
-function statLevel(id,key){return Number(statLevels(id)[key]||0);}
-function statCost(id,key){return Math.round(65*Math.pow(1.52,statLevel(id,key)));}
+const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.0001;
+function statContributionCount(id,key){return Math.floor(Number((save.statCoins[id]||{})[key]||0)/STAT_CONTRIBUTION_COST);}
+function statContributionBonus(id,key){const n=statContributionCount(id,key);if(!n)return 0;const gamma=.5772156649015329;return STAT_BASE_GAIN*(Math.log(n)+gamma+1/(2*n)-1/(12*n*n));}
+function nextStatContributionGain(id,key){return STAT_BASE_GAIN/(statContributionCount(id,key)+1);}
+function legacyStatBonus(id,key){const st=statLevels(id),rates={baseDamage:.10,scaling:.005,weaponSize:.06,projectileRate:.08,delay:.06,spinSpeed:.09};return Number(st[key]||0)*(rates[key]||0);}
+function totalStatBonus(id,key){return legacyStatBonus(id,key)+statContributionBonus(id,key);}
+function percentText(value){return (value*100).toFixed(4)+'%';}
 function money(n){return Math.floor(n).toLocaleString();}
 function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
@@ -264,36 +269,36 @@ document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('cl
 renderArmoryDetails();
 }
 function renderArmoryDetails(){
-const w=weapon(selectedWeapon),st=statLevels(w.id);
-$('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
-$('training-level').textContent='Champion · '+Object.values(st).reduce((a,b)=>a+Number(b||0),0)+' total stat levels';
-$('training-desc').textContent=w.desc;
-$('training-damage').textContent=(w.damage*(1+st.baseDamage*.10)).toFixed(1);
-$('training-speed').textContent=(w.spin*(1+st.spinSpeed*.09)).toFixed(2);
-$('training-reach').textContent=Math.round(w.reach*(1+st.weaponSize*.06));
-$('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
- const value=st[def.id]||0,available=def.available(w),cost=statCost(w.id,def.id);
- return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?'LEVEL '+value:'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?def.display(value):'Ranged weapon only')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<cost?'disabled':'')+'>'+(available?'UPGRADE · '+money(cost)+' ◈':'UNAVAILABLE')+'</button></div></div>';
-}).join('');
-$('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';$('set-favorite-btn').disabled=save.favorite===w.id;
+ const w=weapon(selectedWeapon),st=statLevels(w.id);
+ $('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+ const totalLevels=Object.values(st).reduce((a,b)=>a+Number(b||0),0),totalCoins=Object.values(save.statCoins[w.id]||{}).reduce((a,b)=>a+Number(b||0),0);
+ $('training-level').textContent='Champion · '+money(totalCoins)+' coins contributed · '+totalLevels+' legacy levels';$('training-desc').textContent=w.desc;
+ $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
+ $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
+ $('training-reach').textContent=(w.reach*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
+ $('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
+  const available=def.available(w),coins=Number((save.statCoins[w.id]||{})[def.id]||0),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
+  const note=def.id==='projectileRate'?'Only affects ranged weapons.':def.desc;
+  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?'TOTAL +'+percentText(bonus):'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+note+'</div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?money(coins)+' coins contributed · next +'+percentText(gain):'Ranged weapons only')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'CONTRIBUTE 50 ◈':'NOT APPLICABLE')+'</button></div></div>';
+ }).join('');
+ $('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';$('set-favorite-btn').disabled=save.favorite===w.id;
 }
 function buyStat(statId){
- const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);
- if(!def||!def.available(w))return;
- const cost=statCost(w.id,statId);
- if(save.coins<cost){toast('Not enough coins for that stat.');return;}
- if(!save.stats[w.id])save.stats[w.id]={};
- save.coins-=cost;save.stats[w.id][statId]=statLevel(w.id,statId)+1;
- persist();renderAll();toast(w.name+' '+def.name.toLowerCase()+' upgraded to level '+save.stats[w.id][statId]+'.');
+ const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);if(!def||!def.available(w))return;
+ if(save.coins<STAT_CONTRIBUTION_COST){toast('You need 50 coins to contribute.');return;}
+ const gain=nextStatContributionGain(w.id,statId);
+ if(!save.statCoins[w.id])save.statCoins[w.id]={};
+ save.coins-=STAT_CONTRIBUTION_COST;save.statCoins[w.id][statId]=Number(save.statCoins[w.id][statId]||0)+STAT_CONTRIBUTION_COST;
+ persist();renderAll();toast('50 coins contributed. '+def.name+' increased by '+percentText(gain)+'.');
 }
 function setFavorite(){save.favorite=selectedWeapon;persist();renderAll();toast(weapon(selectedWeapon).name+' is now your champion.');}
 function switchView(next){view=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===next));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===next+'-view'));if(next==='armory')renderArmory();if(next==='records')renderRecords();resizeCanvas();}
 function createFighter(w,side,rng,trained){
  const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
- const trainedDamage=1+st.baseDamage*.10;
- return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:w.damage*trainedDamage,reach:w.reach,width:w.width,weaponScale:1+st.weaponSize*.06,baseSpin:w.spin*(1+st.spinSpeed*.09),spin:w.spin*(1+st.spinSpeed*.09),angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,delayMultiplier:Math.max(.42,1-st.delay*.06),scalingLevel:st.scaling,damageGrowth:1,combatDamage:w.damage,combatSpeed:10,shockCd:3.2,combo:0,lastHit:-10,bleed:[],flash:0,knock:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,hopCooldown:.6+rng()*.9,clone:false,cloneIndex:0};
+ const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
+ return {weapon:w,side,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(45+rng()*35),vy:-20-rng()*30,r:25,hp:w.hp,maxHp:w.hp,damage:w.damage*trainedDamage,reach:w.reach,width:w.width,weaponScale:1+totalStatBonus(w.id,'weaponSize'),baseSpin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*(1+totalStatBonus(w.id,'spinSpeed')),angle:rng()*Math.PI*2,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:st.projectileRate,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-st.delay*.06-totalStatBonus(w.id,'delay')),scalingLevel:st.scaling,scalingBonus:totalStatBonus(w.id,'scaling'),damageGrowth:1,combatDamage:w.damage,combatSpeed:10,shockCd:3.2,combo:0,lastHit:-10,bleed:[],flash:0,knock:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
-function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,reach:parent.reach*.86,weaponScale:parent.weaponScale*.88,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,damageGrowth:1,combatDamage:parent.combatDamage,combatSpeed:parent.combatSpeed,bleed:[],flash:0,knock:0,grounded:false,hopCooldown:.5+rng()*1.1,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
+function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*110,vy:-80-rng()*90,hp:Math.max(28,parent.maxHp*.88),maxHp:parent.maxHp,damage:parent.damage*.43,reach:parent.reach*.86,weaponScale:parent.weaponScale*.88,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,damageGrowth:1,combatDamage:parent.combatDamage,combatSpeed:parent.combatSpeed,bleed:[],flash:0,knock:0,grounded:false,clone:true,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemies=sim.teams[f.side==='left'?'right':'left'].filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
 function spawnDuplicates(side){const team=sim.teams[side];if(!team.length)return;const target=Math.min(16,team.length*2),startCount=team.length,old=team.filter(f=>f.hp>0);if(!old.length)return;let idx=startCount;while(team.length<target){const parent=old[(team.length-startCount)%old.length],clone=cloneFighter(parent,sim.rng,idx++);team.push(clone);burst(clone.x,clone.y,'#e65ad2',8);}syncFighters();updateBars();floatText(arena.x+arena.w/2,arena.y+42,'DUPLICATED · '+team.length,'#cb31b9');}
@@ -320,7 +325,7 @@ if(w.id==='chakram'){amount*=.88;}
 if(w.id==='trident'){amount*=1.12;}
 target.hp=Math.max(0,target.hp-amount);target.flash=.16;target.hitCd=Math.max(target.hitCd,.08);attacker.lastHit=sim.elapsed;attacker.hitCd=(w.id==='chakram'?.46:w.id==='dagger'?.52:w.id==='hammer'?.94:w.id==='lance'?.78:.68)*attacker.delayMultiplier*(1/(1+sim.elapsed*.025))*(w.id==='sword'&&attacker.combo===0?.85:1);
 if(w.id==='lance'){attacker.damageGrowth=Math.min(220,attacker.damageGrowth*(1.045+attacker.scalingLevel*.001));attacker.combatDamage=Math.max(1,attacker.combatDamage+1);}
-else{attacker.damageGrowth=Math.min(3.2,attacker.damageGrowth+.012+attacker.scalingLevel*.005);attacker.combatDamage=Math.min(attacker.damage*2.5,attacker.combatDamage+.13+attacker.scalingLevel*.025);}
+else{attacker.damageGrowth=Math.min(3.2,attacker.damageGrowth+.012+attacker.scalingLevel*.005+attacker.scalingBonus*.02);attacker.combatDamage=Math.min(attacker.damage*2.5,attacker.combatDamage+.13+attacker.scalingLevel*.025);}
 const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;target.vx+=dx/d*(w.id==='spear'?190:115);target.vy+=dy/d*(w.id==='spear'?190:115);target.knock+=w.id==='spear'?60:0;
 burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,critical?18:10);floatText(target.x,target.y-25,(critical?'CRIT ':'')+'-'+Math.round(amount),critical?'#ffd37a':'#fff1df');playTone(critical?510:290,.055,critical?'square':'triangle');
 if(w.id==='dagger')floatText(target.x+12,target.y-48,'BLEED','#e59aff');
@@ -330,7 +335,7 @@ function fireArrow(f,target){
  const leadX=target.x+target.vx*.18,leadY=target.y+target.vy*.18;
  const ax=leadX-f.x,ay=leadY-f.y,aim=Math.max(1,Math.hypot(ax,ay));
  sim.projectiles.push({x:f.x+ax/aim*(f.r+9),y:f.y+ay/aim*(f.r+9),vx:ax/aim*speed,vy:ay/aim*speed-65,life:2.5,owner:f,target:target,color:f.weapon.color});
- f.projectileCd=1.65*Math.max(.35,1-f.projectileRateLevel*.08)*f.delayMultiplier;
+ f.projectileCd=1.65*Math.max(.2,1-f.projectileRateLevel*.08-f.projectileRateBonus)*f.delayMultiplier;
  burst(f.x+ax/aim*(f.r+5),f.y+ay/aim*(f.r+5),f.weapon.color,3);
  playTone(390,.045,'triangle');
 }
@@ -341,8 +346,7 @@ function step(dt){
  for(const f of fs){if(f.hp<=0)continue;const o=nearestEnemy(f);if(!o)continue;const dx=o.x-f.x,dy=o.y-f.y,dir=Math.sign(dx)||(f.side==='left'?1:-1);const desired=Math.abs(dx)>90?dir*115:dir*-30,accel=f.grounded?185:100;
   f.vx+=(desired>f.vx?1:-1)*accel*dt;f.vx*=Math.pow(f.grounded?.984:.998,dt*60);f.vy+=gravity*dt;f.vx=clamp(f.vx,-165,165);f.vy=clamp(f.vy,-420,420);f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
   if(f.x<arena.x+f.r){f.x=arena.x+f.r;f.vx=Math.abs(f.vx)*.78;}if(f.x>arena.x+arena.w-f.r){f.x=arena.x+arena.w-f.r;f.vx=-Math.abs(f.vx)*.78;}
-  if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.42;}if(f.y+f.r>floor){f.y=floor-f.r;if(f.vy>90)f.vy=-f.vy*.42;else f.vy=0;f.grounded=true;f.vx*=Math.pow(.993,dt*60);}
-  f.hopCooldown-=dt;if(f.grounded&&f.hopCooldown<=0&&Math.abs(dx)<430){f.vy=-155-sim.rng()*75;f.grounded=false;f.hopCooldown=1.3+sim.rng()*1.5;}
+  if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.42;}if(f.y+f.r>floor){f.y=floor-f.r;f.vy=-Math.max(105,Math.abs(f.vy)*.62);f.grounded=true;f.vx*=Math.pow(.993,dt*60);}
   f.combatSpeed=10+Math.floor(sim.elapsed*19);f.spin=f.baseSpin*(1+Math.min(5.5,sim.elapsed*.075));f.angle+=f.spin*dt;f.hitCd=Math.max(0,f.hitCd-dt);f.flash=Math.max(0,f.flash-dt);f.shockCd-=dt;
   if(f.weapon.id==='hammer'&&f.shockCd<=0){f.shockCd=4.2;const dd=Math.hypot(o.x-f.x,o.y-f.y);if(dd<130){o.hp=Math.max(0,o.hp-5);o.flash=.15;burst(o.x,o.y,'#c4a3ff',12);floatText(o.x,o.y-34,'SHOCKWAVE -5','#b795db');}}
   for(let j=f.bleed.length-1;j>=0;j--){const bl=f.bleed[j];bl.ttl-=dt;bl.next-=dt;if(bl.next<=0){bl.next=.65;o.hp=Math.max(0,o.hp-2.2);floatText(o.x,o.y-30,'-2','#bd77ce');}if(bl.ttl<=0)f.bleed.splice(j,1);}
