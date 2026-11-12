@@ -192,7 +192,7 @@ function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
 function level(id){return Number(save.levels[id]||0);}
 const STAT_DEFS=[
 {id:'baseDamage',name:'Base damage',desc:'Raises the damage dealt by every successful hit.',display:lv=>'+'+(lv*10)+'% damage',available:w=>true},
-{id:'scaling',name:'Scaling',desc:'Each successful hit adds extra damage for the rest of the fight.',display:lv=>'+'+(lv*.5).toFixed(1)+'% extra per hit',available:w=>true},
+{id:'scaling',name:'Scaling',desc:'Increases how much your weapon gains from each successful hit. Applies to that weapon’s unique growth rule.',display:lv=>'+'+(lv*.5).toFixed(1)+'% growth per hit',available:w=>true},
 {id:'weaponSize',name:'Weapon size',desc:'Increases the weapon length and its physical hitbox.',display:lv=>'+'+(lv*6)+'% size and reach',available:w=>true},
 {id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between shots. Only ranged weapons can use this.',display:lv=>'-'+(lv*8)+'% shot interval',available:w=>!!w.projectile},
 {id:'delay',name:'Delay',desc:'Reduces recovery time between attacks so you can strike sooner.',display:lv=>'-'+(lv*6)+'% attack delay',available:w=>true},
@@ -501,7 +501,7 @@ function draw(){
  for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
  for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
  }else{drawPreviewBall(ctx,leftWeapon,180,330,1);drawPreviewBall(ctx,rightWeapon,360,330,-1);}ctx.restore();
- const lead=sim&&sim.teams.left[0],rightLead=sim&&sim.teams.right[0],damageValue=lead?Math.floor(lead.combatDamage*lead.damageGrowth):Math.floor(leftWeapon.damage),speedValue=lead?lead.combatSpeed:10,leftDup=lead&&lead.weapon.duplicator,rightDup=rightLead&&rightLead.weapon.duplicator;
+ const lead=sim&&sim.teams.left[0],rightLead=sim&&sim.teams.right[0],damageValue=lead?Math.floor(lead.combatDamage):Math.floor(leftWeapon.damage),speedValue=lead?lead.combatSpeed:10,leftDup=lead&&lead.weapon.duplicator,rightDup=rightLead&&rightLead.weapon.duplicator;
  ctx.fillStyle='#b32636';ctx.font='900 15px system-ui';ctx.textAlign='left';ctx.fillText('DAMAGE: '+damageValue,arena.x,712);
  ctx.fillStyle='#16893a';ctx.textAlign='right';ctx.fillText((leftDup||rightDup)?'BALLS: '+sim.teams[leftDup?'left':'right'].filter(f=>f.hp>0).length:'ATTACK SPEED: '+speedValue,arena.x+arena.w,712);
 }
