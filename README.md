@@ -25,7 +25,9 @@ No GitHub Actions workflow is required for this setup.
 
 - Daily deterministic weapon matchup with an animated canvas battle.
 - Daily coin claim, one prediction per daily matchup, and simulated community odds.
-- Eight weapon types, favorite champion, persistent training levels, and practice fights.
+- Nine weapon types, including a ranged Bow with physical projectiles.
+- Individual coin-funded upgrades for base damage, scaling, weapon size, projectile rate, attack delay, and spin speed.
+- Gravity, jumping, floor bounce, wall collisions, and weapon hitboxes in the arena.
 - Fight records and a local developer test panel.
 - Sound toggle and 1× / 2× battle speed.
 
