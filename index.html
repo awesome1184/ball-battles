@@ -417,7 +417,7 @@ function step(dt){
  syncFighters();const fs=sim.fighters;
  for(const f of fs){
   if(f.hp<=0)continue;
-  if(f.poisonDps>0){
+  if(f.poisonDps>0&&!f.lanceCharging){
    f.hp=Math.max(0,f.hp-f.poisonDps*dt);
    f.poisonPulse=(f.poisonPulse||0)+dt;
    if(f.poisonPulse>=1){floatText(f.x,f.y-40,'-'+Math.floor(f.poisonDps)+' POISON DPS','#70b96b');f.poisonPulse%=1;}
