@@ -35,6 +35,22 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e9b759;color:#231d16;border-radius:12px;padding:12px 17px;font-size:12px;font-weight:900;box-shadow:0 15px 40px #0007;transition:.22s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
 .dev-toggle{position:fixed;right:14px;bottom:14px;border:1px solid #4b5969;color:#9aa8b9;background:#18212b;border-radius:9px;padding:7px 10px;font-size:9px;font-weight:900;letter-spacing:.12em;opacity:.65}.dev-toggle:hover{opacity:1}.dev-panel{display:none;position:fixed;z-index:30;right:14px;bottom:54px;width:min(310px,calc(100vw - 28px));background:#151e29;border:1px solid #526174;border-radius:14px;padding:16px;box-shadow:0 20px 60px #000b}.dev-panel.open{display:block}.dev-panel h3{font-size:12px;letter-spacing:.12em;margin-bottom:8px}.dev-panel p{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:12px}.dev-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.dev-actions button{padding:9px 7px;border:1px solid #3b4b5e;background:#202c3a;border-radius:8px;color:var(--text);font-size:10px;font-weight:800}.dev-actions button.danger{border-color:#75454a;color:#ffb2b0}
 .footer{margin-top:30px;border-top:1px solid #222e3b;padding-top:15px;color:#728193;font-size:10px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+.stats-upgrades{display:grid;gap:9px;margin-top:12px}
+.stat-upgrade{border:1px solid #2d3b49;background:#111923;border-radius:12px;padding:11px}
+.stat-upgrade.na{opacity:.56}
+.stat-upgrade-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.stat-upgrade-name{font-weight:900;font-size:11px;letter-spacing:.04em}
+.stat-upgrade-level{font-size:9px;color:#f2bd57;font-weight:900;letter-spacing:.1em;white-space:nowrap}
+.stat-upgrade-desc{font-size:10px;color:var(--muted);line-height:1.45;margin-top:4px}
+.stat-upgrade-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px}
+.stat-upgrade-value{font-size:10px;color:#c8d4e0;font-weight:750}
+.stat-upgrade-btn{border:1px solid #715a38;background:#392d1c;color:#ffd27c;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:950;letter-spacing:.05em}
+.stat-upgrade-btn:hover{background:#493820}
+.stat-upgrade-btn:disabled{opacity:.4;cursor:not-allowed}
+.stat-section-label{font-size:9px;color:#aab8c7;font-weight:950;letter-spacing:.16em;margin-top:18px}
+.physics-note{display:flex;align-items:center;gap:8px;color:#a6b4c3;font-size:10px;margin-top:11px}
+.physics-note strong{color:#e8c276}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 280px}.armory-layout{grid-template-columns:minmax(0,1fr) 300px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:780px){.app{padding:17px 14px 46px}.layout,.armory-layout{grid-template-columns:1fr}.side-col{grid-template-columns:repeat(2,minmax(0,1fr))}.side-col .side-card:last-child{grid-column:1/-1}.weapon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:540px){.topbar{align-items:flex-start}.brand{min-width:0}.brand-name{font-size:16px}.brand-sub{font-size:8px}.top-actions{gap:6px}.wallet{padding:8px 10px}.wallet small{display:none}.top-actions .icon-btn{padding:9px}.tabs{margin-bottom:17px}.tab{padding-left:11px;padding-right:11px;font-size:10px}.match-head{align-items:flex-start}.date-chip{font-size:9px}.arena-card{padding:9px}.arena-canvas{height:330px}.arena-bottom{align-items:flex-start;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}.bet-card{padding:14px}.bet-controls{flex-wrap:wrap}.bet-controls .primary-btn{margin-left:0;flex:1}.side-col{grid-template-columns:1fr}.side-col .side-card:last-child{grid-column:auto}.weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.weapon-card{min-height:130px}.history-row{grid-template-columns:1fr 80px 55px}.footer{font-size:9px}}
@@ -117,15 +133,16 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
       <div class="eyebrow">CHAMPION TRAINING</div>
       <div class="training-hero"><div class="mini-orb" id="training-orb">⚔</div><div><h2 id="training-name">Sword</h2><p id="training-level">Level 1 champion</p></div></div>
       <div class="section-desc" id="training-desc">A balanced weapon with reliable combos.</div>
-      <div class="stat-line"><span>Damage</span><strong id="training-damage">10</strong></div>
-      <div class="stat-line"><span>Attack speed</span><strong id="training-speed">3.2</strong></div>
-      <div class="stat-line"><span>Reach</span><strong id="training-reach">68</strong></div>
-      <div class="stat-line"><span>Vitality bonus</span><strong id="training-vitality">+0%</strong></div>
-      <div class="upgrade-cost"><span class="muted-tag">NEXT TRAINING</span><strong id="upgrade-cost">80 ◈</strong></div>
-      <button class="primary-btn wide" id="upgrade-btn">TRAIN WEAPON</button>
+      <div class="stat-line"><span>Current base damage</span><strong id="training-damage">10</strong></div>
+      <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
+      <div class="stat-line"><span>Weapon reach</span><strong id="training-reach">68</strong></div>
+      <div class="stat-section-label">INDIVIDUAL STAT TRAINING</div>
+      <p class="section-desc">Spend coins on exactly the attribute you want. Each stat has its own level and increasing price.</p>
+      <div class="stats-upgrades" id="stat-upgrades"></div>
       <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
       <button class="soft-btn wide" id="armory-practice-btn">TEST THIS WEAPON</button>
-      <div class="tip">Training makes your champion stronger in personal practice fights. The official daily showdown stays standardized so every player sees the same fair result.</div>
+      <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters fall, bounce off the floor, and can jump back into the fight.</span></div>
+      <div class="tip">Your investments strengthen your champion in practice fights. Daily showdowns use standardized weapons so everyone competes on equal terms.</div>
     </section>
   </div>
 </section>
@@ -158,18 +175,30 @@ const WEAPONS=[
 {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Slow, crushing impacts. Every few seconds it sends a shockwave.',damage:16,reach:58,width:25,spin:1.75,hp:130,special:'Shockwave'},
 {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Sweeping curved strikes. Landing a hit restores a little health.',damage:9,reach:81,width:18,spin:3.05,hp:110,special:'Harvest'},
 {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'A whirling ring with wide coverage and rapid attack cycles.',damage:7,reach:76,width:14,spin:4.45,hp:110,special:'Whirl'},
-{id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A precise three-pronged weapon with excellent reach and control.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Pierce'}
+{id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A precise three-pronged weapon with excellent reach and control.',damage:10,reach:84,width:15,spin:2.85,hp:116,special:'Pierce'},
+{id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Keeps its distance and fires guided arrows. Projectile rate controls how often it shoots.',damage:8,reach:142,width:7,spin:0.7,hp:104,special:'Projectile',projectile:true}
 ];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
 const dayLabel=new Date(today+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
 const $=id=>document.getElementById(id);
-function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},bets:{},settled:{},results:{},history:[],sound:true};}
-function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();return Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});}catch(e){return defaultSave();}}
+function defaultSave(){return {coins:350,claimedDay:'',streak:0,lastClaim:'',favorite:'sword',levels:{},stats:{},bets:{},settled:{},results:{},history:[],sound:true};}
+function loadSave(){try{const v=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(!v||typeof v!=='object')return defaultSave();const d=defaultSave();const out=Object.assign(d,v,{levels:Object.assign({},d.levels,v.levels||{}),stats:Object.assign({},d.stats||v.stats||{}),bets:v.bets||{},settled:v.settled||{},results:v.results||{},history:Array.isArray(v.history)?v.history:[]});for(const id of Object.keys(out.levels)){if(!out.stats[id])out.stats[id]={};out.stats[id].baseDamage=Math.max(Number(out.stats[id].baseDamage||0),Number(out.levels[id]||0));}return out;}catch(e){return defaultSave();}}
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
 function level(id){return Number(save.levels[id]||0);}
+const STAT_DEFS=[
+{id:'baseDamage',name:'Base damage',desc:'Raises the damage dealt by every successful hit.',display:lv=>'+'+(lv*10)+'% damage',available:w=>true},
+{id:'scaling',name:'Scaling',desc:'Each successful hit adds extra damage for the rest of the fight.',display:lv=>'+'+(lv*.5).toFixed(1)+'% extra per hit',available:w=>true},
+{id:'weaponSize',name:'Weapon size',desc:'Increases the weapon length and its physical hitbox.',display:lv=>'+'+(lv*6)+'% size and reach',available:w=>true},
+{id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between shots. Only ranged weapons can use this.',display:lv=>'-'+(lv*8)+'% shot interval',available:w=>!!w.projectile},
+{id:'delay',name:'Delay',desc:'Reduces recovery time between attacks so you can strike sooner.',display:lv=>'-'+(lv*6)+'% attack delay',available:w=>true},
+{id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly your weapon rotates around the ball.',display:lv=>'+'+(lv*9)+'% rotation speed',available:w=>true}
+];
+function statLevels(id){return Object.assign({baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0},save.stats[id]||{});}
+function statLevel(id,key){return Number(statLevels(id)[key]||0);}
+function statCost(id,key){return Math.round(65*Math.pow(1.52,statLevel(id,key)));}
 function money(n){return Math.floor(n).toLocaleString();}
 function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
@@ -233,25 +262,38 @@ document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('cl
 renderArmoryDetails();
 }
 function renderArmoryDetails(){
-const w=weapon(selectedWeapon),lv=level(w.id),cost=Math.round(80*Math.pow(1.48,lv));
+const w=weapon(selectedWeapon),st=statLevels(w.id);
 $('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
-$('training-level').textContent='Level '+(lv+1)+' champion';$('training-desc').textContent=w.desc;
-$('training-damage').textContent=(w.damage*(1+lv*.045)).toFixed(1);$('training-speed').textContent=w.spin.toFixed(2);$('training-reach').textContent=w.reach;
-$('training-vitality').textContent='+'+(lv*3)+'%';$('upgrade-cost').textContent=money(cost)+' ◈';
-$('upgrade-btn').textContent='TRAIN WEAPON · '+money(cost)+' ◈';$('upgrade-btn').disabled=save.coins<cost;
+$('training-level').textContent='Champion · '+Object.values(st).reduce((a,b)=>a+Number(b||0),0)+' total stat levels';
+$('training-desc').textContent=w.desc;
+$('training-damage').textContent=(w.damage*(1+st.baseDamage*.10)).toFixed(1);
+$('training-speed').textContent=(w.spin*(1+st.spinSpeed*.09)).toFixed(2);
+$('training-reach').textContent=Math.round(w.reach*(1+st.weaponSize*.06));
+$('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
+ const value=st[def.id]||0,available=def.available(w),cost=statCost(w.id,def.id);
+ return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?'LEVEL '+value:'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?def.display(value):'Ranged weapon only')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<cost?'disabled':'')+'>'+(available?'UPGRADE · '+money(cost)+' ◈':'UNAVAILABLE')+'</button></div></div>';
+}).join('');
 $('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';$('set-favorite-btn').disabled=save.favorite===w.id;
 }
-function upgrade(){const w=weapon(selectedWeapon),lv=level(w.id),cost=Math.round(80*Math.pow(1.48,lv));if(save.coins<cost){toast('You need more coins.');return;}save.coins-=cost;save.levels[w.id]=lv+1;persist();renderAll();toast(w.name+' trained to level '+(lv+2)+'!');}
+function buyStat(statId){
+ const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);
+ if(!def||!def.available(w))return;
+ const cost=statCost(w.id,statId);
+ if(save.coins<cost){toast('Not enough coins for that stat.');return;}
+ if(!save.stats[w.id])save.stats[w.id]={};
+ save.coins-=cost;save.stats[w.id][statId]=statLevel(w.id,statId)+1;
+ persist();renderAll();toast(w.name+' '+def.name.toLowerCase()+' upgraded to level '+save.stats[w.id][statId]+'.');
+}
 function setFavorite(){save.favorite=selectedWeapon;persist();renderAll();toast(weapon(selectedWeapon).name+' is now your champion.');}
 function switchView(next){view=next;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===next));document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===next+'-view'));if(next==='armory')renderArmory();if(next==='records')renderRecords();resizeCanvas();}
 function createFighter(w,side,rng,trained){
-const lv=trained?level(w.id):0;
-return {weapon:w,side,x:side==='left'?260:640,y:260,vx:(side==='left'?1:-1)*(32+rng()*20),vy:(rng()-.5)*55,r:31,hp:w.hp*(1+lv*.03),maxHp:w.hp*(1+lv*.03),damage:w.damage*(1+lv*.045),reach:w.reach,width:w.width,spin:w.spin,angle:rng()*Math.PI*2,hitCd:.5+rng()*.4,shockCd:3.2,combo:0,lastHit:-10,bleed:[],flash:0,knock:0,dead:false,level:lv,aiPhase:rng()*6.28,kills:0};
+const st=trained?statLevels(w.id):{baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0};
+return {weapon:w,side,x:side==='left'?260:640,y:175,vx:(side==='left'?1:-1)*(32+rng()*20),vy:-25-rng()*35,r:31,hp:w.hp,maxHp:w.hp,damage:w.damage*(1+st.baseDamage*.10),reach:w.reach,width:w.width,weaponScale:1+st.weaponSize*.06,spin:w.spin*(1+st.spinSpeed*.09),angle:rng()*Math.PI*2,hitCd:.5+rng()*.4,projectileCd:.5+rng()*.5,projectileRateLevel:st.projectileRate,delayMultiplier:Math.max(.42,1-st.delay*.06),scalingLevel:st.scaling,damageGrowth:1,shockCd:3.2,combo:0,lastHit:-10,bleed:[],flash:0,knock:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,hopCooldown:.35+rng()*.8};
 }
 function startFight(mode,forced){if(sim&&sim.active){return;}if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random());const rng=mulberry32(seed);let a,b;
 if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}
 else{const main=weapon(save.favorite);let rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];while(rival.id===main.id)rival=WEAPONS[Math.floor(rng()*WEAPONS.length)];a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);}
-sim={mode:mode,active:true,elapsed:0,rng:rng,fighters:[a,b],particles:[],texts:[],result:null,forced:forced||null,seed:seed};lastFrame=0;accumulator=0;
+sim={mode:mode,active:true,elapsed:0,rng:rng,fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed};lastFrame=0;accumulator=0;
 $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'PRACTICE MATCH';$('arena-status-text').textContent='THE FIGHT IS ON';$('live-pulse').classList.add('live');$('fight-btn').textContent='FIGHT IN PROGRESS';$('fight-btn').disabled=true;
 if(mode==='daily'){ $('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
 updateBars();playTone(180,.12,'sawtooth');raf=requestAnimationFrame(loop);}
@@ -259,7 +301,7 @@ function distPointSegment(px,py,x1,y1,x2,y2){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*
 function burst(x,y,color,count){for(let i=0;i<count;i++){const a=sim.rng()*Math.PI*2,s=35+sim.rng()*190;sim.particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+sim.rng()*.55,max:.9,color:color,size:2+sim.rng()*4});}}
 function floatText(x,y,text,color){sim.texts.push({x:x,y:y,text:text,color:color,life:.8,max:.8});}
 function damage(attacker,target,dt){
-const w=attacker.weapon;let amount=attacker.damage*(.9+sim.rng()*.2),critical=false;
+const w=attacker.weapon;let amount=attacker.damage*attacker.damageGrowth*(w.projectile?1.1:1)*(.9+sim.rng()*.2),critical=false;
 if(w.id==='sword'){if(sim.elapsed-attacker.lastHit<2.3)attacker.combo++;else attacker.combo=1;if(attacker.combo>=3){amount*=1.55;attacker.combo=0;floatText(attacker.x,attacker.y-48,'COMBO!', '#ffd37a');burst(target.x,target.y,'#ffd37a',10);}}
 if(w.id==='axe'&&sim.rng()<.23){amount*=1.85;critical=true;}
 if(w.id==='dagger'){target.bleed.push({ttl:2.4,next:.55});}
@@ -268,25 +310,75 @@ if(w.id==='hammer'){amount*=1.15;burst(target.x,target.y,'#c8a3ff',13);}
 if(w.id==='scythe'){attacker.hp=Math.min(attacker.maxHp,attacker.hp+3);floatText(attacker.x,attacker.y-38,'+3', '#8ce2a8');}
 if(w.id==='chakram'){amount*=.88;}
 if(w.id==='trident'){amount*=1.12;}
-target.hp=Math.max(0,target.hp-amount);target.flash=.16;target.hitCd=Math.max(target.hitCd,.08);attacker.lastHit=sim.elapsed;attacker.hitCd=(w.id==='chakram'?.46:w.id==='dagger'?.52:w.id==='hammer'?.94:.68)*(w.id==='sword'&&attacker.combo===0?.85:1);
+target.hp=Math.max(0,target.hp-amount);target.flash=.16;target.hitCd=Math.max(target.hitCd,.08);attacker.lastHit=sim.elapsed;attacker.hitCd=(w.id==='chakram'?.46:w.id==='dagger'?.52:w.id==='hammer'?.94:.68)*attacker.delayMultiplier*(w.id==='sword'&&attacker.combo===0?.85:1);
+attacker.damageGrowth=Math.min(2.5,attacker.damageGrowth+.014+attacker.scalingLevel*.005);
 const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;target.vx+=dx/d*(w.id==='spear'?190:115);target.vy+=dy/d*(w.id==='spear'?190:115);target.knock+=w.id==='spear'?60:0;
 burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,critical?18:10);floatText(target.x,target.y-25,(critical?'CRIT ':'')+'-'+Math.round(amount),critical?'#ffd37a':'#fff1df');playTone(critical?510:290,.055,critical?'square':'triangle');
 if(w.id==='dagger')floatText(target.x+12,target.y-48,'BLEED','#e59aff');
 }
+function fireArrow(f,target){
+ const dx=target.x-f.x,dy=target.y-f.y,d=Math.max(1,Math.hypot(dx,dy)),speed=455;
+ const leadX=target.x+target.vx*.18,leadY=target.y+target.vy*.18;
+ const ax=leadX-f.x,ay=leadY-f.y,aim=Math.max(1,Math.hypot(ax,ay));
+ sim.projectiles.push({x:f.x+ax/aim*(f.r+9),y:f.y+ay/aim*(f.r+9),vx:ax/aim*speed,vy:ay/aim*speed-65,life:2.5,owner:f,target:target,color:f.weapon.color});
+ f.projectileCd=1.65*Math.max(.35,1-f.projectileRateLevel*.08)*f.delayMultiplier;
+ burst(f.x+ax/aim*(f.r+5),f.y+ay/aim*(f.r+5),f.weapon.color,3);
+ playTone(390,.045,'triangle');
+}
 function step(dt){
-if(!sim||!sim.active)return;sim.elapsed+=dt;const fs=sim.fighters;
-for(let i=0;i<2;i++){const f=fs[i],o=fs[1-i];if(f.hp<=0)continue;const dx=o.x-f.x,dy=o.y-f.y,d=Math.max(1,Math.hypot(dx,dy));const ux=dx/d,uy=dy/d;const orbit=Math.sin(sim.elapsed*1.15+f.aiPhase)*.38;const ax=ux*170-uy*orbit*85,ay=uy*170+ux*orbit*85;
-f.vx+=ax*dt;f.vy+=ay*dt;f.vx*=Math.pow(.986,dt*60);f.vy*=Math.pow(.986,dt*60);
-const max=155+f.level*1.3,sp=Math.hypot(f.vx,f.vy);if(sp>max){f.vx=f.vx/sp*max;f.vy=f.vy/sp*max;}
-f.x+=f.vx*dt;f.y+=f.vy*dt;f.x=clamp(f.x,arena.x+f.r,arena.x+arena.w-f.r);f.y=clamp(f.y,arena.y+f.r,arena.y+arena.h-f.r);
-if(f.x<=arena.x+f.r+1||f.x>=arena.x+arena.w-f.r-1)f.vx*=-.78;if(f.y<=arena.y+f.r+1||f.y>=arena.y+arena.h-f.r-1)f.vy*=-.78;
-f.angle+=f.spin*dt;f.hitCd=Math.max(0,f.hitCd-dt);f.flash=Math.max(0,f.flash-dt);f.shockCd-=dt;
-if(f.weapon.id==='hammer'&&f.shockCd<=0){f.shockCd=4.2;const dd=Math.hypot(o.x-f.x,o.y-f.y);if(dd<130){o.hp=Math.max(0,o.hp-5);o.flash=.15;burst(o.x,o.y,'#c4a6ed',12);floatText(o.x,o.y-48,'SHOCKWAVE -5','#d9baff');}}
-for(let j=f.bleed.length-1;j>=0;j--){const bl=f.bleed[j];bl.ttl-=dt;bl.next-=dt;if(bl.next<=0){bl.next=.65;o.hp=Math.max(0,o.hp-2.2);floatText(o.x,o.y-36,'-2','#dfa0ff');}if(bl.ttl<=0)f.bleed.splice(j,1);}
-if(f.hitCd<=0&&o.hp>0){const tx=f.x+Math.cos(f.angle)*f.reach,ty=f.y+Math.sin(f.angle)*f.reach;const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);if(distance<o.r+f.width*.5){damage(f,o,dt);}}
+if(!sim||!sim.active)return;
+sim.elapsed+=dt;
+const fs=sim.fighters,gravity=760,floor=arena.y+arena.h;
+for(let i=0;i<2;i++){
+ const f=fs[i],o=fs[1-i];if(f.hp<=0)continue;
+ const dx=o.x-f.x,dy=o.y-f.y,d=Math.max(1,Math.hypot(dx,dy));
+ const direction=Math.sign(dx)|| (f.side==='left'?1:-1);
+ const desired=Math.abs(dx)>115?direction*145:direction*-48;
+ const airControl=f.grounded?255:125;
+ f.vx+=(desired>f.vx?1:-1)*airControl*dt;
+ f.vx*=Math.pow(f.grounded?.982:.997,dt*60);
+ f.vy+=gravity*dt;
+ f.vx=clamp(f.vx,-190,190);f.vy=clamp(f.vy,-510,510);
+ f.x+=f.vx*dt;f.y+=f.vy*dt;
+ f.grounded=false;
+ if(f.x<arena.x+f.r){f.x=arena.x+f.r;f.vx=Math.abs(f.vx)*.72;}
+ if(f.x>arena.x+arena.w-f.r){f.x=arena.x+arena.w-f.r;f.vx=-Math.abs(f.vx)*.72;}
+ if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.5;}
+ if(f.y+f.r>floor){
+   f.y=floor-f.r;
+   if(f.vy>110)f.vy=-f.vy*.48;
+   else f.vy=0;
+   f.grounded=true;
+   f.vx*=Math.pow(.994,dt*60);
+ }
+ f.hopCooldown-=dt;
+ if(f.grounded&&f.hopCooldown<=0&&Math.abs(dx)<510){
+   f.vy=-220-sim.rng()*45;
+   f.grounded=false;
+   f.hopCooldown=1.25+sim.rng()*1.35;
+ }
+ f.angle+=f.spin*dt;f.hitCd=Math.max(0,f.hitCd-dt);f.flash=Math.max(0,f.flash-dt);f.shockCd-=dt;
+ if(f.weapon.id==='hammer'&&f.shockCd<=0){f.shockCd=4.2;const dd=Math.hypot(o.x-f.x,o.y-f.y);if(dd<130){o.hp=Math.max(0,o.hp-5);o.flash=.15;burst(o.x,o.y,'#c4a6ed',12);floatText(o.x,o.y-48,'SHOCKWAVE -5','#d9baff');}}
+ for(let j=f.bleed.length-1;j>=0;j--){const bl=f.bleed[j];bl.ttl-=dt;bl.next-=dt;if(bl.next<=0){bl.next=.65;o.hp=Math.max(0,o.hp-2.2);floatText(o.x,o.y-36,'-2','#dfa0ff');}if(bl.ttl<=0)f.bleed.splice(j,1);}
+ if(f.weapon.projectile){
+   f.projectileCd-=dt;
+   if(f.projectileCd<=0&&o.hp>0)fireArrow(f,o);
+ }else if(f.hitCd<=0&&o.hp>0){
+   const effectiveReach=f.reach*f.weaponScale;
+   const tx=f.x+Math.cos(f.angle)*effectiveReach,ty=f.y+Math.sin(f.angle)*effectiveReach;
+   const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);
+   if(distance<o.r+f.width*f.weaponScale*.5)damage(f,o,dt);
+ }
 }
 const dx=fs[1].x-fs[0].x,dy=fs[1].y-fs[0].y,d=Math.hypot(dx,dy)||1,min=fs[0].r+fs[1].r+2;if(d<min){const nx=dx/d,ny=dy/d,over=min-d;fs[0].x-=nx*over*.5;fs[0].y-=ny*over*.5;fs[1].x+=nx*over*.5;fs[1].y+=ny*over*.5;const rel=(fs[0].vx-fs[1].vx)*nx+(fs[0].vy-fs[1].vy)*ny;if(rel>0){fs[0].vx-=nx*rel*.86;fs[0].vy-=ny*rel*.86;fs[1].vx+=nx*rel*.86;fs[1].vy+=ny*rel*.86;}}
-for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.97;p.vy*=.97;if(p.life<=0)sim.particles.splice(i,1);}
+for(let i=sim.projectiles.length-1;i>=0;i--){
+ const p=sim.projectiles[i];p.life-=dt;p.vy+=gravity*.42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
+ if(p.life<=0||p.x<arena.x||p.x>arena.x+arena.w||p.y>floor+18){sim.projectiles.splice(i,1);continue;}
+ if(p.target.hp>0&&Math.hypot(p.x-p.target.x,p.y-p.target.y)<p.target.r+7){
+   damage(p.owner,p.target,dt);burst(p.x,p.y,p.color,7);sim.projectiles.splice(i,1);
+ }
+}
+for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=gravity*.2*dt;p.vx*=.97;if(p.life<=0)sim.particles.splice(i,1);}
 for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
 updateBars();
 if(fs[0].hp<=0||fs[1].hp<=0||sim.elapsed>68){let winner=fs[0].hp===fs[1].hp?(fs[0].hp>=fs[1].hp?fs[0]:fs[1]):(fs[0].hp>fs[1].hp?fs[0]:fs[1]);finishFight(winner);}
@@ -304,7 +396,7 @@ function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let
 function updateBars(){if(!sim)return;const a=sim.fighters[0],b=sim.fighters[1];$('left-hp-bar').style.width=clamp(a.hp/a.maxHp*100,0,100)+'%';$('right-hp-bar').style.width=clamp(b.hp/b.maxHp*100,0,100)+'%';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
-function drawWeapon(c,f){c.save();c.translate(f.x,f.y);c.rotate(f.angle);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
+function drawWeapon(c,f){c.save();c.translate(f.x,f.y);c.rotate(f.angle);c.scale(f.weaponScale||1,f.weaponScale||1);const w=f.weapon;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#b9a18a';c.lineWidth=7;c.beginPath();c.moveTo(-3,0);c.lineTo(f.reach*.78,0);c.stroke();c.strokeStyle='#e4d7c4';c.lineWidth=2;c.beginPath();c.moveTo(4,-2);c.lineTo(f.reach*.77,-2);c.stroke();c.fillStyle=w.color;c.strokeStyle='#f6e8d2';c.lineWidth=2;
 if(w.id==='sword'){c.beginPath();c.moveTo(f.reach*.66,-10);c.lineTo(f.reach+13,0);c.lineTo(f.reach*.66,10);c.closePath();c.fill();c.stroke();c.fillStyle='#d9b77d';c.fillRect(f.reach*.61,-13,5,26);}
 else if(w.id==='dagger'){c.beginPath();c.moveTo(f.reach*.65,-7);c.lineTo(f.reach+7,0);c.lineTo(f.reach*.65,7);c.closePath();c.fill();c.stroke();}
 else if(w.id==='spear'){c.beginPath();c.moveTo(f.reach*.78,-9);c.lineTo(f.reach+17,0);c.lineTo(f.reach*.78,9);c.closePath();c.fill();c.stroke();}
@@ -313,6 +405,7 @@ else if(w.id==='hammer'){c.fillRect(f.reach*.65,-16,25,32);c.strokeRect(f.reach*
 else if(w.id==='scythe'){c.beginPath();c.moveTo(f.reach*.55,-3);c.quadraticCurveTo(f.reach+20,-39,f.reach+9,-12);c.quadraticCurveTo(f.reach-1,7,f.reach*.63,13);c.strokeStyle=w.color;c.lineWidth=8;c.stroke();c.strokeStyle='#f3eadc';c.lineWidth=2;c.stroke();}
 else if(w.id==='chakram'){c.beginPath();c.arc(f.reach,0,13,0,Math.PI*2);c.strokeStyle=w.color;c.lineWidth=7;c.stroke();c.strokeStyle='#fff0bd';c.lineWidth=2;c.stroke();}
 else if(w.id==='trident'){c.strokeStyle=w.color;c.lineWidth=4;c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach+9,0);c.lineTo(f.reach-11,12);c.moveTo(f.reach-11,-12);c.lineTo(f.reach-4,0);c.lineTo(f.reach-11,12);c.stroke();c.beginPath();c.moveTo(f.reach-11,-12);c.lineTo(f.reach-19,-18);c.moveTo(f.reach-11,12);c.lineTo(f.reach-19,18);c.stroke();}
+else if(w.id==='bow'){c.strokeStyle=w.color;c.lineWidth=7;c.beginPath();c.arc(f.reach*.55,0,24,-1.18,1.18);c.stroke();c.strokeStyle='#efe6f5';c.lineWidth=1.5;c.beginPath();c.moveTo(f.reach*.55+9,-22);c.lineTo(f.reach*.55+9,22);c.stroke();c.strokeStyle='#b9a18a';c.lineWidth=4;c.beginPath();c.moveTo(f.reach*.4,0);c.lineTo(f.reach*.55+7,0);c.stroke();}
 c.restore();}
 function drawBall(c,f){drawWeapon(c,f);c.save();c.translate(f.x,f.y);c.shadowColor=f.weapon.color;c.shadowBlur=22;c.fillStyle='#0008';c.beginPath();c.ellipse(3,8,f.r+5,f.r*.7,0,0,Math.PI*2);c.fill();c.shadowBlur=0;
 const grad=c.createRadialGradient(-11,-14,3,0,0,f.r+4);grad.addColorStop(0,'#ffffff');grad.addColorStop(.12,f.weapon.color);grad.addColorStop(.65,shade(f.weapon.color,-25));grad.addColorStop(1,'#17212c');c.fillStyle=grad;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.strokeStyle='#ffffffaa';c.lineWidth=2;c.stroke();c.strokeStyle='#ffffff45';c.lineWidth=1;c.beginPath();c.arc(0,0,f.r-7,.3,Math.PI*1.7);c.stroke();
@@ -327,7 +420,8 @@ ctx.fillStyle='#0d1721';ctx.fillRect(arena.x,arena.y,arena.w,arena.h);
 ctx.strokeStyle='#243646';ctx.lineWidth=1;for(let x=arena.x+20;x<arena.x+arena.w;x+=38){ctx.beginPath();ctx.moveTo(x,arena.y);ctx.lineTo(x,arena.y+arena.h);ctx.stroke();}for(let y=arena.y+20;y<arena.y+arena.h;y+=38){ctx.beginPath();ctx.moveTo(arena.x,y);ctx.lineTo(arena.x+arena.w,y);ctx.stroke();}
 ctx.strokeStyle='#345064';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(W/2,H/2,150,118,0,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='#203849';ctx.beginPath();ctx.ellipse(W/2,H/2,95,75,0,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#1a3545';ctx.globalAlpha=.25;ctx.beginPath();ctx.arc(W/2,H/2,48,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
 for(let i=0;i<4;i++){ctx.strokeStyle='rgba(104,163,190,.12)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(W/2,H/2,195+i*24,0,Math.PI*2);ctx.stroke();}
-if(sim){for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=9;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;ctx.shadowBlur=0;for(const f of sim.fighters)drawBall(ctx,f);for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='950 15px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.shadowColor='#000';ctx.shadowBlur=5;ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;ctx.shadowBlur=0;}
+ctx.strokeStyle='#76a1b9';ctx.globalAlpha=.5;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(arena.x+14,arena.y+arena.h-1);ctx.lineTo(arena.x+arena.w-14,arena.y+arena.h-1);ctx.stroke();ctx.globalAlpha=1;
+if(sim){for(const arrow of (sim.projectiles||[])){ctx.save();ctx.translate(arrow.x,arrow.y);ctx.rotate(Math.atan2(arrow.vy,arrow.vx));ctx.strokeStyle=arrow.color;ctx.lineWidth=4;ctx.shadowColor=arrow.color;ctx.shadowBlur=10;ctx.beginPath();ctx.moveTo(-15,0);ctx.lineTo(10,0);ctx.stroke();ctx.fillStyle='#f7eee2';ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(5,-4);ctx.lineTo(5,4);ctx.closePath();ctx.fill();ctx.restore();}for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=9;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;ctx.shadowBlur=0;for(const f of sim.fighters)drawBall(ctx,f);for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='950 15px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.shadowColor='#000';ctx.shadowBlur=5;ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;ctx.shadowBlur=0;}
 else{drawPreviewBall(ctx,leftWeapon,270,260,1.0);drawPreviewBall(ctx,rightWeapon,630,260,-1.0);}
 ctx.restore();ctx.strokeStyle='#496075';ctx.lineWidth=3;roundRect(ctx,arena.x,arena.y,arena.w,arena.h,arena.r);ctx.stroke();
 }
@@ -345,7 +439,7 @@ $('place-bet-btn').addEventListener('click',placeBet);
 $('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').addEventListener('click',()=>selectBet('right'));
 $('bet-amount').addEventListener('input',()=>selectBet(selectedBet));
 document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('click',()=>{$('bet-amount').value=b.dataset.betAmount;selectBet(selectedBet);}));
-$('upgrade-btn').addEventListener('click',upgrade);$('set-favorite-btn').addEventListener('click',setFavorite);
+$('stat-upgrades').addEventListener('click',event=>{const button=event.target.closest('[data-stat]');if(button&&!button.disabled)buyStat(button.dataset.stat);});$('set-favorite-btn').addEventListener('click',setFavorite);
 $('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',startPractice);$('armory-practice-btn').addEventListener('click',startPractice);
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
 function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
