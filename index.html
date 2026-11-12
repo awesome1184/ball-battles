@@ -212,7 +212,7 @@ const WEAPONS=[
  {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +1 damage, raises its maximum spin speed, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +1 · Max spin +0.25 / hit · Unparryable',hitDelay:.94},
  {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds one poison stack to the enemy. Every stack deals 1 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +1 DPS / hit',hitDelay:.68},
  {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 2.5%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +2.5% / hit',hitDelay:.46},
- {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A decorative whirlpool follows its weapon head. It does not pull balls. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Whirlpool effect',hitDelay:.64},
+ {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
  {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The ball itself damages opponents on direct contact. Every 4 team hits creates one additional ball, up to 16 balls total.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Body contact · +1 clone / 4 team hits',duplicator:true,hitDelay:.68}
@@ -614,7 +614,22 @@ function step(dt){
    }
   }
  }
- // Trident whirlpools are visual only; they exert no force on balls.
+ // The Trident whirlpool follows its weapon head and pulls every nearby living ball.
+ for(const vortex of fs){
+  if(vortex.hp<=0||vortex.weapon.id!=='trident')continue;
+  const tx=vortex.x+Math.cos(vortex.angle)*vortex.reach*vortex.weaponScale;
+  const ty=vortex.y+Math.sin(vortex.angle)*vortex.reach*vortex.weaponScale;
+  const radius=122;
+  for(const ball of fs){
+   if(ball===vortex||ball.hp<=0)continue;
+   const dx=tx-ball.x,dy=ty-ball.y,d=Math.hypot(dx,dy)||1;
+   if(d<radius){
+    const pull=(1-d/radius)*360;
+    ball.vx+=dx/d*pull*dt;
+    ball.vy+=dy/d*pull*dt;
+   }
+  }
+ }
  const all=sim.fighters;
  for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){
   const a=all[i],b=all[j];if(a.hp<=0||b.hp<=0)continue;
