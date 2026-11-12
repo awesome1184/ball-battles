@@ -199,7 +199,7 @@ const STAT_DEFS=[
 {id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly your weapon rotates around the ball.',display:lv=>'+'+(lv*9)+'% rotation speed',available:w=>true}
 ];
 function statLevels(id){return Object.assign({baseDamage:0,scaling:0,weaponSize:0,projectileRate:0,delay:0,spinSpeed:0},save.stats[id]||{});}
-const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.01;
+const STAT_CONTRIBUTION_COST=50,STAT_BASE_GAIN=.05;
 function statContributionCount(id,key){return Math.floor(Number((save.statCoins[id]||{})[key]||0)/STAT_CONTRIBUTION_COST);}
 function statContributionBonus(id,key){const n=statContributionCount(id,key);if(!n)return 0;const gamma=.5772156649015329;return STAT_BASE_GAIN*(Math.log(n)+gamma+1/(2*n)-1/(12*n*n));}
 function nextStatContributionGain(id,key){return STAT_BASE_GAIN/(statContributionCount(id,key)+1);}
