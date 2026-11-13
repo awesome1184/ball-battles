@@ -213,11 +213,11 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
     <div class="card stat-card"><span>BEST CHAMPION</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
   </div>
   <section class="card history-card matchup-card">
-    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">2,750 SIMULATIONS</span></div>
-    <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. Results use the current balance settings, no purchased stat upgrades, and equal left/right starting-side representation.</p>
+    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">PREVIOUS BALANCE SNAPSHOT</span></div>
+    <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. This archived matrix predates the new horizontal roaming movement and knockout-only rules, so it is not a measurement of the current build.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
-    <p class="matchup-foot">50 simulated fights per pairing · 25 from each starting side · Estimates, not live player statistics.</p>
+    <p class="matchup-foot">Archived pre-movement results: 50 simulated fights per pairing · 25 from each starting side. Re-run the matrix to measure the new movement tuning.</p>
   </section>
   <section class="card history-card"><div class="side-heading"><h3>MATCH HISTORY</h3><span class="muted-tag">LATEST FIRST</span></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
@@ -244,7 +244,7 @@ const WEAPONS=[
  {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
 ];
-const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,horizontalSpeedMin:150,horizontalSpeedRange:90,overtimeStart:40,overtimeDamageRate:6,maxDuration:50};
+const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,horizontalSpeedMin:210,horizontalSpeedRange:110,overtimeStart:40};
 const BALANCE={
  sword:{hp:1.03,damage:1.02},
  dagger:{hp:1.15,damage:1.12,reach:1.5,width:1.2,weaponScale:1.15,cooldown:.82,speedGrowth:.06},
@@ -496,9 +496,9 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(MATCH_RULES.horizontalSpeedMin+rng()*MATCH_RULES.horizontalSpeedRange),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),reach:w.reach*1.12*(balance.reach||1),width:w.width*1.12*(balance.width||1),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(MATCH_RULES.horizontalSpeedMin+rng()*MATCH_RULES.horizontalSpeedRange),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),reach:w.reach*1.12*(balance.reach||1),width:w.width*1.12*(balance.width||1),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,roamDirection:rng()<.5?-1:1,roamSpeed:250+rng()*95,roamTimer:.4+rng()*.9,roamWindowTimer:0,roamMinX:side==='left'?165:375,roamMaxX:side==='left'?165:375,roamSlowTimer:0};
 }
-function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*150,vy:-80-rng()*90,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:Math.max(BALANCE.duplicator.cloneDamageFloor,parent.damage*BALANCE.duplicator.cloneDamage),combatDamage:Math.max(BALANCE.duplicator.cloneDamageFloor,parent.combatDamage*BALANCE.duplicator.cloneDamage),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28});}
+function cloneFighter(parent,rng,index){return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx+(rng()-.5)*150,vy:-80-rng()*90,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:Math.max(BALANCE.duplicator.cloneDamageFloor,parent.damage*BALANCE.duplicator.cloneDamage),combatDamage:Math.max(BALANCE.duplicator.cloneDamageFloor,parent.combatDamage*BALANCE.duplicator.cloneDamage),reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28,roamDirection:rng()<.5?-1:1,roamSpeed:250+rng()*95,roamTimer:.35+rng()*.85,roamWindowTimer:0,roamMinX:parent.x,roamMaxX:parent.x,roamSlowTimer:0});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
 function nearestEnemy(f){const enemyTeam=sim.teams[f.side==='left'?'right':'left'];const main=enemyTeam.find(x=>x.hp>0&&x.mainBall&&x.weapon.id==='duplicator');if(main)return main;const enemies=enemyTeam.filter(x=>x.hp>0);let best=null,bd=Infinity;for(const e of enemies){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<bd){best=e;bd=d;}}return best;}
 function collapseDuplicatorSwarm(side){
@@ -520,6 +520,45 @@ function spawnDuplicates(side){
  const clone=cloneFighter(parent,sim.rng,team.length);team.push(clone);
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
+}
+function driveHorizontal(f,dt){
+ const center=arena.x+arena.w*.5;
+ if(!f.roamDirection)f.roamDirection=Math.sign(f.vx)||(f.side==='left'?1:-1);
+ f.roamTimer-=dt;
+ if(f.roamTimer<=0){
+  if(sim.rng()<.72)f.roamDirection=-f.roamDirection;
+  if(Math.abs(f.x-center)<arena.w*.12&&sim.rng()<.45)f.roamDirection=f.x<center?1:-1;
+  f.roamSpeed=250+sim.rng()*105;
+  f.roamTimer=.78+sim.rng()*1.3;
+ }
+ const leftEdge=arena.x+f.r*1.65,rightEdge=arena.x+arena.w-f.r*1.65;
+ if(f.x<leftEdge){f.roamDirection=1;f.roamSpeed=Math.max(f.roamSpeed||0,290);f.roamTimer=Math.min(f.roamTimer,.35);}
+ else if(f.x>rightEdge){f.roamDirection=-1;f.roamSpeed=Math.max(f.roamSpeed||0,290);f.roamTimer=Math.min(f.roamTimer,.35);}
+ const desired=f.roamDirection*(f.roamSpeed||285),acceleration=920;
+ f.vx+=clamp(desired-f.vx,-acceleration*dt,acceleration*dt);
+ f.vx=clamp(f.vx,-365,365);
+ if(!Number.isFinite(f.roamMinX))f.roamMinX=f.x;
+ if(!Number.isFinite(f.roamMaxX))f.roamMaxX=f.x;
+ f.roamMinX=Math.min(f.roamMinX,f.x);f.roamMaxX=Math.max(f.roamMaxX,f.x);
+ f.roamWindowTimer=(f.roamWindowTimer||0)+dt;
+ if(f.roamWindowTimer>=1.35){
+  if(f.roamMaxX-f.roamMinX<115){
+   const escapeDirection=f.x<leftEdge?1:f.x>rightEdge?-1:(f.x<center?1:-1);
+   f.roamDirection=escapeDirection;f.roamSpeed=315+sim.rng()*45;
+   f.roamTimer=.65+sim.rng()*.35;
+   f.vx=escapeDirection*Math.max(235,Math.min(350,Math.abs(f.vx)+185));
+  }
+  f.roamWindowTimer=0;f.roamMinX=f.x;f.roamMaxX=f.x;
+ }
+ if(Math.abs(f.vx)<115){
+  f.roamSlowTimer=(f.roamSlowTimer||0)+dt;
+  if(f.roamSlowTimer>.24){
+   let direction=f.x<center?1:-1;
+   if(f.x<leftEdge)direction=1;else if(f.x>rightEdge)direction=-1;else if(sim.rng()<.5)direction=-direction;
+   f.roamDirection=direction;f.vx=direction*(255+sim.rng()*45);
+   f.roamSpeed=275+sim.rng()*70;f.roamTimer=.65+sim.rng()*.45;f.roamSlowTimer=0;
+  }
+ }else f.roamSlowTimer=0;
 }
 function startFight(mode,forced,practiceId,opponentId){
  if(sim&&sim.active)return;if(raf)cancelAnimationFrame(raf);const seed=mode==='daily'?hashString('ball-battles-'+today):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
@@ -694,6 +733,7 @@ function step(dt){
    f.vx=f.lanceChargeDirection*300;
    f.vy+=gravity*.45*dt;
   }else{
+   driveHorizontal(f,dt);
    f.vy+=gravity*dt;
   }
   f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
@@ -769,28 +809,18 @@ function step(dt){
  }
  for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=gravity*.2*dt;p.vx*=.97;if(p.life<=0)sim.particles.splice(i,1);}
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
- if(sim.elapsed>=MATCH_RULES.overtimeStart){
-  if(!sim.overtimeAnnounced){
-   sim.overtimeAnnounced=true;
-   $('fight-state-chip').textContent='SUDDEN DEATH';
-   $('arena-status-text').textContent='SUDDEN DEATH · Arena pressure is rising.';
-   floatText(arena.x+arena.w/2,arena.y+24,'SUDDEN DEATH','#d94b50');
-   playTone(150,.18,'sawtooth');
-  }
-  const overtimeDps=(sim.elapsed-(MATCH_RULES.overtimeStart-1))*MATCH_RULES.overtimeDamageRate;
-  for(const side of ['left','right']){
-   const living=sim.teams[side].filter(f=>f.hp>0);
-   const share=overtimeDps*dt/Math.max(1,living.length);
-   for(const fighter of living)fighter.hp=Math.max(0,fighter.hp-share);
-   const main=sim.teams[side].find(f=>f.mainBall);if(main&&main.hp<=0)collapseDuplicatorSwarm(side);
-  }
+ if(sim.elapsed>=MATCH_RULES.overtimeStart&&!sim.overtimeAnnounced){
+  sim.overtimeAnnounced=true;
+  $('fight-state-chip').textContent='KNOCKOUT ONLY';
+  $('arena-status-text').textContent='OVERTIME · No clock-based winner. A knockout is required.';
+  floatText(arena.x+arena.w/2,arena.y+24,'KNOCKOUT ONLY','#d94b50');
+  playTone(150,.18,'sawtooth');
  }
  updateBars();
  const leftAlive=sim.teams.left.filter(f=>f.hp>0),rightAlive=sim.teams.right.filter(f=>f.hp>0);
- if(!leftAlive.length||!rightAlive.length||sim.elapsed>=MATCH_RULES.maxDuration){
-  const leftHP=leftAlive.reduce((n,f)=>n+f.hp,0),rightHP=rightAlive.reduce((n,f)=>n+f.hp,0);
-  const team=leftHP>=rightHP?sim.teams.left:sim.teams.right;
-  finishFight(team.slice().sort((a,b)=>b.hp-a.hp)[0]);
+ if(!leftAlive.length||!rightAlive.length){
+  const survivors=leftAlive.length?leftAlive:rightAlive;
+  if(survivors.length)finishFight(survivors.slice().sort((a,b)=>b.hp-a.hp)[0]);
  }
 }
 function finishFight(winner){
