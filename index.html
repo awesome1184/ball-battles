@@ -422,7 +422,7 @@ function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
 function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
 {id:'baseDamage',name:'Base damage',desc:'Raises damage dealt by every successful hit.',baseGain:.02,available:w=>true},
-{id:'scaling',name:'Scaling',desc:'Increases the strength of each weapon’s unique per-hit growth.',baseGain:.01,available:w=>true},
+{id:'scaling',name:'Scaling',desc:'Increases each weapon’s fixed per-hit bonus. Damage grows by addition, never by a multiplier.',baseGain:.01,available:w=>true},
 {id:'weaponSize',name:'Weapon size',desc:'Increases weapon reach and hitbox size.',baseGain:.02,available:w=>w.id!=='duplicator'},
 {id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between ranged attacks.',baseGain:.01,available:w=>!!w.projectile},
 {id:'delay',name:'Attack speed',desc:'Reduces recovery time between attacks.',baseGain:.01,available:w=>true},
