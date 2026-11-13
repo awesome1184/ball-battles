@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#11151b">
+<meta name="theme-color" content="#2b3a67">
 <meta name="description" content="Ball Battles — daily weapon duels, predictions, and champion training.">
 <title>Ball Battles</title>
 <style>
@@ -94,73 +94,190 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 @media(max-width:780px){.app{padding:17px 14px 46px}.layout,.armory-layout{grid-template-columns:1fr}.side-col{grid-template-columns:repeat(2,minmax(0,1fr))}.side-col .side-card:last-child{grid-column:1/-1}.weapon-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:540px){.arena-canvas{height:500px}.topbar{align-items:flex-start}.brand{min-width:0}.brand-name{font-size:16px}.brand-sub{font-size:8px}.top-actions{gap:6px}.wallet{padding:8px 10px}.wallet small{display:none}.top-actions .icon-btn{padding:9px}.tabs{margin-bottom:17px}.tab{padding-left:11px;padding-right:11px;font-size:10px}.match-head{align-items:flex-start}.date-chip{font-size:9px}.arena-card{padding:9px}.arena-canvas{height:330px}.arena-bottom{align-items:flex-start;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}.bet-card{padding:14px}.bet-controls{flex-wrap:wrap}.bet-controls .primary-btn{margin-left:0;flex:1}.side-col{grid-template-columns:1fr}.side-col .side-card:last-child{grid-column:auto}.weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.weapon-card{min-height:130px}.history-row{grid-template-columns:1fr 80px 55px}.footer{font-size:9px}}
 </style>
+
+<style id="handmade-ui">
+:root{color-scheme:light;--backdrop:#2b3a67;--paper:#fbf8ef;--paper-dim:#ebe5d3;--ink:#17172e;--muted:#5d5f7a;--red:#ee5265;--green:#35cd5d;--sun:#ffd23f;--border:3px solid var(--ink);--shadow:4px 4px 0 var(--ink);--r:6px}
+*{box-sizing:border-box}body{min-height:100vh;background:var(--backdrop);color:var(--paper);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.48}:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.app{max-width:1100px;margin:0 auto;padding:20px 20px 48px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-mark{width:42px;height:42px;display:grid;place-items:center;background:var(--sun);color:var(--ink);border:var(--border);border-radius:var(--r);box-shadow:3px 3px 0 var(--ink);font-size:22px;font-weight:900;transform:none}
+.brand-name{font-size:28px;line-height:1.1;font-weight:850;letter-spacing:0;color:var(--paper)}.brand-sub{margin-top:3px;color:#e2e6f1;font-size:12px;letter-spacing:0}
+.top-actions{display:flex;align-items:center;gap:10px}.wallet{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--sun);color:var(--ink);border:var(--border);border-radius:var(--r);box-shadow:3px 3px 0 var(--ink);font-weight:800}
+.wallet .coin{color:var(--ink);font-size:18px}.wallet small{display:block;color:var(--ink);font-size:11px;font-weight:650;letter-spacing:0}.wallet strong,.num{font-variant-numeric:tabular-nums}
+.icon-btn,.soft-btn,.small-btn{border:var(--border);border-radius:var(--r);box-shadow:3px 3px 0 var(--ink);background:var(--paper);color:var(--ink);padding:9px 12px;font-weight:700}
+.icon-btn:hover,.soft-btn:hover,.small-btn:hover{background:var(--paper-dim)}.icon-btn:active,.soft-btn:active,.small-btn:active,.primary-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 24px;border-bottom:2px solid #ffffff55;padding-bottom:7px}.tab{padding:9px 15px;border:3px solid transparent;border-radius:var(--r);background:transparent;color:var(--paper);font-size:14px;font-weight:700;letter-spacing:0;text-transform:none}
+.tab:hover{border-color:#ffffff80}.tab.active{background:var(--paper);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.view{display:none}.view.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:26px;align-items:start}.main-col,.side-col{display:grid;gap:16px;min-width:0}
+.match-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}.eyebrow{display:none}
+h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3vw,34px);font-weight:850;line-height:1.12;letter-spacing:-.025em;margin:0;color:var(--paper)}h2{font-size:20px;font-weight:800;line-height:1.15}h3{font-size:17px;font-weight:800;line-height:1.2}
+.subline{margin-top:6px;color:#e0e5ef;font-size:13px;line-height:1.45}.date-chip{display:none}
+.card{background:var(--paper);color:var(--ink);border:var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}.card h1,.card h2,.card h3{color:var(--ink)}
+.section-desc{font-size:13px;line-height:1.5;color:var(--muted)}.section-title{font-size:17px;font-weight:800;letter-spacing:0}.muted-tag{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0;text-transform:none}
+.arena-card{padding:10px}.arena-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.versus{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:850;letter-spacing:0}
+.versus .red{color:#b32636}.versus .green{color:#16893a}.versus .vs{display:inline-block;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;background:var(--sun);color:var(--ink);font-size:12px;font-weight:900;transform:rotate(-4deg)}
+.status-chip{padding:4px 8px;border:2px solid var(--ink);border-radius:4px;background:var(--paper-dim);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:0;white-space:nowrap}
+.arena-canvas-wrap{position:relative;min-height:0;overflow:hidden;background:var(--paper);border:3px solid var(--ink);border-radius:4px}.arena-canvas-wrap:after{display:none}.arena-canvas{display:block;width:100%;height:auto;aspect-ratio:540/740;background:var(--paper)}.fighter-labels{display:none}
+.arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:12px;line-height:1.4}
+.pulse{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#7b8190;border:1px solid var(--ink)}.pulse.live{background:var(--green);box-shadow:none;animation:none}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.primary-btn{border:var(--border);border-radius:var(--r);background:var(--sun);color:var(--ink);font-weight:800;letter-spacing:0;text-transform:none;padding:10px 14px;box-shadow:3px 3px 0 var(--ink);transition:transform .06s,box-shadow .06s}
+.primary-btn:hover:not(:disabled){background:#ffe06a;filter:none;transform:none}.primary-btn:active:not(:disabled){transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}.small-btn{font-size:12px}.speed-btn{min-width:44px}
+.bet-card{padding:0;background:var(--paper);color:var(--ink);overflow:visible}.slip-pick{padding:16px}.slip-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.slip-heading h2{margin:0;color:var(--ink)}.slip-state{color:var(--muted);font-size:11px}.bet-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
+.bet-side{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:2px solid var(--ink);border-radius:4px;background:var(--paper-dim);color:var(--ink);text-align:left;box-shadow:none}
+.bet-side.left{background:#f6c2c8}.bet-side.right{background:#c4ebcd}.bet-side.selected{border-width:3px;box-shadow:inset 0 0 0 2px var(--ink)}.bet-side strong{display:block;font-size:14px;font-weight:800}
+.bet-side small{display:block;margin-top:3px;font-size:11px;color:#414256}.bet-side .pct{font-size:16px;font-weight:850;color:var(--ink);font-variant-numeric:tabular-nums}
+.slip-tear{position:relative;border-top:3px dashed var(--ink)}.slip-tear:before,.slip-tear:after{content:"";position:absolute;top:-12px;width:20px;height:20px;border:3px solid var(--ink);border-radius:50%;background:var(--backdrop)}
+.slip-tear:before{left:-13px}.slip-tear:after{right:-13px}.slip-wager{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;padding:16px}
+.wager-field{display:grid;gap:5px}.wager-field label{font-size:12px;font-weight:750;color:var(--ink)}.wager-field input{width:100%;min-width:0;padding:9px 10px;border:2px solid var(--ink);border-radius:4px;background:#fff;color:var(--ink);font:inherit;font-variant-numeric:tabular-nums}
+.quick-wagers{display:flex;gap:5px}.quick-wagers .soft-btn{padding:8px 9px;font-size:12px;box-shadow:2px 2px 0 var(--ink)}.place-bet-button{grid-column:1/-1;width:100%}
+.bet-note{padding:0 16px 14px;color:var(--muted);font-size:11px;line-height:1.4}
+.side-col{gap:0}.side-col>.side-card{padding:16px 0;background:transparent;color:var(--paper);border:0;border-top:2px solid #ffffff55;border-radius:0;box-shadow:none;overflow:visible}
+.side-col .side-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.side-col .side-heading h3{margin:0;color:var(--paper);font-size:18px;letter-spacing:0}.side-col .muted-tag{color:#dce3ef}
+.reward-amount{font-size:27px;color:var(--sun);font-weight:850;letter-spacing:0}.reward-copy{font-size:13px;color:#e0e5ef;line-height:1.45;margin-top:3px}.claim-btn{width:auto;margin-top:12px;padding:9px 13px}
+.claim-btn.done{background:var(--paper-dim);color:var(--ink);border:var(--border);box-shadow:3px 3px 0 var(--ink)}.champ-row{display:flex;align-items:center;gap:12px}
+.mini-orb{display:block;width:66px;height:66px;flex:0 0 66px;background:transparent;border:0;border-radius:0;box-shadow:none;object-fit:contain}
+.champ-name{font-size:17px;font-weight:800;color:var(--paper)}.champ-sub{font-size:12px;color:#dce3ef;margin-top:3px}.power-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:#e0e5ef}
+.power-row strong{color:var(--sun);font-size:15px}.power-track{height:9px;border:2px solid var(--ink);border-radius:3px;background:var(--paper);overflow:hidden;margin-top:6px}.power-track span{height:100%;display:block;background:var(--sun);border-radius:0}
+.side-actions{display:flex;gap:8px;margin-top:12px}.side-actions button{flex:1;font-size:12px;padding:9px 7px}
+.odds-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff55;font-size:13px}.odds-row:last-of-type{border-bottom:0}.odds-row span{color:#e0e5ef}.odds-row strong{color:var(--paper);font-variant-numeric:tabular-nums}
+.payout-card{padding:14px 16px;background:var(--paper);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}.payout-card .muted-tag,.payout-card .section-desc{color:var(--muted)}
+.payout-top,.payout-main,.payout-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}.payout-main{margin-top:7px;align-items:flex-end}
+.payout-title{font-size:15px;font-weight:800;letter-spacing:0;color:var(--ink)}.payout-copy{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.4}
+.payout-amount{font-size:26px;font-weight:850;color:var(--ink);letter-spacing:0;white-space:nowrap;text-shadow:none}.payout-card.win{background:#fff0b0;border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}.payout-card.loss{background:var(--paper-dim);border-color:var(--ink)}
+.payout-actions{justify-content:flex-start;margin-top:11px;flex-wrap:wrap}.payout-card.reveal{animation:payoutEnter .35s ease-out both}.payout-card:before{display:none}@keyframes payoutEnter{from{opacity:.65;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+.simulation-launch{margin-bottom:16px}.simulation-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.simulation-actions button{flex:1;min-width:180px}
+.side-card.simulation-launch,.history-card{padding:16px;background:var(--paper);color:var(--ink);border:var(--border);border-radius:var(--r);box-shadow:var(--shadow)}
+.side-card.simulation-launch .side-heading h3,.history-card .side-heading h3{color:var(--ink)}.side-card.simulation-launch .muted-tag,.history-card .muted-tag{color:var(--muted)}
+.view-head{margin-bottom:18px}.view-head h1{margin-top:0}.armory-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.weapon-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.weapon-card{display:grid;gap:7px;justify-items:start;align-content:start;min-height:150px;padding:12px;border:var(--border);border-radius:var(--r);background:var(--paper);color:var(--ink);text-align:left;font-weight:700;box-shadow:3px 3px 0 var(--ink);position:relative;overflow:hidden}
+.weapon-card:hover{border-color:var(--ink);background:#fffdf6;transform:none}.weapon-card.selected{background:#fff0b0;border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}.weapon-glyph{display:block;width:78px;height:78px;object-fit:contain;margin:0 auto 2px;justify-self:center}
+.weapon-card strong{display:block;font-size:14px;color:var(--ink)}.weapon-card small{display:block;color:var(--muted);font-size:11px;line-height:1.35;margin-top:2px}
+.weapon-card .fav-mark{position:absolute;top:8px;right:8px;color:var(--ink);background:var(--sun);padding:3px 5px;border:1px solid var(--ink);font-size:10px;font-weight:800;letter-spacing:0}
+.training-card{padding:18px}.training-hero{display:flex;align-items:center;gap:13px;margin:8px 0 14px}.training-hero h2{font-size:21px}.training-hero p{font-size:12px;color:var(--muted);margin:4px 0 0}
+.stat-line{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:11px;gap:10px}.stat-line strong{color:var(--ink);font-variant-numeric:tabular-nums}.stat-section-label{font-size:14px;color:var(--ink);font-weight:800;letter-spacing:0;margin-top:18px}
+.stats-upgrades{display:grid;gap:8px;margin-top:12px}.stat-upgrade{border:2px solid var(--ink);background:#fff;border-radius:4px;padding:10px}.stat-upgrade.na{opacity:.55}
+.stat-upgrade-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.stat-upgrade-name{font-weight:800;font-size:13px;letter-spacing:0;color:var(--ink)}.stat-upgrade-level{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:0;white-space:nowrap}
+.stat-progress-track{height:8px;background:var(--paper-dim);border:1px solid var(--ink);border-radius:2px;overflow:hidden;margin-top:8px}.stat-progress-track span{display:block;height:100%;background:var(--green);border-radius:0;transition:width .2s ease}
+.stat-upgrade-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-top:4px}.stat-upgrade-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;flex-wrap:wrap}
+.stat-upgrade-value{font-size:10px;color:var(--muted);font-weight:650}.stat-upgrade-btn{border:2px solid var(--ink);background:var(--sun);color:var(--ink);border-radius:4px;padding:7px 9px;font-size:11px;font-weight:800;letter-spacing:0}
+.stat-upgrade-btn:hover{background:#ffe06a}.tip{background:var(--paper-dim);border:2px solid var(--ink);padding:10px;border-radius:4px;font-size:11px;color:var(--muted);line-height:1.45;margin-top:13px}
+.physics-note{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;margin-top:11px}.physics-note strong{color:var(--ink)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat-card{padding:16px}.stat-card span{color:var(--muted);font-size:12px;letter-spacing:0;font-weight:650}.stat-card strong{display:block;color:var(--ink);font-size:27px;margin-top:6px;font-variant-numeric:tabular-nums}
+.history-card{padding:17px}.matchup-card{margin-top:16px}.matchup-desc,.matchup-foot{font-size:12px;color:var(--muted);line-height:1.5}.matchup-summary{font-size:13px;font-weight:750;color:var(--ink);margin:12px 0}
+.matchup-scroll{overflow-x:auto;border:2px solid var(--ink);border-radius:4px}.matchup-table{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;font-size:11px;text-align:center;color:var(--ink)}
+.matchup-table th,.matchup-table td{padding:9px 7px;border-bottom:1px solid #c8c0ad;white-space:nowrap}.matchup-table thead th{background:var(--paper-dim);color:var(--ink);font-size:11px;letter-spacing:0;position:sticky;top:0}
+.matchup-table th:first-child{position:sticky;left:0;background:var(--paper);text-align:left;min-width:102px;z-index:2}.matchup-table thead th:first-child{z-index:3}.matchup-table tbody tr:last-child th,.matchup-table tbody tr:last-child td{border-bottom:0}
+.matchup-table td{font-variant-numeric:tabular-nums;font-weight:750}.matchup-table .rate-high{background:#d1edda;color:#14552c}.matchup-table .rate-low{background:#f6d1d4;color:#76202c}
+.matchup-table .rate-mid{color:var(--ink)}.matchup-table .diagonal{color:#817d72;font-weight:500}.matchup-table .matchup-average{border-left:2px solid var(--ink);color:var(--ink);font-weight:850}
+.history-row{display:grid;grid-template-columns:1fr 90px 90px;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #d4cdbd;font-size:12px}.history-row:last-child{border:0}.history-row span{color:var(--muted)}
+.result-win{color:#176237;font-weight:850}.result-loss{color:#a42f3b;font-weight:850}.empty-state{padding:20px 8px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,16px);opacity:0;pointer-events:none;background:var(--sun);color:var(--ink);border:var(--border);border-radius:var(--r);padding:10px 15px;font-size:13px;font-weight:800;box-shadow:3px 3px 0 var(--ink);transition:opacity .2s,transform .2s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
+.dev-toggle{position:fixed;right:14px;bottom:14px;border:2px solid var(--ink);color:var(--ink);background:var(--paper);border-radius:4px;padding:7px 10px;font-size:11px;font-weight:750;letter-spacing:0;box-shadow:2px 2px 0 var(--ink);opacity:.86}
+.dev-panel{display:none;position:fixed;z-index:30;right:14px;bottom:54px;width:min(310px,calc(100vw - 28px));background:var(--paper);color:var(--ink);border:var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}.dev-panel.open{display:block}
+.dev-panel h3{font-size:17px;letter-spacing:0;margin-bottom:8px}.dev-panel p{font-size:12px;color:var(--muted);line-height:1.45;margin-bottom:12px}
+.dev-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.dev-actions button{padding:9px 7px;border:2px solid var(--ink);background:var(--paper-dim);border-radius:4px;color:var(--ink);font-size:11px;font-weight:750}.dev-actions button.danger{background:#f6d1d4;color:#76202c}
+.footer{margin-top:28px;border-top:1px solid #ffffff55;padding-top:12px;color:#dce3ef;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 330px;gap:20px}.armory-layout{grid-template-columns:minmax(0,1fr) 320px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.app{padding:16px 14px 42px}.layout,.armory-layout{grid-template-columns:1fr}.main-col,.side-col{width:100%;max-width:560px;margin:0 auto}.side-col{gap:0}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.app{padding:13px 11px 38px}.brand-mark{width:36px;height:36px;font-size:19px}.brand-name{font-size:22px}.brand-sub{font-size:11px}.top-actions{gap:6px}.wallet{padding:7px 8px}.wallet small{display:none}.icon-btn{padding:8px}.tabs{gap:4px;margin-bottom:18px}.tab{padding:8px 10px;font-size:12px}.match-head{align-items:flex-start}.arena-card{padding:8px}.arena-top{align-items:flex-start}.arena-status{width:100%}.arena-bottom{align-items:stretch;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}
+.slip-wager{grid-template-columns:1fr auto;padding:13px}.quick-wagers{gap:4px}.quick-wagers .soft-btn{padding:7px 8px}.slip-pick{padding:13px}.side-col>.side-card{padding:13px 0}
+.weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.weapon-card{min-height:138px;padding:10px}.weapon-glyph{width:70px;height:70px}.history-row{grid-template-columns:1fr 65px 65px;gap:8px}.payout-main{align-items:flex-start}.payout-amount{font-size:22px}.footer{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
 </head>
 <body>
 <div class="app">
 <header class="topbar">
-  <div class="brand"><div class="brand-mark">B</div><div><div class="brand-name">BALL BATTLES</div><div class="brand-sub">PICK A SIDE. BACK YOUR BALL.</div></div></div>
+  <div class="brand"><div class="brand-mark">B</div><div><div class="brand-name">Ball Battles</div><div class="brand-sub">Pick a side. Back your ball.</div></div></div>
   <div class="top-actions">
-    <div class="wallet"><span class="coin">◈</span><div><small>YOUR COINS</small><strong id="coin-count">350</strong></div></div>
-    <button class="icon-btn" id="sound-toggle" aria-label="Toggle sound">SFX ON</button>
+    <div class="wallet"><span class="coin">◈</span><div><small>Your coins</small><strong id="coin-count">350</strong></div></div>
+    <button class="icon-btn" id="sound-toggle" aria-label="Toggle sound">Sound on</button>
   </div>
 </header>
 <nav class="tabs">
-  <button class="tab active" data-view="arena">DAILY FIGHT</button>
-  <button class="tab" data-view="armory">UPGRADE</button>
-  <button class="tab" data-view="simulations">SIMULATIONS</button>
-  <button class="tab" data-view="records">RECORDS</button>
+  <button class="tab active" data-view="arena">Today’s fight</button>
+  <button class="tab" data-view="armory">Upgrade</button>
+  <button class="tab" data-view="simulations">Practice</button>
+  <button class="tab" data-view="records">Records</button>
 </nav>
 
 <section class="view active" id="arena-view">
   <div class="layout">
     <div class="main-col">
       <div class="match-head">
-        <div><div class="eyebrow">DAILY WEAPON SHOWDOWN</div><h1 id="match-title">Today's Main Event</h1><p class="subline" id="match-subtitle">One arena. Two weapons. One winner.</p></div>
-        <div class="date-chip" id="date-chip">NOV 12 · DAILY</div>
+        <div><h1 id="match-title">Today's Main Event</h1><p class="subline" id="match-subtitle">One arena. Two weapons. One winner.</p></div>
+        <div class="date-chip" id="date-chip">Today</div>
       </div>
       <section class="card arena-card">
-        <div class="arena-top"><div class="versus"><span class="red" id="left-name-top">SWORD</span><span class="vs">VS</span><span class="blue" id="right-name-top">DAGGER</span></div><span class="status-chip" id="fight-state-chip">MATCH READY</span></div>
+        <div class="arena-top"><div class="versus"><span class="red" id="left-name-top">Sword</span><span class="vs">vs</span><span class="green" id="right-name-top">Dagger</span></div><span class="status-chip" id="fight-state-chip">Ready</span></div>
         <div class="arena-canvas-wrap">
           <div class="fighter-labels">
-            <div class="fighter-label"><div class="fighter-name" id="left-label-name">RED CORNER</div><div class="fighter-weapon" id="left-label-weapon">Sword</div><div class="bar"><div class="bar-fill" id="left-hp-bar"></div></div></div>
-            <div class="fighter-label right"><div class="fighter-name" id="right-label-name">BLUE CORNER</div><div class="fighter-weapon" id="right-label-weapon">Dagger</div><div class="bar"><div class="bar-fill" id="right-hp-bar"></div></div></div>
+            <div class="fighter-label"><div class="fighter-name" id="left-label-name">Red corner</div><div class="fighter-weapon" id="left-label-weapon">Sword</div><div class="bar"><div class="bar-fill" id="left-hp-bar"></div></div></div>
+            <div class="fighter-label right"><div class="fighter-name" id="right-label-name">Green corner</div><div class="fighter-weapon" id="right-label-weapon">Dagger</div><div class="bar"><div class="bar-fill" id="right-hp-bar"></div></div></div>
           </div>
           <canvas id="arena-canvas" class="arena-canvas" aria-label="Animated weapon ball battle arena"></canvas>
         </div>
         <div class="arena-bottom">
           <div class="arena-status"><span class="pulse" id="live-pulse"></span><span id="arena-status-text">The contenders are entering the arena.</span></div>
-          <div class="controls"><button class="small-btn speed-btn" id="speed-btn">1×</button><button class="small-btn" id="sound-hit-btn">SOUND: ON</button><button class="primary-btn" id="fight-btn">START DAILY FIGHT</button></div>
+          <div class="controls"><button class="small-btn speed-btn" id="speed-btn">1×</button><button class="small-btn" id="sound-hit-btn">Sound on</button><button class="primary-btn" id="fight-btn">Start fight</button></div>
         </div>
       </section>
       <section class="card payout-card" id="payout-card" aria-live="polite">
-        <div class="payout-top"><div class="section-title">YESTERDAY'S BET PAYOUT</div><span class="muted-tag" id="payout-day">NO PREVIOUS BET</span></div>
+        <div class="payout-top"><div class="section-title">Yesterday’s bet payout</div><span class="muted-tag" id="payout-day">No previous bet</span></div>
         <div class="payout-main"><div><div class="payout-title" id="payout-title">Your last prediction will appear here.</div><div class="section-desc" id="payout-copy">Watch the daily fight and make a prediction to earn a payout tomorrow.</div></div><strong class="payout-amount" id="payout-amount">—</strong></div>
         <div class="payout-actions"><button class="soft-btn" id="upgrade-from-payout">UPGRADE A BALL</button><button class="soft-btn" id="sim-from-payout">VIEW SIMULATIONS</button></div>
       </section>
-      <section class="card bet-card" id="bet-card">
-        <div class="section-top"><div><div class="section-title">PLACE YOUR PREDICTION</div><div class="section-desc" id="bet-desc">Back the weapon you think will take today's win.</div></div><span class="muted-tag" id="bet-lock-label">CLOSES AT FIGHT START</span></div>
-        <div class="bet-grid">
-          <button class="bet-side selected" id="bet-left"><span><strong id="bet-left-name">Sword</strong><small id="bet-left-caption">Red corner · 1.45× return</small></span><span class="pct" id="bet-left-share">58%</span></button>
-          <button class="bet-side" id="bet-right"><span><strong id="bet-right-name">Dagger</strong><small id="bet-right-caption">Blue corner · 1.82× return</small></span><span class="pct" id="bet-right-share">42%</span></button>
-        </div>
-        <div class="bet-controls"><label for="bet-amount" class="muted-tag">WAGER</label><input type="number" id="bet-amount" min="10" max="500" step="10" value="50"><button class="soft-btn" data-bet-amount="25">25</button><button class="soft-btn" data-bet-amount="50">50</button><button class="soft-btn" data-bet-amount="100">100</button><button class="primary-btn" id="place-bet-btn">PLACE BET · 50</button></div>
-        <div class="bet-note" id="bet-note">Game coins only. Payout includes your original wager. One prediction per daily match.</div>
-      </section>
+
     </div>
     <aside class="side-col">
-      <section class="card side-card">
-        <div class="side-heading"><h3>DAILY DROP</h3><span class="muted-tag">EVERY 24H</span></div>
-        <div class="reward-row"><div><div class="reward-amount">+100 ◈</div><div class="reward-copy">Claim your daily coins and put them to work.</div></div><div style="font-size:31px;color:#c38d48">✦</div></div>
-        <button class="primary-btn claim-btn" id="claim-btn">CLAIM DAILY COINS</button>
+      <section class="card bet-card" id="bet-card">
+        <div class="slip-pick">
+          <div class="slip-heading">
+            <h2>Back a side</h2>
+            <span class="slip-state" id="bet-lock-label">Closes when the fight starts</span>
+          </div>
+          <p class="section-desc" id="bet-desc">Choose the ball you think will win today’s fight.</p>
+          <div class="bet-grid">
+            <button class="bet-side left selected" id="bet-left">
+              <span><strong id="bet-left-name">Sword</strong><small id="bet-left-caption">Red corner, pays 1.45×</small></span>
+              <span class="pct" id="bet-left-share">58%</span>
+            </button>
+            <button class="bet-side right" id="bet-right">
+              <span><strong id="bet-right-name">Dagger</strong><small id="bet-right-caption">Green corner, pays 1.82×</small></span>
+              <span class="pct" id="bet-right-share">42%</span>
+            </button>
+          </div>
+        </div>
+        <div class="slip-tear" aria-hidden="true"></div>
+        <div class="slip-wager">
+          <div class="wager-field">
+            <label for="bet-amount">Wager</label>
+            <input type="number" id="bet-amount" min="10" max="500" step="10" value="50">
+          </div>
+          <div class="quick-wagers">
+            <button class="soft-btn" data-bet-amount="25">25</button>
+            <button class="soft-btn" data-bet-amount="50">50</button>
+            <button class="soft-btn" data-bet-amount="100">100</button>
+          </div>
+          <button class="primary-btn place-bet-button" id="place-bet-btn">Place bet · 50</button>
+        </div>
+        <p class="bet-note" id="bet-note">Game coins only. Your wager is returned with winnings. One prediction per daily match.</p>
       </section>
       <section class="card side-card">
-        <div class="side-heading"><h3>YOUR CHAMPION</h3><span class="muted-tag">PERSONAL</span></div>
-        <div class="champ-row"><div class="mini-orb" id="champ-orb">⚔</div><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 · Favorite weapon</div></div></div>
-        <div class="power-row"><span>CHAMPION POWER</span><strong id="champ-power">100</strong></div><div class="power-track"><span id="champ-power-bar" style="width:12%"></span></div>
-        <div class="side-actions"><button class="small-btn" id="go-armory-btn">TRAIN CHAMPION</button><button class="small-btn" id="practice-btn">SIMULATE MATCH</button></div>
+        <div class="side-heading"><h3>Daily coins</h3><span class="muted-tag">Every day</span></div>
+        <div class="reward-row"><div><div class="reward-amount">+100 ◈</div><div class="reward-copy">A few coins to keep your next upgrade moving.</div></div><div style="font-size:31px;color:#c38d48">✦</div></div>
+        <button class="primary-btn claim-btn" id="claim-btn">Claim coins</button>
       </section>
       <section class="card side-card">
-        <div class="side-heading"><h3>COMMUNITY ODDS</h3><span class="muted-tag">PREDICTIONS</span></div>
+        <div class="side-heading"><h3>Your champion</h3></div>
+        <div class="champ-row"><canvas class="mini-orb" id="champ-orb" width="180" height="180" role="img" aria-label="Champion weapon"></canvas><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 · Favorite weapon</div></div></div>
+        <div class="power-row"><span>Champion power</span><strong id="champ-power">100</strong></div><div class="power-track"><span id="champ-power-bar" style="width:12%"></span></div>
+        <div class="side-actions"><button class="small-btn" id="go-armory-btn">Upgrade</button><button class="small-btn" id="practice-btn">Practice fight</button></div>
+      </section>
+      <section class="card side-card">
+        <div class="side-heading"><h3>Community odds</h3></div>
         <div class="odds-row"><span id="odds-left-name">Sword support</span><strong id="odds-left-value">58%</strong></div>
         <div class="odds-row"><span id="odds-right-name">Dagger support</span><strong id="odds-right-value">42%</strong></div>
         <div class="odds-row"><span>Potential underdog return</span><strong id="underdog-value">1.82×</strong></div>
@@ -171,22 +288,22 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 </section>
 
 <section class="view" id="armory-view">
-  <div class="view-head"><div class="eyebrow">BUILD YOUR MAIN</div><h1>Weapon Lab</h1><p class="subline">Choose the ball you want to strengthen. Simulations will find a random opponent.</p></div>
+  <div class="view-head"><h1>Upgrade a weapon</h1><p class="subline">Choose a ball, add coins to its stats, and see what changes.</p></div>
   <div class="armory-layout">
     <div class="weapon-grid" id="weapon-grid"></div>
     <section class="card training-card">
-      <div class="eyebrow">CHAMPION TRAINING</div>
-      <div class="training-hero"><div class="mini-orb" id="training-orb">⚔</div><div><h2 id="training-name">Sword</h2><p id="training-level">Level 1 champion</p></div></div>
+      
+      <div class="training-hero"><canvas class="mini-orb" id="training-orb" width="180" height="180" role="img" aria-label="Selected weapon"></canvas><div><h2 id="training-name">Sword</h2><p id="training-level">Level 1 champion</p></div></div>
       <div class="section-desc" id="training-desc">A balanced weapon with reliable combos.</div>
       <div class="stat-line"><span>Current base damage</span><strong id="training-damage">10</strong></div>
       <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
       <div class="stat-line"><span id="training-reach-label">Weapon reach</span><strong id="training-reach">68</strong></div>
-      <div class="stat-section-label">WEAPON STAT LEVELS</div>
+      <div class="stat-section-label">Weapon stats</div>
       <p class="section-desc">Each weapon has a separate level and progress bar for every stat. Add 50 coins per contribution; each next level requires quadratically more pooled coins.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
       <div class="tip">Simulation opponents are chosen randomly. Select the weapon you want to test, then run a simulation.</div>
-      <button class="soft-btn wide" id="set-favorite-btn">SET AS FAVORITE</button>
-      <button class="soft-btn wide" id="armory-practice-btn">SIMULATE THIS WEAPON</button>
+      <button class="soft-btn wide" id="set-favorite-btn">Make champion</button>
+      <button class="soft-btn wide" id="armory-practice-btn">Practice with this weapon</button>
       <div class="physics-note">◉ <span><strong>Gravity enabled.</strong> Fighters rebound off the floor, walls, and each other with full velocity retention.</span></div>
       <div class="tip">Each weapon and stat has its own pool. This prototype stores progress in this browser; true global progress shared by all players requires the Devvit backend.</div>
     </section>
@@ -194,55 +311,55 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 </section>
 
 <section class="view" id="simulations-view">
-  <div class="view-head"><div class="eyebrow">UNPREDICTABLE MATCHUPS</div><h1>Simulations</h1><p class="subline">Test your champion against a randomly selected weapon. You choose your ball, never its opponent.</p></div>
+  <div class="view-head"><h1>Practice fights</h1><p class="subline">Your champion faces a randomly chosen opponent. These fights don’t affect the daily prediction.</p></div>
   <section class="card side-card simulation-launch">
-    <div class="side-heading"><h3>YOUR SIMULATION CHAMPION</h3><span class="muted-tag">TRAINED STATS</span></div>
-    <div class="champ-row"><div class="mini-orb" id="simulation-orb">⚔</div><div><div class="champ-name" id="simulation-champion">Sword</div><div class="champ-sub">Your current favorite weapon</div></div></div>
+    <div class="side-heading"><h3>Your champion</h3></div>
+    <div class="champ-row"><canvas class="mini-orb" id="simulation-orb" width="180" height="180" role="img" aria-label="Simulation champion"></canvas><div><div class="champ-name" id="simulation-champion">Sword</div><div class="champ-sub">Your current favorite weapon</div></div></div>
     <p class="section-desc">Simulations use your champion's upgrades and the normal combat physics. The opponent is selected randomly every time. Simulation results never affect daily predictions.</p>
-    <div class="simulation-actions"><button class="primary-btn" id="run-simulation-btn">RUN RANDOM SIMULATION</button><button class="soft-btn" id="choose-champion-btn">CHOOSE / UPGRADE CHAMPION</button></div>
+    <div class="simulation-actions"><button class="primary-btn" id="run-simulation-btn">Run a practice fight</button><button class="soft-btn" id="choose-champion-btn">Change champion</button></div>
   </section>
-  <section class="card history-card"><div class="side-heading"><h3>RECENT SIMULATIONS</h3><span class="muted-tag">LATEST FIRST</span></div><div id="simulation-history"><div class="empty-state">No simulations yet. Run your first random matchup.</div></div></section>
+  <section class="card history-card"><div class="side-heading"><h3>Recent fights</h3></div><div id="simulation-history"><div class="empty-state">No simulations yet. Run your first random matchup.</div></div></section>
 </section>
 
 <section class="view" id="records-view">
-  <div class="view-head"><div class="eyebrow">YOUR CAREER</div><h1>Fight Records</h1><p class="subline">A local record of your daily predictions and champion practice fights.</p></div>
+  <div class="view-head"><h1>Fight records</h1><p class="subline">A record of your predictions and practice fights.</p></div>
   <div class="stats-grid">
-    <div class="card stat-card"><span>FIGHTS WATCHED</span><strong id="stat-fights">0</strong></div>
-    <div class="card stat-card"><span>PREDICTIONS WON</span><strong id="stat-picks">0</strong></div>
-    <div class="card stat-card"><span>PREDICTION RATE</span><strong id="stat-rate">—</strong></div>
-    <div class="card stat-card"><span>BEST CHAMPION</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
+    <div class="card stat-card"><span>Fights watched</span><strong id="stat-fights">0</strong></div>
+    <div class="card stat-card"><span>Predictions won</span><strong id="stat-picks">0</strong></div>
+    <div class="card stat-card"><span>Prediction rate</span><strong id="stat-rate">—</strong></div>
+    <div class="card stat-card"><span>Best champion</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
   </div>
   <section class="card history-card matchup-card">
-    <div class="side-heading"><h3>WEAPON MATCHUP WIN RATES</h3><span class="muted-tag">PREVIOUS BALANCE SNAPSHOT</span></div>
+    <div class="side-heading"><h3>Weapon matchup win rates</h3><span class="muted-tag">PREVIOUS BALANCE SNAPSHOT</span></div>
     <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. This archived matrix predates the new horizontal roaming movement and knockout-only rules, so it is not a measurement of the current build.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
     <p class="matchup-foot">Archived pre-movement results: 50 simulated fights per pairing · 25 from each starting side. Re-run the matrix to measure the new movement tuning.</p>
   </section>
-  <section class="card history-card"><div class="side-heading"><h3>MATCH HISTORY</h3><span class="muted-tag">LATEST FIRST</span></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
+  <section class="card history-card"><div class="side-heading"><h3>Match history</h3></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
 
-<div class="footer"><span>BALL BATTLES · DAILY SHOWDOWNS</span><span>Standalone demo · Progress is stored in this browser</span><span id="build-date">BUILD 01</span></div>
+<div class="footer"><span>Ball Battles</span><span>Progress is saved in this browser.</span><span id="build-date">Build 01</span></div>
 </div>
-<button class="dev-toggle" id="dev-toggle">DEV LAB</button>
-<div class="dev-panel" id="dev-panel"><h3>DEVELOPER TEST LAB</h3><p>Local testing tools. These changes only affect this browser and do not change the official daily matchup.</p><div class="dev-actions"><button id="dev-coins">+1,000 COINS</button><button id="dev-reset-claim">RESET DAILY CLAIM</button><button id="dev-force-left">FORCE LEFT WIN</button><button id="dev-force-right">FORCE RIGHT WIN</button><button class="danger" id="dev-clear">CLEAR LOCAL SAVE</button><button id="dev-close">CLOSE</button></div></div>
+<button class="dev-toggle" id="dev-toggle">Dev tools</button>
+<div class="dev-panel" id="dev-panel"><h3>Developer test tools</h3><p>Local tools for checking fights. These changes only affect this browser.</p><div class="dev-actions"><button id="dev-coins">+1,000 COINS</button><button id="dev-reset-claim">RESET DAILY CLAIM</button><button id="dev-force-left">FORCE LEFT WIN</button><button id="dev-force-right">FORCE RIGHT WIN</button><button class="danger" id="dev-clear">CLEAR LOCAL SAVE</button><button id="dev-close">CLOSE</button></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
 'use strict';
 const WEAPONS=[
- {id:'sword',name:'Sword',glyph:'⚔',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
- {id:'dagger',name:'Dagger',glyph:'†',color:'#71b9e9',desc:'Every hit increases attack speed by 6%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +6% / hit',hitDelay:.52},
- {id:'spear',name:'Spear',glyph:'➶',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
- {id:'axe',name:'Axe',glyph:'✦',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage grows by 1.95× after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×1.95 / hit',hitDelay:.76},
- {id:'hammer',name:'Hammer',glyph:'⬟',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +0.65 · Max spin +0.15× / hit · Unparryable',hitDelay:.94},
- {id:'scythe',name:'Scythe',glyph:'☾',color:'#a1d17a',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.275 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +0.275 DPS / hit',hitDelay:.68},
- {id:'chakram',name:'Chakram',glyph:'◎',color:'#e4c36c',desc:'Every hit increases rotation speed by 4.75%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +4.75% / hit',hitDelay:.46},
- {id:'trident',name:'Trident',glyph:'♆',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
- {id:'bow',name:'Bow',glyph:'➳',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
- {id:'lance',name:'Lance',glyph:'⚔',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',glyph:'✣',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
+ {id:'sword',name:'Sword',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
+ {id:'dagger',name:'Dagger',color:'#71b9e9',desc:'Every hit increases attack speed by 6%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +6% / hit',hitDelay:.52},
+ {id:'spear',name:'Spear',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
+ {id:'axe',name:'Axe',color:'#d78e72',desc:'Its crit chance equals its current damage percentage. Damage grows by 1.95× after every hit. Normal hits deal 1; critical hits deal its full damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Crit chance = damage · Damage ×1.95 / hit',hitDelay:.76},
+ {id:'hammer',name:'Hammer',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +0.65 · Max spin +0.15× / hit · Unparryable',hitDelay:.94},
+ {id:'scythe',name:'Scythe',color:'#a1d17a',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.275 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +0.275 DPS / hit',hitDelay:.68},
+ {id:'chakram',name:'Chakram',color:'#e4c36c',desc:'Every hit increases rotation speed by 4.75%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +4.75% / hit',hitDelay:.46},
+ {id:'trident',name:'Trident',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
+ {id:'bow',name:'Bow',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
+ {id:'lance',name:'Lance',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its full damage during the charge. Every hit doubles its damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Damage ×2 / hit · Periodic invincible charge',hitDelay:.78},
+ {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,horizontalSpeedMin:210,horizontalSpeedRange:110,overtimeStart:40};
 const BALANCE={
@@ -374,11 +491,11 @@ function renderPayout(){
  card.classList.remove('win','loss');
  if(p){
   card.classList.add(p.won?'win':'loss');
-  $('payout-day').textContent=new Date(p.day+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric'}).toUpperCase();
-  $('payout-title').textContent=p.won?'YOU WON YOUR PREDICTION':'YOUR PREDICTION DIDN’T HIT';
+  $('payout-day').textContent=new Date(p.day+'T12:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  $('payout-title').textContent=p.won?'You won your prediction':'Your prediction didn’t hit';
   $('payout-copy').textContent='You backed '+weapon(p.pick).name+'. '+weapon(p.winner).name+' won. Wager: '+money(p.wager)+' coins at '+Number(p.odds).toFixed(2)+'×.';
-  $('payout-amount').textContent=p.won?'+'+money(p.payout)+' ◈':'0 ◈';
-  $('upgrade-from-payout').textContent='UPGRADE '+weapon(p.pick).name.toUpperCase();
+  $('payout-amount').textContent=p.won?'+'+money(p.payout)+' coins':'0 coins';
+  $('upgrade-from-payout').textContent='Upgrade '+weapon(p.pick).name;
   if(!p.seen){
    card.classList.add('reveal');
    if(payoutAnimationDay!==p.day){
@@ -388,63 +505,64 @@ function renderPayout(){
   }
  }else if(save.bets[today]&&save.results[today]){
   card.classList.remove('reveal');
-  $('payout-day').textContent='SETTLES TOMORROW';
-  $('payout-title').textContent='TODAY’S RESULT IS LOCKED IN';
+  $('payout-day').textContent='Settles tomorrow';
+  $('payout-title').textContent='Today’s result is locked in';
   $('payout-copy').textContent='Your '+weapon(save.bets[today].side==='left'?leftWeapon.id:rightWeapon.id).name+' prediction will be paid on your next daily visit.';
-  $('payout-amount').textContent='PENDING';
-  $('upgrade-from-payout').textContent='UPGRADE A BALL';
+  $('payout-amount').textContent='Pending';
+  $('upgrade-from-payout').textContent='Upgrade a ball';
  }else{
   card.classList.remove('reveal');
-  $('payout-day').textContent='NO PREVIOUS BET';
+  $('payout-day').textContent='No previous bet';
   $('payout-title').textContent='No payout waiting today.';
   $('payout-copy').textContent='Watch the daily showdown, place a prediction, and come back for its payout on the next daily visit.';
   $('payout-amount').textContent='—';
-  $('upgrade-from-payout').textContent='UPGRADE A BALL';
+  $('upgrade-from-payout').textContent='Upgrade a ball';
  }
 }
 function renderDaily(){
 $('bet-card').style.display='';
 renderPayout();
-$('date-chip').textContent=dayLabel+' · DAILY';
-$('left-name-top').textContent=leftWeapon.name.toUpperCase();$('right-name-top').textContent=rightWeapon.name.toUpperCase();
-$('left-label-name').textContent='RED CORNER';$('right-label-name').textContent='BLUE CORNER';
+$('date-chip').textContent=dayLabel;
+$('left-name-top').textContent=leftWeapon.name;$('right-name-top').textContent=rightWeapon.name;
+$('left-label-name').textContent='Red corner';$('right-label-name').textContent='Green corner';
 $('left-label-weapon').textContent=leftWeapon.name;$('right-label-weapon').textContent=rightWeapon.name;
 $('bet-left-name').textContent=leftWeapon.name;$('bet-right-name').textContent=rightWeapon.name;
 $('bet-left-share').textContent=leftShare+'%';$('bet-right-share').textContent=rightShare+'%';
-$('bet-left-caption').textContent='Red corner · '+odds('left').toFixed(2)+'× return';$('bet-right-caption').textContent='Blue corner · '+odds('right').toFixed(2)+'× return';
+$('bet-left-caption').textContent='Red corner, pays '+odds('left').toFixed(2)+'×';$('bet-right-caption').textContent='Green corner, pays '+odds('right').toFixed(2)+'×';
 $('odds-left-name').textContent=leftWeapon.name+' support';$('odds-right-name').textContent=rightWeapon.name+' support';
 $('odds-left-value').textContent=leftShare+'%';$('odds-right-value').textContent=rightShare+'%';
 $('underdog-value').textContent=Math.max(odds('left'),odds('right')).toFixed(2)+'×';
 $('match-title').textContent=leftWeapon.name+' vs '+rightWeapon.name;
 $('match-subtitle').textContent='Daily weapon showdown · '+(leftWeapon.special+' meets '+rightWeapon.special);
-const claim=$('claim-btn');const claimed=save.claimedDay===today;claim.disabled=claimed;claim.classList.toggle('done',claimed);claim.textContent=claimed?'DAILY COINS CLAIMED':'CLAIM DAILY COINS';
-const old=save.results[today];if(old){$('fight-state-chip').textContent='RESULT SAVED';$('arena-status-text').textContent=weapon(old.winner).name+' won today. Replay the fight below.';$('fight-btn').textContent='REPLAY DAILY FIGHT';}
-const bet=save.bets[today];if(bet){$('bet-desc').textContent='Your prediction is locked for today.';$('bet-amount').disabled=true;$('bet-amount').value=bet.amount;$('place-bet-btn').disabled=true;$('place-bet-btn').textContent='PREDICTION LOCKED';$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-note').textContent='You backed '+weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).name+' with '+money(bet.amount)+' coins at '+bet.odds.toFixed(2)+'×.';}
-else if(old){$('bet-desc').textContent='Today’s showdown has already been decided.';$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='BETTING CLOSED';}
-else{$('bet-desc').textContent='Back the weapon you think will take today’s win.';$('bet-amount').disabled=false;$('place-bet-btn').disabled=false;$('bet-left').disabled=false;$('bet-right').disabled=false;$('bet-lock-label').textContent='CLOSES AT FIGHT START';}
+const claim=$('claim-btn');const claimed=save.claimedDay===today;claim.disabled=claimed;claim.classList.toggle('done',claimed);claim.textContent=claimed?'Daily coins claimed':'Claim coins';
+const old=save.results[today];if(old){$('fight-state-chip').textContent='Result saved';$('arena-status-text').textContent=weapon(old.winner).name+' won today. Replay the fight below.';$('fight-btn').textContent='Replay fight';}
+const bet=save.bets[today];if(bet){$('bet-desc').textContent='Your prediction is locked for today.';$('bet-amount').disabled=true;$('bet-amount').value=bet.amount;$('place-bet-btn').disabled=true;$('place-bet-btn').textContent='Prediction locked';$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-note').textContent='You backed '+weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).name+' with '+money(bet.amount)+' coins at '+bet.odds.toFixed(2)+'×.';}
+else if(old){$('bet-desc').textContent='Today’s showdown has already been decided.';$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='Betting closed';}
+else{$('bet-desc').textContent='Choose the ball you think will win today’s fight.';$('bet-amount').disabled=false;$('place-bet-btn').disabled=false;$('bet-left').disabled=false;$('bet-right').disabled=false;$('bet-lock-label').textContent='Closes when the fight starts';}
 selectBet(selectedBet);renderChampion();renderWallet();
 }
-function selectBet(side){selectedBet=side;$('bet-left').classList.toggle('selected',side==='left');$('bet-right').classList.toggle('selected',side==='right');const val=Math.max(10,Number($('bet-amount').value)||10);$('place-bet-btn').textContent='PLACE BET · '+money(val);$('place-bet-btn').disabled=!!save.bets[today]||!!save.results[today]||val>save.coins;}
+function selectBet(side){selectedBet=side;$('bet-left').classList.toggle('selected',side==='left');$('bet-right').classList.toggle('selected',side==='right');const val=Math.max(10,Number($('bet-amount').value)||10);$('place-bet-btn').textContent='Place bet · '+money(val);$('place-bet-btn').disabled=!!save.bets[today]||!!save.results[today]||val>save.coins;}
 function claimDaily(){if(save.claimedDay===today)return;const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);save.streak=save.lastClaim===yesterday?Math.min(30,save.streak+1):1;const reward=100+Math.max(0,save.streak-1)*10;save.coins+=reward;save.claimedDay=today;save.lastClaim=today;persist();renderDaily();toast('+'+reward+' coins claimed. Day '+save.streak+' streak!');}
 function placeBet(){if(save.bets[today]||save.results[today])return;const amount=Math.floor(Number($('bet-amount').value));if(!Number.isFinite(amount)||amount<10){toast('Minimum wager is 10 coins.');return;}if(amount>500){toast('Maximum wager is 500 coins.');return;}if(amount>save.coins){toast('Not enough coins for that wager.');return;}save.coins-=amount;save.bets[today]={side:selectedBet,amount:amount,odds:odds(selectedBet),day:today};persist();renderDaily();toast('Prediction locked. Good luck.');}
 function renderChampion(){
 const w=weapon(save.favorite),lv=level(w.id),power=100+lv*12;
 ['champ-name','training-name'].forEach(id=>$(id).textContent=w.name);
-$('champ-level').textContent='Level '+(lv+1)+' · Favorite weapon';$('champ-power').textContent=power;
+$('champ-level').textContent='Level '+(lv+1)+' champion';$('champ-power').textContent=power;
 $('champ-power-bar').style.width=clamp(12+lv*7,12,100)+'%';
-$('champ-orb').textContent=w.glyph;$('champ-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+drawWeaponIcon($('champ-orb'),w);
 renderArmoryDetails();
 }
 function renderArmory(){
-$('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">YOUR MAIN</span>':'')+'<span class="weapon-glyph">'+w.glyph+'</span><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
+$('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">Your main</span>':'')+'<canvas class="weapon-glyph" width="180" height="180" data-weapon-icon="'+w.id+'" role="img" aria-label="'+w.name+' weapon art"></canvas><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
 document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('click',()=>{selectedWeapon=btn.dataset.weapon;renderArmory();}));
+document.querySelectorAll('[data-weapon-icon]').forEach(canvas=>drawWeaponIcon(canvas,weapon(canvas.dataset.weaponIcon)));
  renderArmoryDetails();
 }
 function renderArmoryDetails(){
  const w=weapon(selectedWeapon),st=statLevels(w.id);
- $('training-name').textContent=w.name;$('training-orb').textContent=w.glyph;$('training-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+ $('training-name').textContent=w.name;drawWeaponIcon($('training-orb'),w);
  const totalLevels=Object.values(st).reduce((a,b)=>a+Number(b||0),0),coins=totalStatCoins(w.id);
- $('training-level').textContent='Weapon Level '+totalLevels+' · '+money(coins)+' coins pooled across its stats';
+ $('training-level').textContent='Level '+totalLevels+' · '+money(coins)+' coins invested';
  $('training-desc').textContent=w.desc;
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
@@ -454,11 +572,11 @@ function renderArmoryDetails(){
   const available=def.available(w),pool=statPool(w.id,def.id);
   const cost=nextStatLevelCost(w.id,def.id),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
   const percent=available?clamp(pool.progress/cost*100,0,100):0;
-  const label='LEVEL '+pool.level+' · TOTAL +'+percentText(bonus);
-  const progressLabel=money(pool.progress)+' / '+money(cost)+' coins toward next level';
-  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?label:'NOT APPLICABLE')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-progress-track"><span style="width:'+percent.toFixed(1)+'%"></span></div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?progressLabel+' · next level +'+percentText(gain):'Not used by this weapon')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'CONTRIBUTE 50 ◈':'NOT APPLICABLE')+'</button></div></div>';
+  const label='Level '+pool.level+' · total +'+percentText(bonus);
+  const progressLabel=money(pool.progress)+' of '+money(cost)+' coins toward next level';
+  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?label:'Not used')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-progress-track"><span style="width:'+percent.toFixed(1)+'%"></span></div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?progressLabel+' · next level +'+percentText(gain):'Not used by this weapon')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'Add 50 coins':'Not used')+'</button></div></div>';
  }).join('');
- $('set-favorite-btn').textContent=save.favorite===w.id?'★ YOUR FAVORITE':'SET AS FAVORITE';
+ $('set-favorite-btn').textContent=save.favorite===w.id?'Your champion':'Make champion';
  $('set-favorite-btn').disabled=save.favorite===w.id;
 }
 function buyStat(statId){
@@ -569,10 +687,10 @@ function startFight(mode,forced,practiceId,opponentId){
  $('match-title').textContent=a.weapon.name+' vs '+b.weapon.name;
  $('match-subtitle').textContent=mode==='daily'?'Daily weapon showdown · '+a.weapon.special+' meets '+b.weapon.special:'Random simulation · your trained '+a.weapon.name+' against '+b.weapon.name;
  $('left-name-top').textContent=a.weapon.name.toUpperCase();$('right-name-top').textContent=b.weapon.name.toUpperCase();
- $('fight-state-chip').textContent=mode==='daily'?'LIVE SHOWDOWN':'SIMULATION LIVE';
+ $('fight-state-chip').textContent=mode==='daily'?'Fight in progress':'Practice fight in progress';
  $('arena-status-text').textContent=mode==='daily'?'THE DAILY FIGHT IS ON':'RANDOM SIMULATION IN PROGRESS';
  $('live-pulse').classList.add('live');
- $('fight-btn').textContent=mode==='daily'?'FIGHT IN PROGRESS':'SIMULATION IN PROGRESS';
+ $('fight-btn').textContent=mode==='daily'?'Fight in progress':'Practice fight in progress';
  $('fight-btn').disabled=true;
  $('bet-card').style.display=mode==='daily'?'':'none';
  if(mode==='daily'){$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
@@ -816,9 +934,9 @@ function step(dt){
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
  if(sim.elapsed>=MATCH_RULES.overtimeStart&&!sim.overtimeAnnounced){
   sim.overtimeAnnounced=true;
-  $('fight-state-chip').textContent='KNOCKOUT ONLY';
-  $('arena-status-text').textContent='OVERTIME · No clock-based winner. A knockout is required.';
-  floatText(arena.x+arena.w/2,arena.y+24,'KNOCKOUT ONLY','#d94b50');
+  $('fight-state-chip').textContent='Knockout only';
+  $('arena-status-text').textContent='Overtime. No time limit or tiebreak. A knockout is required.';
+  floatText(arena.x+arena.w/2,arena.y+24,'Knockout only','#d94b50');
   playTone(150,.18,'sawtooth');
  }
  updateBars();
@@ -832,10 +950,10 @@ function finishFight(winner){
  if(!sim||!sim.active)return;
  sim.active=false;sim.result=winner.side;
  $('live-pulse').classList.remove('live');
- $('fight-state-chip').textContent='MATCH COMPLETE';
- $('arena-status-text').textContent=winner.weapon.name+' takes the win!';
+ $('fight-state-chip').textContent='Fight complete';
+ $('arena-status-text').textContent=winner.weapon.name+' wins!';
  $('fight-btn').disabled=false;
- $('fight-btn').textContent=sim.mode==='daily'?'REPLAY DAILY FIGHT':'SIMULATE AGAIN';
+ $('fight-btn').textContent=sim.mode==='daily'?'Replay fight':'Run another practice fight';
  burst(winner.x,winner.y,winner.weapon.color,35);playTone(640,.25,'sine');
  const mode=sim.mode;
  const summary={day:today,mode:mode,winner:winner.weapon.id,left:sim.teams.left[0].weapon.id,right:sim.teams.right[0].weapon.id,time:Math.round(sim.elapsed),date:Date.now()};
@@ -851,9 +969,9 @@ function finishFight(winner){
   renderAll();
  }else{
   $('bet-card').style.display='none';
-  $('fight-state-chip').textContent='SIMULATION COMPLETE';
-  $('arena-status-text').textContent=summary.left+' vs '+summary.right+' · '+winner.weapon.name+' wins';
-  $('match-subtitle').textContent='Simulation complete · Random opponent · No daily wager was involved.';
+  $('fight-state-chip').textContent='Practice complete';
+  $('arena-status-text').textContent=summary.left+' vs '+summary.right+': '+winner.weapon.name+' wins';
+  $('match-subtitle').textContent='Practice fight complete. No daily prediction was involved.';
   renderWallet();renderChampion();renderArmory();renderSimulationHistory();renderRecords();
  }
 }
@@ -1158,8 +1276,7 @@ function drawBall(c,f){
  if(f.lanceCharging){c.strokeStyle='#f0d15b';c.lineWidth=4;c.globalAlpha=.8;c.beginPath();c.arc(0,0,f.r+9,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
 
  if(f.parryFlash>0){c.strokeStyle='#f4cf67';c.lineWidth=4;c.globalAlpha=Math.min(1,f.parryFlash*4);c.beginPath();c.arc(0,0,f.r+7,0,Math.PI*2);c.stroke();c.globalAlpha=1;}
- c.fillStyle='#101010';c.font='900 '+(f.r>23?'16':'13')+'px system-ui';c.textAlign='center';c.textBaseline='middle';
- c.fillText(Math.max(0,Math.ceil(f.hp)),0,1);
+ if(!f.preview){c.fillStyle='#101010';c.font='900 '+(f.r>23?'16':'13')+'px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText(Math.max(0,Math.ceil(f.hp)),0,1);}
  if(f.flash>0){c.fillStyle='rgba(255,255,255,'+Math.min(.72,f.flash*4)+')';c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();}
  c.restore();drawWeapon(c,f);
 }
@@ -1192,7 +1309,7 @@ function draw(){
    case 'duplicator':detail='BALLS '+(team.length?team.filter(f=>f.hp>0).length:1)+'/16';break;
    default:detail='DMG '+fixed(damage);
   }
-  return w.name.toUpperCase()+' · '+detail;
+  return w.name+': '+detail;
  }
  const leftStatus=readout(leftTeam,rightTeam,leftWeapon),rightStatus=readout(rightTeam,leftTeam,rightWeapon);
  ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillStyle='#b32636';
@@ -1202,7 +1319,8 @@ function draw(){
  while(ctx.measureText(rightStatus).width>arena.w*.49&&parseInt(ctx.font,10)>9)ctx.font=(parseInt(ctx.font,10)-1)+'px system-ui';
  ctx.fillText(rightStatus,arena.x+arena.w,712);
 }
-function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100};drawBall(c,f);}
+function drawWeaponIcon(canvas,w){if(!canvas)return;const c=canvas.getContext('2d'),size=canvas.width||180;c.clearRect(0,0,size,size);c.save();c.translate(size/2,size/2);c.scale(.5,.5);drawPreviewBall(c,w,0,0,1);c.restore();}
+function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
 function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(e){}}
 function renderMatchupTable(){
  const labels=WEAPONS.map((w,i)=>'<th scope="col" title="'+w.name+'">'+MATCHUP_SHORT[i]+'</th>').join('');
@@ -1221,7 +1339,7 @@ function renderMatchupTable(){
 }
 function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),picks=Object.keys(save.settled).length,wins=Object.keys(save.settled).filter(d=>{const b=save.bets[d],r=save.results[d];return b&&r&&((b.side==='left'&&r.winner===r.left)||(b.side==='right'&&r.winner===r.right));}).length;
 $('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;renderMatchupTable();
-const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'DAILY SHOWDOWN':'PRACTICE FIGHT')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
+const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'Daily fight':'Practice fight')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
 function renderSimulationHistory(){
  const rows=save.history.filter(h=>h.mode==='practice').slice(0,12);
  $('simulation-history').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">SIMULATION · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No simulations yet. Run your first random matchup.</div>';
@@ -1229,8 +1347,8 @@ function renderSimulationHistory(){
 function renderSimulations(){
  const w=weapon(save.favorite);
  $('simulation-champion').textContent=w.name;
- $('simulation-orb').textContent=w.glyph;
- $('simulation-orb').style.background='radial-gradient(circle at 35% 28%,#fff9,transparent 20%),linear-gradient(145deg,'+w.color+',#27313b)';
+ drawWeaponIcon($('simulation-orb'),w);
+ 
  renderSimulationHistory();
 }
 function openUpgradeFromDaily(){
@@ -1254,7 +1372,7 @@ $('choose-champion-btn').addEventListener('click',()=>switchView('armory'));
 $('upgrade-from-payout').addEventListener('click',openUpgradeFromDaily);
 $('sim-from-payout').addEventListener('click',()=>switchView('simulations'));
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
-function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';if(soundOn)playTone(420,.06);}
+function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'Sound on':'Sound off';$('sound-hit-btn').textContent=soundOn?'Sound on':'Sound off';if(soundOn)playTone(420,.06);}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
 $('dev-toggle').addEventListener('click',()=>$('dev-panel').classList.toggle('open'));$('dev-close').addEventListener('click',()=>$('dev-panel').classList.remove('open'));
@@ -1264,7 +1382,7 @@ $('dev-force-left').addEventListener('click',()=>forceFinish('left'));$('dev-for
 $('dev-clear').addEventListener('click',()=>{if(sim&&sim.active){sim.active=false;cancelAnimationFrame(raf);}localStorage.removeItem(SAVE_KEY);save=defaultSave();selectedWeapon=save.favorite;renderAll();toast('Local save cleared.');});
 window.addEventListener('resize',resizeCanvas);
 settlePreviousBet();
-renderDaily();renderWallet();renderChampion();renderArmory();renderSimulations();$('sound-toggle').textContent=soundOn?'SFX ON':'SFX OFF';$('sound-hit-btn').textContent=soundOn?'SOUND: ON':'SOUND: OFF';$('build-date').textContent='BUILD '+today;
+renderDaily();renderWallet();renderChampion();renderArmory();renderSimulations();$('sound-toggle').textContent=soundOn?'Sound on':'Sound off';$('sound-hit-btn').textContent=soundOn?'Sound on':'Sound off';$('build-date').textContent='Updated '+today;
 resizeCanvas();draw();
 })();
 </script>
