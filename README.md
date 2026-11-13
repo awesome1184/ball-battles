@@ -21,6 +21,10 @@ https://awesome1184.github.io/ball-battles/
 
 No GitHub Actions workflow is required for this setup.
 
+## Visual direction
+
+The live page follows the visual guide in `DESIGN.md`: a flat blue backdrop, cream paper panels, ink outlines and offset shadows, flat red/green corners, a ticket-style prediction slip, sentence-case copy, and pixel-art weapon previews drawn from the battle sprites. The battle engine remains in the standalone `index.html`; the `/ui` scaffold is a reference for the design and future extraction, not a replacement runtime.
+
 ## Prototype features
 
 - Daily deterministic weapon matchup with an animated canvas battle. All fights use 1.5× faster weapon rotation and 1.6× base health. Matches have no time limit or overtime damage: a side wins only when every opposing ball has been eliminated.
