@@ -718,7 +718,15 @@ function step(dt){
    f.poisonPulse=(f.poisonPulse||0)+dt;
    if(f.poisonPulse>=1){floatText(f.x,f.y-40,'-'+Math.floor(f.poisonDps)+' POISON DPS','#70b96b');f.poisonPulse%=1;}
   }
-  if(f.hp<=0)continue;
+  if(f.hp<=0){
+   const sideStillAlive=sim.teams[f.side].some(other=>other.hp>0);
+   if(!sideStillAlive){
+    const enemySide=f.side==='left'?'right':'left';
+    const survivors=sim.teams[enemySide].filter(other=>other.hp>0);
+    if(survivors.length){updateBars();finishFight(survivors.slice().sort((a,b)=>b.hp-a.hp)[0]);return;}
+   }
+   continue;
+  }
   const o=nearestEnemy(f);if(!o)continue;
   const dx=o.x-f.x,dir=Math.sign(dx)||(f.side==='left'?1:-1),lance=f.weapon.id==='lance';
   if(lance&&!f.lanceCharging){
@@ -788,7 +796,7 @@ function step(dt){
   resolveWeaponClash(a,b);
    const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,min=a.r+b.r+1;
   if(d<min){const nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;
-   if(a.side!==b.side){if(a.weapon.id==='duplicator'&&a.contactHitCd<=0){damage(a,b,dt);a.contactHitCd=a.hitDelay;}if(b.weapon.id==='duplicator'&&b.contactHitCd<=0){damage(b,a,dt);b.contactHitCd=b.hitDelay;}}
+   if(a.side!==b.side){if(a.weapon.id==='duplicator'&&a.contactHitCd<=0){damage(a,b,dt);a.contactHitCd=a.hitDelay;}if(b.hp>0&&b.weapon.id==='duplicator'&&b.contactHitCd<=0){damage(b,a,dt);b.contactHitCd=b.hitDelay;}}
    const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
    if(rel>0){const impulse=rel;a.vx-=nx*impulse;a.vy-=ny*impulse;b.vx+=nx*impulse;b.vy+=ny*impulse;}
   }
