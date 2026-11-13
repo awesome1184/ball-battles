@@ -1264,10 +1264,8 @@ function drawWhirlpool(c,f){
 }
 function drawBall(c,f){
  c.save();c.translate(f.x,f.y);const color=teamBallColor(f);
- c.shadowColor='#0002';c.shadowBlur=3;c.shadowOffsetY=2;
- const g=c.createRadialGradient(-7,-9,2,0,0,f.r+2);g.addColorStop(0,'#fff');g.addColorStop(.12,color);g.addColorStop(1,shade(color,-15));
- c.fillStyle=g;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();c.shadowBlur=0;c.shadowOffsetY=0;
- c.strokeStyle='#171717';c.lineWidth=2.2;c.stroke();
+ c.fillStyle=color;c.beginPath();c.arc(0,0,f.r,0,Math.PI*2);c.fill();
+ c.strokeStyle='#17172e';c.lineWidth=3;c.stroke();
  if(f.weapon.id==='duplicator'&&f.mainBall){
   c.strokeStyle='#ffd86e';c.lineWidth=4;c.beginPath();c.arc(0,0,f.r+7,0,Math.PI*2);c.stroke();
   c.fillStyle='#5a3912';c.font='1000 8px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('MAIN',0,-f.r-13);
