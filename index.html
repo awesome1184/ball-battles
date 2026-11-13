@@ -1282,7 +1282,7 @@ function draw(){
    case 'chakram':detail='SPIN ×'+(fighter?fighter.spinGrowth:1).toFixed(2);break;
    case 'trident':detail='DMG '+fixed(damage)+' / WHIRLPOOL';break;
    case 'bow':detail='ARROWS '+(fighter?fighter.projectileShots:1);break;
-   case 'lance':detail='FULL DMG '+fixed(damage)+(fighter&&fighter.lanceCharging?' / CHARGING':' / CHARGE');break;
+   case 'lance':detail='CHARGE DMG '+fixed(damage)+(fighter&&fighter.lanceCharging?' / CHARGING':' / CHARGE');break;
    case 'duplicator':detail='BALLS '+(team.length?team.filter(f=>f.hp>0).length:1)+'/16';break;
    default:detail='DMG '+fixed(damage);
   }
