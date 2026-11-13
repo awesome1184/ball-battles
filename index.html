@@ -724,8 +724,6 @@ function resolveWeaponClash(a,b){
  a.parryCd=Math.max(a.parryCd,.18);b.parryCd=Math.max(b.parryCd,.18);
  a.stagger=Math.max(a.stagger,.13);b.stagger=Math.max(b.stagger,.13);
  a.hitCd=Math.max(a.hitCd,.18);b.hitCd=Math.max(b.hitCd,.18);
- const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1,nx=dx/len,ny=dy/len;
- 
  const px=(sa.x2+sb.x2)*.5,py=(sa.y2+sb.y2)*.5;
  burst(px,py,'#f3c65f',10);
  floatText(a.x,a.y-43,'PARRY!','#eac65e');floatText(b.x,b.y-43,'PARRY!','#eac65e');
@@ -774,7 +772,6 @@ function damage(attacker,target,dt){
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
  applyHitGrowth(attacker,target);
  const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;
- target.vx+=dx/d*105;target.vy+=dy/d*80;
  burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,10);
  floatText(target.x,target.y-25,'-'+(Number.isInteger(amount)?amount:amount.toFixed(1)),'#fff1df');
  if(crit)floatText(target.x,target.y-48,'CRITICAL HIT!','#d78e72');
