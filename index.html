@@ -352,13 +352,13 @@ const WEAPONS=[
  {id:'sword',name:'Sword',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
  {id:'dagger',name:'Dagger',color:'#71b9e9',desc:'Every hit increases attack speed by 6%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +6% / hit',hitDelay:.52},
  {id:'spear',name:'Spear',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
- {id:'axe',name:'Axe',color:'#d78e72',desc:'Every hit adds +1 damage. Its critical-hit chance rises with its current damage, and critical hits deal that full damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Damage +1 / hit · Growing critical chance',hitDelay:.76},
+ {id:'axe',name:'Axe',color:'#d78e72',desc:'Every hit adds +2 damage and 2 percentage points of critical chance. Normal hits deal 1; critical hits deal its full stored damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Damage +2 / hit · Crit chance +2% / hit',hitDelay:.76},
  {id:'hammer',name:'Hammer',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +0.65 · Max spin +0.15× / hit · Unparryable',hitDelay:.94},
  {id:'scythe',name:'Scythe',color:'#a1d17a',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.275 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +0.275 DPS / hit',hitDelay:.68},
  {id:'chakram',name:'Chakram',color:'#e4c36c',desc:'Every hit increases rotation speed by 4.75%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +4.75% / hit',hitDelay:.46},
  {id:'trident',name:'Trident',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
  {id:'bow',name:'Bow',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
- {id:'lance',name:'Lance',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it charges toward a wall, becoming invincible and dealing its stored charge damage. Every hit adds +1 charge damage.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Charge damage +1 / hit · Periodic invincible charge',hitDelay:.78},
+ {id:'lance',name:'Lance',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it gradually accelerates toward a wall while invulnerable. Each hit adds +2 damage to its next charge.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Charge damage +2 / hit · Accelerating charge',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,horizontalSpeedMin:210,horizontalSpeedRange:110,overtimeStart:40};
@@ -366,13 +366,13 @@ const BALANCE={
  sword:{hp:1.03,damage:1.02},
  dagger:{hp:1.15,damage:1.12,reach:1.5,width:1.2,weaponScale:1.15,cooldown:.82,speedGrowth:.06},
  spear:{hp:1.15,damage:1.2,reach:1.45,weaponScale:1.18,cooldown:.85},
- axe:{hp:1.03},
+ axe:{hp:1.03,damagePerHit:2,critChancePerHit:2},
  hammer:{hp:.9,cooldown:1.18,damagePerHit:.65,spinGrowth:.15},
  scythe:{hp:.925,cooldown:1.18,poison:.275},
  chakram:{hp:1.16,reach:1.075,cooldown:.93,spinGrowth:.0475},
  trident:{hp:1.06,damage:1.07,cooldown:.96},
  bow:{hp:1,damage:.91,cooldown:1.55},
- lance:{hp:1.02,cooldown:.95},
+ lance:{hp:1.02,cooldown:.95,damagePerHit:2,chargeStartSpeed:50,chargeAcceleration:720,chargeMaxSpeed:500},
  duplicator:{hp:.7,cloneDamage:.06,cloneDamageFloor:.06,cap:6,hitsPerClone:8}
 };
 const MATCHUP_WIN_RATES=[[null,44,46,64,40,68,54,50,50,64,52],[56,null,32,56,38,54,60,44,52,68,58],[54,68,null,56,42,52,68,64,48,74,40],[36,44,44,null,44,58,54,56,40,60,80],[60,62,58,56,null,64,60,66,50,62,26],[32,46,48,42,36,null,42,60,48,58,72],[46,40,32,46,40,58,null,50,48,68,16],[50,56,36,44,34,40,50,null,44,70,42],[50,48,52,60,50,52,52,56,null,34,60],[36,32,26,40,38,42,32,30,66,null,64],[48,42,60,20,74,28,84,58,40,36,null]];
@@ -614,7 +614,7 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(MATCH_RULES.horizontalSpeedMin+rng()*MATCH_RULES.horizontalSpeedRange),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),reach:w.reach*1.12*(balance.reach||1),width:w.width*1.12*(balance.width||1),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,roamTimer:.4+rng()*.9,roamWindowTimer:0,roamMinX:side==='left'?165:375,roamMaxX:side==='left'?165:375,roamSlowTimer:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(rng()<.5?-1:1)*(MATCH_RULES.horizontalSpeedMin+rng()*MATCH_RULES.horizontalSpeedRange),vy:-20-rng()*30,r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?1:0,lanceChargeSpeed:0,reach:w.reach*1.12*(balance.reach||1),width:w.width*1.12*(balance.width||1),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,roamTimer:.4+rng()*.9,roamWindowTimer:0,roamMinX:side==='left'?165:375,roamMaxX:side==='left'?165:375,roamSlowTimer:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28,roamTimer:.6+rng()*.4,roamDirection:parent.roamDirection||Math.sign(parent.vx)||1,roamSpeed:parent.roamSpeed||Math.abs(parent.vx),roamMinX:parent.x,roamMaxX:parent.x,roamSlowTimer:0});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -739,13 +739,13 @@ function applyHitGrowth(f,target){
   case 'sword':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
   case 'dagger':f.attackSpeedFactor*=1+BALANCE.dagger.speedGrowth*(f.growthMultiplier||1);notice='ATTACK SPEED +6%';break;
   case 'spear':f.combatDamage+=.5*m;f.spearLength*=(1+.08*m);f.reach=f.weapon.reach*f.spearLength;notice='+0.5 DMG · LENGTH '+f.spearLength.toFixed(2)+'×';break;
-  case 'axe':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
+  case 'axe':f.combatDamage+=BALANCE.axe.damagePerHit*m;f.critChance=clamp((f.critChance||1)+BALANCE.axe.critChancePerHit*m,0,100);notice='+2 DAMAGE · CRIT CHANCE +2%';break;
   case 'hammer':f.combatDamage+=BALANCE.hammer.damagePerHit*m;f.hammerMaxSpin+=BALANCE.hammer.spinGrowth*(f.growthMultiplier||1);f.hammerSpin=1;notice='+0.65 DAMAGE · MAX SPIN UP';break;
   case 'scythe':target.poisonDps=(target.poisonDps||0)+BALANCE.scythe.poison;notice='+0.275 POISON DPS';floatText(target.x,target.y-39,notice,'#7ccf75');break;
   case 'chakram':f.spinGrowth*=1+BALANCE.chakram.spinGrowth*(f.growthMultiplier||1);notice='SPIN SPEED +4.75%';break;
   case 'trident':f.combatDamage+=.5*m;notice='+0.5 DAMAGE';break;
   case 'bow':f.projectileShots=Math.min(64,(f.projectileShots||1)+1);notice='+1 PROJECTILE · '+f.projectileShots+' SHOTS';break;
-  case 'lance':f.combatDamage+=1*m;notice='+1 CHARGE DAMAGE';break;
+  case 'lance':f.combatDamage+=BALANCE.lance.damagePerHit*m;notice='+2 CHARGE DAMAGE';break;
   case 'duplicator':
    sim.duplicateHits[f.side]=(sim.duplicateHits[f.side]||0)+1;
    if(sim.duplicateHits[f.side]%BALANCE.duplicator.hitsPerClone===0&&sim.teams[f.side].length<BALANCE.duplicator.cap)spawnDuplicates(f.side);
@@ -760,7 +760,7 @@ function damage(attacker,target,dt){
  const w=attacker.weapon;
  let amount,crit=false;
  if(w.id==='axe'){
-  crit=sim.rng()*100<clamp(attacker.combatDamage,0,100);
+  crit=sim.rng()*100<clamp(attacker.critChance||0,0,100);
   amount=crit?attacker.combatDamage:1;
  }else if(w.id==='lance'){
   amount=attacker.lanceCharging?Math.max(1,attacker.combatDamage):1;
@@ -826,12 +826,13 @@ function step(dt){
    f.lanceChargeCooldown-=dt;
    if(f.lanceChargeCooldown<=0){
     f.lanceCharging=true;f.lanceChargeDirection=dir;f.lanceChargeCooldown=4.2;
-    f.vx=dir*300;f.vy=Math.min(0,f.vy);
+    f.lanceChargeSpeed=BALANCE.lance.chargeStartSpeed;f.vx=dir*f.lanceChargeSpeed;f.vy=Math.min(0,f.vy);
     floatText(f.x,f.y-48,'CHARGING!','#e9cf55');burst(f.x,f.y,'#e9cf55',8);
    }
   }
   if(lance&&f.lanceCharging){
-   f.vx=f.lanceChargeDirection*300;
+   f.lanceChargeSpeed=Math.min(BALANCE.lance.chargeMaxSpeed,(f.lanceChargeSpeed||BALANCE.lance.chargeStartSpeed)+BALANCE.lance.chargeAcceleration*dt);
+   f.vx=f.lanceChargeDirection*f.lanceChargeSpeed;
    f.vy+=gravity*.45*dt;
   }else{
    driveHorizontal(f,dt);
@@ -840,12 +841,12 @@ function step(dt){
   f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
   if(f.x<arena.x+f.r){
    f.x=arena.x+f.r;
-   if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
+   if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
    else f.vx=Math.abs(f.vx);
   }
   if(f.x>arena.x+arena.w-f.r){
    f.x=arena.x+arena.w-f.r;
-   if(lance&&f.lanceCharging){f.lanceCharging=false;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
+   if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
    else f.vx=-Math.abs(f.vx);
   }
   if(f.y<arena.y+f.r){f.y=arena.y+f.r;f.vy=Math.abs(f.vy);}
@@ -1275,7 +1276,7 @@ function draw(){
    case 'sword':detail='DMG '+fixed(damage);break;
    case 'dagger':detail='SPEED ×'+(fighter?fighter.attackSpeedFactor:1).toFixed(2);break;
    case 'spear':detail='DAMAGE/LENGTH: '+fixed(damage);break;
-   case 'axe':detail='CRIT '+Math.min(100,Math.floor(damage))+'% / DMG '+fixed(damage);break;
+   case 'axe':detail='CRIT '+fixed(fighter?fighter.critChance:1)+'% / DMG '+fixed(damage);break;
    case 'hammer':detail='DMG '+fixed(damage)+' / MAX SPIN '+(fighter?fighter.hammerMaxSpin:1).toFixed(1)+'×';break;
    case 'scythe':detail='POISON '+(opponents.reduce((sum,f)=>sum+(f.poisonDps||0),0))+' DPS';break;
    case 'chakram':detail='SPIN ×'+(fighter?fighter.spinGrowth:1).toFixed(2);break;
