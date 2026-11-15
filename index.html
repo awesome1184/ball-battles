@@ -229,14 +229,76 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
 @media(max-width:360px){.brand-name{font-size:20px}.wallet small{display:none}.date-chip{display:none}.tab{font-size:10px}.quick-wagers{gap:3px}.quick-wagers .soft-btn{min-width:32px;padding:6px 5px}}
 @media(prefers-reduced-motion:reduce){.weapon-card,.bet-side,.odds-meter-left,.odds-meter-right{transition:none!important}}
 </style>
+
+<style id="round-two-ui-pass">
+/* round two: less template, more game.
+   Display font is Pixelify Sans (medium instance), latin subset. (c) 2021 The Pixelify Sans Project Authors, SIL OFL 1.1, see licenses/ */
+@font-face{font-family:"Pixelify Sans";font-style:normal;font-weight:700;font-display:swap;src:url(data:font/woff2;base64,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) format("woff2")}
+:root{--display:"Pixelify Sans","Trebuchet MS","Segoe UI",system-ui,sans-serif}
+
+.brand{gap:14px}.brand-balls{display:flex;align-items:center;flex:none}
+.brand-balls i{width:24px;height:24px;border:3px solid var(--ink);border-radius:50%;background:var(--red)}
+.brand-balls i+i{background:var(--green);margin-left:-9px}
+.brand-name{font-family:var(--display);font-size:32px;font-weight:700;line-height:1;color:var(--paper)}
+.brand-sub{display:none}
+.coin{display:inline-block;width:18px;height:18px;flex:none;border:2px solid var(--ink);border-radius:50%;background:var(--sun);font-size:0;vertical-align:-3px}
+.wallet{gap:8px;padding:6px 12px}.wallet .coin{background:#fff3b0}
+.wallet strong{font-size:20px;font-weight:850;line-height:1.1}.wallet small{display:inline;font-size:12px;font-weight:700}
+.icon-btn{white-space:nowrap}
+#sound-hit-btn,.arena-top{display:none}
+
+#match-title{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-family:var(--display);font-size:clamp(26px,3.4vw,38px);font-weight:700;line-height:1;letter-spacing:0}
+#match-title .corner{padding:6px 12px 8px;border:var(--border);border-radius:var(--r);box-shadow:3px 3px 0 var(--ink);color:var(--ink)}
+#match-title .corner.red{background:var(--red)}#match-title .corner.green{background:var(--green)}
+#match-title .vs{font-size:.55em;color:var(--paper);transform:rotate(-6deg)}
+#match-subtitle{display:grid;gap:5px;margin-top:12px;font-size:14px;color:#e8ebf5}
+#match-subtitle .row{display:flex;align-items:center;gap:9px}#match-subtitle b{color:var(--paper)}
+#match-subtitle .dot{flex:none;width:12px;height:12px;border:2px solid var(--ink);border-radius:50%}
+#match-subtitle .dot.red{background:var(--red)}#match-subtitle .dot.green{background:var(--green)}
+
+.view-head h1{font-family:var(--display);font-size:clamp(30px,4vw,40px);font-weight:700;letter-spacing:0}
+.bet-side .pct{font-size:20px;font-weight:850}
+.payout-amount{font-size:28px;font-weight:850}
+.reward-amount{display:flex;align-items:center;gap:9px;font-size:30px;font-weight:850;line-height:1.1}
+.reward-amount .coin{width:22px;height:22px;vertical-align:0}
+.power-row strong{font-size:18px;font-weight:850}
+
+.weapon-glyph{background:none;border:0;border-radius:0;box-shadow:none;margin:0 0 2px;justify-self:start;width:92px;height:92px}
+.weapon-card small{font-weight:500;line-height:1.4}.weapon-card small::first-letter{text-transform:uppercase}
+.weapon-card{min-height:170px}.weapon-card .lv{margin-top:auto;font-size:12px;font-weight:700;color:var(--muted)}
+.weapon-card.selected .lv{color:var(--ink)}
+.stat-upgrade-level,.stat-upgrade-value{font-size:12px}.stat-upgrade-desc{font-size:12px}
+.physics-note{font-size:12px;line-height:1.45}
+
+.stats-grid{gap:0;background:var(--paper);border:var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.stats-grid .stat-card{border:0;border-radius:0;box-shadow:none;background:transparent;padding:16px 18px}
+.stats-grid .stat-card+.stat-card{border-left:3px dashed var(--ink)}
+.stat-card strong{font-size:34px;font-weight:850;line-height:1.15}
+#stat-champion{font-family:var(--display);font-size:28px;font-weight:700}
+.matchup-card h3,.history-card h3{letter-spacing:0}.matchup-card{margin-bottom:18px}
+.matchup-summary strong{color:var(--ink);background:linear-gradient(transparent 58%,var(--sun) 58%);padding:0 2px}
+.history-row span{font-size:12px}.history-meta{margin-top:3px;font-size:12px;color:var(--muted)}
+
+.side-card .bet-note{padding:0;margin-top:10px;color:#c9d0e6;font-size:12px}
+.dev-toggle{position:static;display:inline;margin-left:10px;padding:0;border:0;background:none;box-shadow:none;color:inherit;font-size:inherit;font-weight:400;text-decoration:underline;opacity:.65}
+.dev-panel{bottom:14px}.dev-actions button{font-weight:700}
+
+@media(max-width:600px){
+ .topbar{gap:8px}.brand{gap:10px}.brand-name{font-size:22px;white-space:nowrap}.brand-balls i{width:18px;height:18px;border-width:2px}.brand-balls i+i{margin-left:-7px}
+ .wallet small{display:none}.wallet{padding:6px 10px}.icon-btn{padding:8px 10px;font-size:13px}
+ #match-title{font-size:26px}#match-title .corner{padding:5px 9px 7px}
+ .stats-grid .stat-card:nth-child(odd){border-left:0}.stats-grid .stat-card:nth-child(n+3){border-top:3px dashed var(--ink)}
+ .stat-card strong{font-size:30px}
+}
+</style>
 </head>
 <body>
 <div class="app">
 <a class="skip-link" href="#arena-stage">Skip to the battle</a>
 <header class="topbar">
-  <div class="brand"><div class="brand-mark">B</div><div><div class="brand-name">Ball Battles</div><div class="brand-sub">Pick a side. Back your ball.</div></div></div>
+  <div class="brand"><span class="brand-balls" aria-hidden="true"><i></i><i></i></span><div class="brand-name">Ball Battles</div></div>
   <div class="top-actions">
-    <div class="wallet"><span class="coin">◈</span><div><small>Your coins</small><strong id="coin-count">350</strong></div></div>
+    <div class="wallet" title="Your coins"><span class="coin" aria-hidden="true"></span><strong id="coin-count">350</strong><small>coins</small></div>
     <button class="icon-btn" id="sound-toggle" aria-label="Toggle sound">Sound on</button>
   </div>
 </header>
@@ -311,12 +373,12 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
       </section>
       <section class="card side-card">
         <div class="side-heading"><h3>Daily coins</h3><span class="muted-tag">Every day</span></div>
-        <div class="reward-row"><div><div class="reward-amount">+100 ◈</div><div class="reward-copy">A few coins to keep your next upgrade moving.</div></div><div style="font-size:31px;color:#c38d48">✦</div></div>
+        <div class="reward-row"><div><div class="reward-amount"><span class="coin" aria-hidden="true"></span>+100</div><div class="reward-copy">A few coins to keep your next upgrade moving.</div></div></div>
         <button class="primary-btn claim-btn" id="claim-btn">Claim coins</button>
       </section>
       <section class="card side-card">
         <div class="side-heading"><h3>Your champion</h3></div>
-        <div class="champ-row"><canvas class="mini-orb" id="champ-orb" width="180" height="180" role="img" aria-label="Champion weapon"></canvas><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 · Favorite weapon</div></div></div>
+        <div class="champ-row"><canvas class="mini-orb" id="champ-orb" width="180" height="180" role="img" aria-label="Champion weapon"></canvas><div><div class="champ-name" id="champ-name">Sword</div><div class="champ-sub" id="champ-level">Level 1 champion</div></div></div>
         <div class="power-row"><span>Champion power</span><strong id="champ-power">100</strong></div><div class="power-track"><span id="champ-power-bar" style="width:12%"></span></div>
         <div class="side-actions"><button class="small-btn" id="go-armory-btn">Upgrade</button><button class="small-btn" id="practice-btn">Practice fight</button></div>
       </section>
@@ -344,12 +406,12 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
       <div class="stat-line"><span>Current spin speed</span><strong id="training-speed">3.2</strong></div>
       <div class="stat-line"><span id="training-reach-label">Weapon reach</span><strong id="training-reach">68</strong></div>
       <div class="stat-section-label">Weapon stats</div>
-      <p class="section-desc">Each weapon has a separate level and progress bar for every stat. Add 50 coins per contribution; each next level requires quadratically more pooled coins.</p>
+      <p class="section-desc">Every stat has its own level. Each contribution is 50 coins, and every level costs more than the last.</p>
       <div class="stats-upgrades" id="stat-upgrades"></div>
       <div class="tip">Simulation opponents are chosen randomly. Select the weapon you want to test, then run a simulation.</div>
       <button class="soft-btn wide" id="set-favorite-btn">Make champion</button>
       <button class="soft-btn wide" id="armory-practice-btn">Practice with this weapon</button>
-      <div class="physics-note">◉ <span><strong>Gravity and natural rebounds.</strong> Hits and parries no longer add knockback; the trident whirlpool still pulls nearby balls.</span></div>
+      <div class="physics-note">Fights run on gravity and bounces. Hits don’t knock anyone back, but the Trident’s whirlpool still pulls.</div>
       <div class="tip">Each weapon and stat has its own pool. This prototype stores progress in this browser; true global progress shared by all players requires the Devvit backend.</div>
     </section>
   </div>
@@ -372,39 +434,38 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
     <div class="card stat-card"><span>Fights watched</span><strong id="stat-fights">0</strong></div>
     <div class="card stat-card"><span>Predictions won</span><strong id="stat-picks">0</strong></div>
     <div class="card stat-card"><span>Prediction rate</span><strong id="stat-rate">—</strong></div>
-    <div class="card stat-card"><span>Best champion</span><strong id="stat-champion" style="font-size:19px">Sword</strong></div>
+    <div class="card stat-card"><span>Best champion</span><strong id="stat-champion">Sword</strong></div>
   </div>
   <section class="card history-card matchup-card">
-    <div class="side-heading"><h3>Weapon matchup win rates</h3><span class="muted-tag">Archived balance snapshot</span></div>
-    <p class="matchup-desc">Each row shows that ball's win rate against the weapon at the top of the column. This archived matrix predates the new horizontal roaming movement and knockout-only rules, so it is not a measurement of the current build.</p>
+    <div class="side-heading"><h3>Weapon matchup win rates</h3><span class="muted-tag">New physics sample</span></div>
+    <p class="matchup-desc">Each row shows that weapon's win rate against the weapon at the top of the column. These results use free movement, elastic collisions, and the current weapon rules.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
-    <p class="matchup-foot">Archived pre-movement results: 50 simulated fights per pairing · 25 from each starting side. Re-run the matrix to measure the new movement tuning.</p>
+    <p class="matchup-foot">2,750 simulated fights: 50 per pairing, with 25 from each starting side.</p>
   </section>
   <section class="card history-card"><div class="side-heading"><h3>Match history</h3></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
 
-<div class="footer"><span>Ball Battles</span><span>Progress is saved in this browser.</span><span id="build-date">Build 01</span></div>
+<div class="footer"><span>Ball Battles</span><span>Progress is saved in this browser. <button class="dev-toggle" id="dev-toggle">dev tools</button></span><span id="build-date">Build 01</span></div>
 </div>
-<button class="dev-toggle" id="dev-toggle">Dev tools</button>
-<div class="dev-panel" id="dev-panel"><h3>Developer test tools</h3><p>Local tools for checking fights. These changes only affect this browser.</p><div class="dev-actions"><button id="dev-coins">+1,000 COINS</button><button id="dev-reset-claim">RESET DAILY CLAIM</button><button id="dev-force-left">FORCE LEFT WIN</button><button id="dev-force-right">FORCE RIGHT WIN</button><button class="danger" id="dev-clear">CLEAR LOCAL SAVE</button><button id="dev-close">CLOSE</button></div></div>
+<div class="dev-panel" id="dev-panel"><h3>Developer test tools</h3><p>Local tools for checking fights. These changes only affect this browser.</p><div class="dev-actions"><button id="dev-coins">Add 1,000 coins</button><button id="dev-reset-claim">Reset daily claim</button><button id="dev-force-left">Force left win</button><button id="dev-force-right">Force right win</button><button class="danger" id="dev-clear">Clear local save</button><button id="dev-close">Close</button></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
 'use strict';
 const WEAPONS=[
- {id:'sword',name:'Sword',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'Damage +1 / hit',hitDelay:.68},
- {id:'dagger',name:'Dagger',color:'#71b9e9',desc:'Every hit increases attack speed by 6%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'Attack speed +6% / hit',hitDelay:.52},
- {id:'spear',name:'Spear',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'Damage +0.5 · Length +8% / hit',hitDelay:.74},
- {id:'axe',name:'Axe',color:'#d78e72',desc:'Every hit adds +2 damage and 2 percentage points of critical chance. Normal hits deal 1; critical hits deal its full stored damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'Damage +2 / hit · Crit chance +2% / hit',hitDelay:.76},
- {id:'hammer',name:'Hammer',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'Damage +0.65 · Max spin +0.15× / hit · Unparryable',hitDelay:.94},
- {id:'scythe',name:'Scythe',color:'#a1d17a',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.275 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'Poison +0.275 DPS / hit',hitDelay:.68},
- {id:'chakram',name:'Chakram',color:'#e4c36c',desc:'Every hit increases rotation speed by 4.75%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'Spin speed +4.75% / hit',hitDelay:.46},
- {id:'trident',name:'Trident',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'Damage +0.5 / hit · Pulling whirlpool',hitDelay:.64},
- {id:'bow',name:'Bow',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'+1 projectile / projectile hit',projectile:true,hitDelay:1.65},
- {id:'lance',name:'Lance',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it gradually accelerates toward a wall while invulnerable. Each hit adds +2 damage to its next charge.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'Charge damage +2 / hit · Accelerating charge',hitDelay:.78},
- {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'Main ball · Full-health clones · Swarm dies with main',duplicator:true,hitDelay:.68}
+ {id:'sword',name:'Sword',color:'#e99b62',desc:'Every successful hit adds exactly +1 damage for the rest of the fight.',damage:1,reach:69,width:14,spin:3.25,hp:118,special:'gains +1 damage every hit',hitDelay:.68},
+ {id:'dagger',name:'Dagger',color:'#71b9e9',desc:'Every hit increases attack speed by 6%. The bonus compounds with every strike.',damage:1,reach:54,width:10,spin:5.15,hp:108,special:'attacks 6% faster every hit',hitDelay:.52},
+ {id:'spear',name:'Spear',color:'#83c49c',desc:'Starts with a short shaft. Every hit adds +0.5 damage and makes the spear 8% longer, compounding with each strike.',damage:1,reach:56,width:8,spin:2.35,hp:112,special:'gains +0.5 damage and 8% length every hit',hitDelay:.74},
+ {id:'axe',name:'Axe',color:'#d78e72',desc:'Every hit adds +2 damage and 2 percentage points of critical chance. Normal hits deal 1; critical hits deal its full stored damage.',damage:1,reach:66,width:22,spin:2.65,hp:120,special:'gains +2 damage and +2% crit chance every hit',hitDelay:.76},
+ {id:'hammer',name:'Hammer',color:'#bea0e8',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:58,width:25,spin:1.75,hp:130,special:'gains +0.65 damage and +0.15× max spin every hit, and can’t be parried',hitDelay:.94},
+ {id:'scythe',name:'Scythe',color:'#a1d17a',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.275 damage per second. Poison does not scale.',damage:1,reach:81,width:18,spin:3.05,hp:110,special:'adds a poison stack every hit (0.275 damage per second each)',hitDelay:.68},
+ {id:'chakram',name:'Chakram',color:'#e4c36c',desc:'Every hit increases rotation speed by 4.75%. The speed bonus compounds with every strike.',damage:1,reach:76,width:14,spin:4.45,hp:110,special:'spins 4.75% faster every hit',hitDelay:.46},
+ {id:'trident',name:'Trident',color:'#73c9c5',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +0.5 damage.',damage:1,reach:84,width:15,spin:2.85,hp:116,special:'gains +0.5 damage every hit and pulls nearby balls in',hitDelay:.64},
+ {id:'bow',name:'Bow',color:'#d6a6ed',desc:'Every arrow that hits adds one projectile to every future volley.',damage:1,reach:142,width:7,spin:.7,hp:104,special:'fires one more arrow for every arrow that lands',projectile:true,hitDelay:1.65},
+ {id:'lance',name:'Lance',color:'#edd04d',desc:'Normal hits deal 1 damage. Every few seconds it gradually accelerates toward a wall while invulnerable. Each hit adds +2 damage to its next charge.',damage:1,reach:105,width:13,spin:2.4,hp:112,special:'gains +2 charge damage every hit and charges faster over time',hitDelay:.78},
+ {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'spawns clones from its main ball; lose the main ball and they all go',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,overtimeStart:40};
 const BALANCE={
@@ -489,7 +550,13 @@ function statContributionBonus(id,key){const def=STAT_DEFS.find(x=>x.id===key),l
 function nextStatContributionGain(id,key){const def=STAT_DEFS.find(x=>x.id===key),lv=statPool(id,key).level;return def?def.baseGain*(lv+1):0;}
 function totalStatBonus(id,key){return statContributionBonus(id,key);}
 function totalStatCoins(id){return Object.values(save.statPools[id]||{}).reduce((n,p)=>n+Number(p.totalContributed||0),0);}
-function percentText(value){return (value*100).toFixed(4)+'%';}
+function setMatchHead(l,r,mode){
+ $('match-title').innerHTML='<span class="corner red">'+l.name+'</span><span class="vs">vs</span><span class="corner green">'+r.name+'</span>';
+ $('match-subtitle').innerHTML=mode==='daily'
+  ?'<span class="row"><i class="dot red"></i><span><b>'+l.name+'</b> '+l.special+'</span></span><span class="row"><i class="dot green"></i><span><b>'+r.name+'</b> '+r.special+'</span></span>'
+  :'<span class="row">Practice fight: your trained '+l.name+' against '+r.name+'.</span>';
+}
+function percentText(value){return String(Number((value*100).toFixed(2)))+'%';}
 function money(n){return Math.floor(n).toLocaleString();}
 function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
@@ -577,8 +644,7 @@ $('bet-left-caption').textContent='Red corner, pays '+odds('left').toFixed(2)+'�
 $('odds-left-name').textContent=leftWeapon.name+' support';$('odds-right-name').textContent=rightWeapon.name+' support';$('odds-left-meter').style.width=leftShare+'%';$('odds-right-meter').style.width=rightShare+'%';
 $('odds-left-value').textContent=leftShare+'%';$('odds-right-value').textContent=rightShare+'%';
 $('underdog-value').textContent=Math.max(odds('left'),odds('right')).toFixed(2)+'×';
-$('match-title').textContent=leftWeapon.name+' vs '+rightWeapon.name;
-$('match-subtitle').textContent='Daily weapon showdown · '+(leftWeapon.special+' meets '+rightWeapon.special);
+setMatchHead(leftWeapon,rightWeapon,'daily');
 const claim=$('claim-btn');const claimed=save.claimedDay===today;claim.disabled=claimed;claim.classList.toggle('done',claimed);claim.textContent=claimed?'Daily coins claimed':'Claim coins';
 const old=save.results[today];if(old){$('fight-state-chip').textContent='Result saved';$('arena-status-text').textContent=weapon(old.winner).name+' won today. Replay the fight below.';$('fight-btn').textContent='Replay fight';}
 const bet=save.bets[today];if(bet){$('bet-desc').textContent='Your prediction is locked for today.';$('bet-amount').disabled=true;$('bet-amount').value=bet.amount;$('place-bet-btn').disabled=true;$('place-bet-btn').textContent='Prediction locked';$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-note').textContent='You backed '+weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).name+' with '+money(bet.amount)+' coins at '+bet.odds.toFixed(2)+'×.';}
@@ -598,7 +664,7 @@ drawWeaponIcon($('champ-orb'),w);
 renderArmoryDetails();
 }
 function renderArmory(){
-$('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">Your main</span>':'')+'<canvas class="weapon-glyph" width="180" height="180" data-weapon-icon="'+w.id+'" role="img" aria-label="'+w.name+' weapon art"></canvas><strong>'+w.name+'</strong><small>'+w.special+' · Lv '+(level(w.id)+1)+'</small></button>').join('');
+$('weapon-grid').innerHTML=WEAPONS.map(w=>'<button class="weapon-card '+(selectedWeapon===w.id?'selected':'')+'" data-weapon="'+w.id+'" style="--wc:'+w.color+'">'+(save.favorite===w.id?'<span class="fav-mark">Your main</span>':'')+'<canvas class="weapon-glyph" width="180" height="180" data-weapon-icon="'+w.id+'" role="img" aria-label="'+w.name+' weapon art"></canvas><strong>'+w.name+'</strong><small>'+w.special+'</small><span class="lv">Level '+(level(w.id)+1)+'</span></button>').join('');
 document.querySelectorAll('[data-weapon]').forEach(btn=>btn.addEventListener('click',()=>{selectedWeapon=btn.dataset.weapon;renderArmory();}));
 document.querySelectorAll('[data-weapon-icon]').forEach(canvas=>drawWeaponIcon(canvas,weapon(canvas.dataset.weaponIcon)));
  renderArmoryDetails();
@@ -607,7 +673,7 @@ function renderArmoryDetails(){
  const w=weapon(selectedWeapon),st=statLevels(w.id);
  $('training-name').textContent=w.name;drawWeaponIcon($('training-orb'),w);
  const totalLevels=Object.values(st).reduce((a,b)=>a+Number(b||0),0),coins=totalStatCoins(w.id);
- $('training-level').textContent='Level '+totalLevels+' · '+money(coins)+' coins invested';
+ $('training-level').textContent='Level '+totalLevels+', '+money(coins)+' coins invested';
  $('training-desc').textContent=w.desc;
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
@@ -617,9 +683,9 @@ function renderArmoryDetails(){
   const available=def.available(w),pool=statPool(w.id,def.id);
   const cost=nextStatLevelCost(w.id,def.id),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
   const percent=available?clamp(pool.progress/cost*100,0,100):0;
-  const label='Level '+pool.level+' · total +'+percentText(bonus);
-  const progressLabel=money(pool.progress)+' of '+money(cost)+' coins toward next level';
-  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?label:'Not used')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-progress-track"><span style="width:'+percent.toFixed(1)+'%"></span></div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?progressLabel+' · next level +'+percentText(gain):'Not used by this weapon')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'Add 50 coins':'Not used')+'</button></div></div>';
+  const label='Level '+pool.level+' (+'+percentText(bonus)+')';
+  const progressLabel=money(pool.progress)+'/'+money(cost)+' coins';
+  return '<div class="stat-upgrade '+(available?'':'na')+'"><div class="stat-upgrade-head"><span class="stat-upgrade-name">'+def.name+'</span><span class="stat-upgrade-level">'+(available?label:'Not used')+'</span></div><div class="stat-upgrade-desc">'+def.desc+'</div><div class="stat-progress-track"><span style="width:'+percent.toFixed(1)+'%"></span></div><div class="stat-upgrade-foot"><span class="stat-upgrade-value">'+(available?progressLabel+', next level +'+percentText(gain):'Not used by this weapon')+'</span><button class="stat-upgrade-btn" data-stat="'+def.id+'" '+(!available||save.coins<STAT_CONTRIBUTION_COST?'disabled':'')+'>'+(available?'Add 50 coins':'Not used')+'</button></div></div>';
  }).join('');
  $('set-favorite-btn').textContent=save.favorite===w.id?'Your champion':'Make champion';
  $('set-favorite-btn').disabled=save.favorite===w.id;
@@ -706,8 +772,7 @@ function startFight(mode,forced,practiceId,opponentId){
   a=createFighter(main,'left',rng,true);b=createFighter(rival,'right',rng,false);
  }
  sim={mode:mode,active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,forced:forced||null,seed:seed,playerWeaponId:a.weapon.id,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false}};
- $('match-title').textContent=a.weapon.name+' vs '+b.weapon.name;
- $('match-subtitle').textContent=mode==='daily'?'Daily weapon showdown · '+a.weapon.special+' meets '+b.weapon.special:'Random simulation · your trained '+a.weapon.name+' against '+b.weapon.name;
+ setMatchHead(a.weapon,b.weapon,mode);
  $('left-name-top').textContent=a.weapon.name.toUpperCase();$('right-name-top').textContent=b.weapon.name.toUpperCase();
  $('fight-state-chip').textContent=mode==='daily'?'Fight in progress':'Practice fight in progress';
  $('arena-status-text').textContent=mode==='daily'?'THE DAILY FIGHT IS ON':'RANDOM SIMULATION IN PROGRESS';
@@ -1346,7 +1411,19 @@ function draw(){
  while(ctx.measureText(rightStatus).width>arena.w*.49&&parseInt(ctx.font,10)>9)ctx.font=(parseInt(ctx.font,10)-1)+'px system-ui';
  ctx.fillText(rightStatus,arena.x+arena.w,712);
 }
-function drawWeaponIcon(canvas,w){if(!canvas)return;const c=canvas.getContext('2d'),size=canvas.width||180;c.clearRect(0,0,size,size);c.save();c.translate(size/2,size/2);c.scale(.5,.5);drawPreviewBall(c,w,0,0,1);c.restore();}
+function drawWeaponIcon(canvas,w){
+ if(!canvas)return;
+ const c=canvas.getContext('2d'),size=canvas.width||180;
+ c.clearRect(0,0,size,size);
+ // Fit the ball and weapon into the canvas, with the weapon angled up and right.
+ const r=25,unit=w.id==='bow'?2.24:Math.max(1.45,w.reach/40),len=w.id==='duplicator'?r:40*unit,a=-.75,pad=11*unit*.75;
+ const tipX=Math.cos(a)*len,tipY=Math.sin(a)*len;
+ const minX=-r,maxX=Math.max(r,tipX+pad),minY=Math.min(-r,tipY-pad),maxY=r;
+ const scale=size*.88/Math.max(maxX-minX,maxY-minY);
+ c.save();c.translate(size/2-scale*(minX+maxX)/2,size/2-scale*(minY+maxY)/2);c.scale(scale,scale);
+ drawBall(c,{x:0,y:0,r:r,weapon:w,side:'left',angle:a,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100,preview:true});
+ c.restore();
+}
 function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
 function playTone(freq,duration,type){if(!soundOn)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(.055,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+duration);}catch(e){}}
 function renderMatchupTable(){
@@ -1354,7 +1431,7 @@ function renderMatchupTable(){
  $('matchup-head').innerHTML='<tr><th scope="col">BALL</th>'+labels+'<th scope="col">AVG</th></tr>';
  const averages=MATCHUP_WIN_RATES.map((row,i)=>row.reduce((sum,value,j)=>sum+(j===i?0:value),0)/(WEAPONS.length-1));
  const order=averages.map((rate,i)=>({name:WEAPONS[i].name,rate:rate})).sort((a,b)=>b.rate-a.rate);
- $('matchup-summary').innerHTML='Best overall: <strong>'+order[0].name+' · '+order[0].rate.toFixed(1)+'%</strong> average win rate. Lowest: <strong>'+order[order.length-1].name+' · '+order[order.length-1].rate.toFixed(1)+'%</strong>.';
+ $('matchup-summary').innerHTML='Best overall: <strong>'+order[0].name+'</strong>, winning '+order[0].rate.toFixed(1)+'% on average. Lowest: <strong>'+order[order.length-1].name+'</strong> at '+order[order.length-1].rate.toFixed(1)+'%.'.replace('%..','%.');
  $('matchup-body').innerHTML=WEAPONS.map((w,i)=>{
   const cells=MATCHUP_WIN_RATES[i].map((rate,j)=>{
    if(i===j)return '<td class="diagonal" aria-label="Same weapon">—</td>';
@@ -1366,10 +1443,10 @@ function renderMatchupTable(){
 }
 function renderRecords(){const daily=save.history.filter(h=>h.mode==='daily'),picks=Object.keys(save.settled).length,wins=Object.keys(save.settled).filter(d=>{const b=save.bets[d],r=save.results[d];return b&&r&&((b.side==='left'&&r.winner===r.left)||(b.side==='right'&&r.winner===r.right));}).length;
 $('stat-fights').textContent=save.history.length;$('stat-picks').textContent=wins;$('stat-rate').textContent=picks?Math.round(wins/picks*100)+'%':'—';$('stat-champion').textContent=weapon(save.favorite).name;renderMatchupTable();
-const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">'+(h.mode==='daily'?'Daily fight':'Practice fight')+' · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
+const rows=save.history.slice(0,20);$('history-list').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div class="history-meta">'+(h.mode==='daily'?'Daily fight':'Practice fight')+' on '+new Date(h.date).toLocaleDateString()+'</div></div><span>Winner</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No fights recorded yet. Watch today’s showdown to get started.</div>';}
 function renderSimulationHistory(){
  const rows=save.history.filter(h=>h.mode==='practice').slice(0,12);
- $('simulation-history').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div style="color:#748397;font-size:9px;margin-top:4px">SIMULATION · '+new Date(h.date).toLocaleDateString()+'</div></div><span>WINNER</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No simulations yet. Run your first random matchup.</div>';
+ $('simulation-history').innerHTML=rows.length?rows.map(h=>'<div class="history-row"><div><strong>'+weapon(h.left).name+'</strong> <span>vs</span> <strong>'+weapon(h.right).name+'</strong><div class="history-meta">Practice fight on '+new Date(h.date).toLocaleDateString()+'</div></div><span>Winner</span><strong class="result-win">'+weapon(h.winner).name+'</strong></div>').join(''):'<div class="empty-state">No simulations yet. Run your first random matchup.</div>';
 }
 function renderSimulations(){
  const w=weapon(save.favorite);
