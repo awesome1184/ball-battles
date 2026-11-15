@@ -1089,7 +1089,7 @@ function step(dt){
   if(target&&target.hp>0&&target.weapon.id!=='duplicator'&&!target.lanceCharging&&target.parryCd<=0){
    const guard=weaponSegment(target);
    if(distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2)<target.width*.5+5){
-    target.parryCd=.82;target.parryFlash=.3;recordExcitement('parry',2.2,target.side);reverseWeaponRotation(target);p.owner.stagger=Math.max(p.owner.stagger,.2);
+    target.parryCd=.82;target.parryFlash=.3;recordExcitement('parry',target.side,0);reverseWeaponRotation(target);p.owner.stagger=Math.max(p.owner.stagger,.2);
     floatText(target.x,target.y-42,'PARRY!','#eac65e');burst(p.x,p.y,'#f3c65f',10);playMetalClang('parry');
     sim.projectiles.splice(i,1);continue;
    }
