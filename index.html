@@ -23,7 +23,7 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .arena-canvas-wrap{position:relative;border-radius:9px;overflow:hidden;background:#fbf8ef;border:1px solid #191919;min-height:250px}.arena-canvas-wrap:after{content:"";pointer-events:none;position:absolute;inset:0;box-shadow:none}.arena-canvas{width:100%;height:clamp(430px,55vw,620px);display:block;background:#fbf8ef}
 .fighter-labels{display:none}.fighter-label{width:35%;min-width:0}.fighter-label.right{text-align:right}.fighter-name{font-size:11px;font-weight:950;letter-spacing:.12em;text-shadow:0 2px 5px #000}.fighter-weapon{font-size:10px;color:#aab8c7;margin-top:3px}.bar{height:7px;background:#27323e;border-radius:9px;overflow:hidden;margin-top:7px;border:1px solid #ffffff10}.bar-fill{height:100%;width:100%;border-radius:9px;transition:width .15s linear;background:linear-gradient(90deg,#ef6f74,#ff9c75)}.fighter-label.right .bar-fill{margin-left:auto;background:linear-gradient(90deg,#62b9ff,#85d4ed)}
 .arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 3px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:#adbac9;font-size:12px}.pulse{width:7px;height:7px;border-radius:50%;background:#64768a}.pulse.live{background:var(--green);box-shadow:0 0 0 5px #65d5a01c;animation:pulse 1.4s infinite}@keyframes pulse{50%{box-shadow:0 0 0 9px #65d5a000}}
-.controls{display:flex;align-items:center;gap:7px}.primary-btn{border:0;background:linear-gradient(135deg,#ffd27c,#e9a444);color:#26202a;font-weight:950;letter-spacing:.04em;border-radius:11px;padding:12px 17px;box-shadow:0 8px 20px #e9a44420}.primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.small-btn{border:1px solid #3b4b5d;background:#202b38;color:#e6edf6;border-radius:10px;padding:10px 12px;font-weight:800;font-size:11px}.speed-btn{min-width:44px}
+.controls{display:flex;align-items:center;gap:7px}.primary-btn{border:0;background:linear-gradient(135deg,#ffd27c,#e9a444);color:#26202a;font-weight:950;letter-spacing:.04em;border-radius:11px;padding:12px 17px;box-shadow:0 8px 20px #e9a44420}.primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}.small-btn{border:1px solid #3b4b5d;background:#202b38;color:#e6edf6;border-radius:10px;padding:10px 12px;font-weight:800;font-size:11px}
 .payout-card{padding:17px;position:relative;overflow:hidden;border-color:#5b4930;background:linear-gradient(125deg,#2c261d,#171d25 64%);isolation:isolate}
 .payout-card:before{content:"";position:absolute;inset:-60% auto -60% -45%;width:35%;background:linear-gradient(90deg,transparent,#fff5b866,transparent);transform:rotate(18deg);opacity:0;pointer-events:none;z-index:-1}
 .payout-card.reveal{animation:payoutEnter .7s cubic-bezier(.2,.9,.25,1.15) both}
@@ -139,7 +139,7 @@ h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3vw,34px);font-weight:850;line-h
 .arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:12px;line-height:1.4}
 .pulse{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#7b8190;border:1px solid var(--ink)}.pulse.live{background:var(--green);box-shadow:none;animation:none}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .primary-btn{border:var(--border);border-radius:var(--r);background:var(--sun);color:var(--ink);font-weight:800;letter-spacing:0;text-transform:none;padding:10px 14px;box-shadow:3px 3px 0 var(--ink);transition:transform .06s,box-shadow .06s}
-.primary-btn:hover:not(:disabled){background:#ffe06a;filter:none;transform:none}.primary-btn:active:not(:disabled){transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}.small-btn{font-size:12px}.speed-btn{min-width:44px}
+.primary-btn:hover:not(:disabled){background:#ffe06a;filter:none;transform:none}.primary-btn:active:not(:disabled){transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}.small-btn{font-size:12px}
 .bet-card{padding:0;background:var(--paper);color:var(--ink);overflow:visible}.slip-pick{padding:16px}.slip-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:5px}
 .slip-heading h2{margin:0;color:var(--ink)}.slip-state{color:var(--muted);font-size:11px}.bet-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
 .bet-side{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:2px solid var(--ink);border-radius:4px;background:var(--paper-dim);color:var(--ink);text-align:left;box-shadow:none}
@@ -351,7 +351,7 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
         </div>
         <div class="arena-bottom">
           <div class="arena-status"><span class="pulse" id="live-pulse"></span><span id="arena-status-text" aria-live="polite">The contenders are entering the arena.</span></div>
-          <div class="controls"><button class="small-btn speed-btn" id="speed-btn">1×</button><button class="small-btn" id="sound-hit-btn">Sound on</button><button class="primary-btn" id="fight-btn">Start fight</button></div>
+          <div class="controls"><button class="small-btn" id="sound-hit-btn">Sound on</button><button class="primary-btn" id="fight-btn">Start fight</button></div>
         </div>
       </section>
       <section class="card payout-card" id="payout-card" aria-live="polite">
@@ -617,7 +617,6 @@ const rightShare=100-leftShare;
 const shares={left:leftShare,right:rightShare};
 function odds(side){return Math.max(1.12,Math.min(2.65,0.78/(shares[side]/100)));}
 let selectedBet='left';
-let speed=1;
 let selectedWeapon=save.favorite;
 let payoutAnimationDay='';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
@@ -854,10 +853,15 @@ function applySeededRebound(f,maxAngle){
   const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
   f.vx=Math.cos(angle)*speed;f.vy=Math.sin(angle)*speed;
  }
+ function stopCurrentFight(){
+  if(sim&&sim.active)sim.active=false;
+  if(raf)cancelAnimationFrame(raf);
+  raf=0;lastFrame=0;accumulator=0;
+ }
  function startFight(mode,forced,practiceId,opponentId){
- if(sim&&sim.active)return;
+ stopCurrentFight();
  if(mode==='daily'&&dailyQuickSeed===null){ensureDailyQuickFight();return;}
- unlockAudio();if(raf)cancelAnimationFrame(raf);lastFrame=0;accumulator=0;const seed=mode==='daily'?(dailyQuickSeed===null?hashString('ball-battles-'+today):dailyQuickSeed):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
+ unlockAudio();const seed=mode==='daily'?(dailyQuickSeed===null?hashString('ball-battles-'+today):dailyQuickSeed):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
  if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{
   const main=weapon(practiceId||save.favorite);
   const rivals=WEAPONS.filter(w=>w.id!==main.id);
@@ -870,8 +874,8 @@ function applySeededRebound(f,maxAngle){
  $('fight-state-chip').textContent=mode==='daily'?'Fight in progress':'Practice fight in progress';
  $('arena-status-text').textContent=mode==='daily'?'DAILY FIGHT · EXCITEMENT '+dailyQuickScore.toFixed(2)+' · PREVIEWED KNOCKOUT '+dailyQuickTime.toFixed(1)+'s':'RANDOM SIMULATION IN PROGRESS';
  $('live-pulse').classList.add('live');
- $('fight-btn').textContent=mode==='daily'?'Fight in progress':'Practice fight in progress';
- $('fight-btn').disabled=true;
+ $('fight-btn').textContent='Restart fight';
+ $('fight-btn').disabled=false;
  $('bet-card').style.display=mode==='daily'?'':'none';
  if(mode==='daily'){$('bet-amount').disabled=true;$('place-bet-btn').disabled=true;$('bet-left').disabled=true;$('bet-right').disabled=true;$('bet-lock-label').textContent='FIGHT IN PROGRESS';}
  updateBars();playFightStart();raf=requestAnimationFrame(loop);
@@ -1178,7 +1182,7 @@ function finishFight(winner){
   renderWallet();renderChampion();renderArmory();renderSimulationHistory();renderRecords();
  }
 }
-function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let elapsed=Math.min(.05,(time-lastFrame)/1000);lastFrame=time;accumulator+=elapsed*speed;let n=0;while(accumulator>=1/60&&n<12&&sim&&sim.active){step(1/60);accumulator-=1/60;n++;}draw();if(sim&&sim.active)raf=requestAnimationFrame(loop);}
+function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let elapsed=Math.min(.05,(time-lastFrame)/1000);lastFrame=time;accumulator+=elapsed;let n=0;while(accumulator>=1/60&&n<12&&sim&&sim.active){step(1/60);accumulator-=1/60;n++;}draw();if(sim&&sim.active)raf=requestAnimationFrame(loop);}
 function updateBars(){if(!sim||sim.mode==='simulation')return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
@@ -1835,7 +1839,7 @@ function simulateOneMatchup(leftId,rightId,runIndex){
 let matchupBatchActive=false,matchupBatchFrame=0;
 function runMatchupBatch(){
  if(matchupBatchActive)return;
- if(sim&&sim.active){toast('Finish the live fight before running a batch.');return;}
+ stopCurrentFight();
  const leftId=$('simulation-left-weapon').value,rightId=$('simulation-right-weapon').value;
  const count=clamp(Math.floor(Number($('simulation-count').value)||25),1,500);
  if(!leftId||!rightId||leftId===rightId){toast('Choose two different weapons.');return;}
@@ -1897,9 +1901,9 @@ function openUpgradeFromDaily(){
  switchView('armory');
 }
 function renderAll(){renderWallet();renderDaily();renderArmory();if(view==='records')renderRecords();if(view==='simulations')renderSimulationHistory();updateBars();}
-function startPractice(weaponId){if(sim&&sim.active){toast('A fight is already running.');return;}const chosen=typeof weaponId==='string'?weaponId:save.favorite;switchView('arena');startFight('practice',null,chosen);}
+function startPractice(weaponId){const chosen=typeof weaponId==='string'?weaponId:save.favorite;switchView('arena');startFight('practice',null,chosen);}
 function forceFinish(side){if(!sim||!sim.active){startFight('daily');}if(!sim||!sim.active)return;const winner=sim.teams[side].find(f=>f.hp>0)||sim.teams[side][0];for(const f of sim.teams[side==='left'?'right':'left'])f.hp=0;winner.hp=Math.max(1,winner.hp);finishFight(winner);draw();}
-$('fight-btn').addEventListener('click',()=>{if(sim&&sim.active)return;if(sim&&sim.mode==='practice'){startPractice(sim.playerWeaponId||save.favorite);return;}if(dailyQuickSeed===null){ensureDailyQuickFight();return;}startFight('daily');});
+$('fight-btn').addEventListener('click',()=>{if(sim&&sim.mode==='practice'){startPractice(sim.playerWeaponId||save.favorite);return;}startFight('daily');});
 $('claim-btn').addEventListener('click',claimDaily);
 $('place-bet-btn').addEventListener('click',placeBet);
 $('bet-left').addEventListener('click',()=>selectBet('left'));$('bet-right').addEventListener('click',()=>selectBet('right'));
@@ -1912,7 +1916,7 @@ $('run-matchup-simulations-btn').addEventListener('click',runMatchupBatch);
 $('choose-champion-btn').addEventListener('click',()=>switchView('armory'));
 $('upgrade-from-payout').addEventListener('click',openUpgradeFromDaily);
 $('sim-from-payout').addEventListener('click',()=>switchView('simulations'));
-$('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
+
 function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();if(audioMaster&&audio)audioMaster.gain.setTargetAtTime(soundOn?1:0,audio.currentTime,.008);$('sound-toggle').textContent=soundOn?'Sound on':'Sound off';$('sound-hit-btn').textContent=soundOn?'Sound on':'Sound off';if(soundOn)playUiConfirm();}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
 document.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>switchView(b.dataset.view));b.addEventListener('keydown',event=>{const tabs=[...document.querySelectorAll('.tab')],index=tabs.indexOf(b);let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();tabs[next].focus();switchView(tabs[next].dataset.view);});});
