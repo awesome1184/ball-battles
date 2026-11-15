@@ -831,24 +831,26 @@ const WEAPON_MOVEMENT={
 };
 function steerWeaponMovement(f,target,dt){
  const p=WEAPON_MOVEMENT[f.weapon.id]||WEAPON_MOVEMENT.sword;
- const dx=target.x-f.x,dy=target.y-f.y,dir=Math.sign(dx)||(f.side==='left'?1:-1),gap=Math.abs(dx),vertical=Math.abs(dy);
- let desired=0;
+ const dx=target.x-f.x,dy=target.y-f.y,dir=Math.sign(dx)||(f.side==='left'?1:-1),vertical=Math.abs(dy);
+ let desired;
  if(f.weapon.id==='bow'){
   const distance=Math.hypot(dx,dy);
-  if(distance>p.range+55)desired=dir*p.speed;
-  else if(distance<p.range-65)desired=-dir*p.speed*p.retreat;
-  else desired=dir*p.speed*.08;
- }else if(vertical>p.vertical){
-  desired=dir*p.speed*.68;
+  if(distance>p.range+45)desired=dir*p.speed*.82;
+  else if(distance<p.range-55)desired=-dir*p.speed*.22;
+  else desired=dir*p.speed*.10;
  }else{
-  const error=gap-p.range;
-  desired=dir*p.speed*clamp(error/100,-.28,1);
+  // Melee fighters always close. Never reverse just because they have entered weapon range.
+  desired=dir*p.speed*(vertical>p.vertical?1:.78);
  }
  const change=p.accel*dt;
  f.vx+=clamp(desired-f.vx,-change,change);
  f.vx=clamp(f.vx,-p.speed*1.25,p.speed*1.25);
 }
-
+function applySeededRebound(f,maxAngle){
+ const velocity=Math.hypot(f.vx,f.vy);if(velocity<1)return;
+ const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
+ f.vx=Math.cos(angle)*velocity;f.vy=Math.sin(angle)*velocity;
+}
  function stopCurrentFight(){
   if(sim&&sim.active)sim.active=false;
   if(raf)cancelAnimationFrame(raf);
@@ -1050,15 +1052,15 @@ function step(dt){
   if(f.x<arena.x+f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=Math.abs(f.vx)*.92;
+   else f.vx=Math.abs(f.vx);
   }
   if(f.x>arena.x+arena.w-f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+arena.w-f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=-Math.abs(f.vx)*.92;
+   else f.vx=-Math.abs(f.vx);
   }
-  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.82;playWallTick(wallImpact);}
-  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.max(150,Math.abs(f.vy)*.78);f.grounded=true;playWallTick(wallImpact);}
+  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);applySeededRebound(f,.12);playWallTick(wallImpact);}
+  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;applySeededRebound(f,.12);playWallTick(wallImpact);}
   
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
@@ -1108,17 +1110,11 @@ function step(dt){
    const normalVelocity=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
    if(normalVelocity>0){
     playBallBump(normalVelocity);
-    const impulse=1.82*normalVelocity/(1/massA+1/massB);
+    const impulse=2*normalVelocity/(1/massA+1/massB);
     a.vx-=impulse/massA*nx;a.vy-=impulse/massA*ny;
     b.vx+=impulse/massB*nx;b.vy+=impulse/massB*ny;
    }
   }
- }
- for(const f of all){
-  if(f.hp<=0)continue;
-  const minX=arena.x+f.r,maxX=arena.x+arena.w-f.r,minY=arena.y+f.r,maxY=floor-f.r;
-  if(f.x<minX){f.x=minX;if(f.vx<0)f.vx=0;}else if(f.x>maxX){f.x=maxX;if(f.vx>0)f.vx=0;}
-  if(f.y<minY){f.y=minY;if(f.vy<0)f.vy=0;}else if(f.y>maxY){f.y=maxY;if(f.vy>0)f.vy=0;}
  }
  for(let i=sim.projectiles.length-1;i>=0;i--){
   const p=sim.projectiles[i];p.life-=dt;p.vy+=gravity*.42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
