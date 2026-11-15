@@ -491,7 +491,7 @@ const WEAPONS=[
  {id:'dagger',name:'Dagger',color:'#71b9e9',ballColor:'#26d83f',desc:'Every hit increases attack speed by 6% and adds +0.08 damage. Both bonuses compound as the fight continues.',damage:1,reach:86,width:10,spin:5.15,hp:STARTING_HP,special:'attacks 6% faster and gains +0.08 damage every hit',hitDelay:.52},
  {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Every hit adds +0.7 damage and makes the spear 8% longer, compounding until it reaches the shared 90px weapon-length cap.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'gains +0.7 damage and 8% length per hit, up to the size cap',hitDelay:.74},
  {id:'axe',name:'Axe',color:'#d78e72',ballColor:'#a95535',desc:'Every hit adds +2.5 stored damage and 2.5 percentage points of critical chance. Normal hits deal 1; critical hits deal its full stored damage.',damage:1,reach:86,width:22,spin:2.65,hp:STARTING_HP,special:'gains +2.5 stored damage and +2.5% crit chance every hit',hitDelay:.76},
- {id:'hammer',name:'Hammer',color:'#bea0e8',ballColor:'#d92c9c',desc:'Starts spinning extremely slowly. Each hit adds +0.65 damage, raises its maximum spin speed by 0.15×, and resets its current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:86,width:25,spin:1.75,hp:STARTING_HP,special:'gains +0.65 damage and +0.15× max spin every hit, and can’t be parried',hitDelay:.94},
+ {id:'hammer',name:'Hammer',color:'#bea0e8',ballColor:'#d92c9c',desc:'Starts spinning extremely slowly. Each hit adds +0.5 damage and +0.5× maximum spin, then resets current spin speed to 1×. Hammer strikes cannot be parried.',damage:1,reach:86,width:25,spin:1.75,hp:STARTING_HP,special:'gains +0.5 damage and +0.5× max spin every hit, and can’t be parried',hitDelay:.94},
  {id:'scythe',name:'Scythe',color:'#a1d17a',ballColor:'#77bd55',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.11 damage per second. Poison does not scale.',damage:1,reach:86,width:18,spin:3.05,hp:STARTING_HP,special:'adds a poison stack every hit (0.11 damage per second each)',hitDelay:.68},
  {id:'chakram',name:'Chakram',color:'#e4c36c',ballColor:'#e4bd42',desc:'Every hit increases rotation speed by 4.75% and adds +0.25 damage. Both bonuses compound with every strike.',damage:1,reach:86,width:18,spin:4.45,hp:STARTING_HP,special:'spins 4.75% faster and gains +0.25 damage every hit',hitDelay:.46},
  {id:'trident',name:'Trident',color:'#73c9c5',ballColor:'#37b9bf',desc:'A whirlpool follows the weapon head and pulls nearby balls toward it. Every hit adds +1.5 damage.',damage:1,reach:86,width:20,spin:2.85,hp:STARTING_HP,special:'gains +1.5 damage every hit and pulls nearby balls in',hitDelay:.64},
@@ -507,7 +507,7 @@ const BALANCE={
  dagger:{damage:1.12,cooldown:.82,speedGrowth:.06,damagePerHit:.08},
  spear:{damage:1.2,cooldown:.85,damagePerHit:.7},
  axe:{damagePerHit:2.5,critChancePerHit:2.5},
- hammer:{cooldown:1.18,damagePerHit:.65,spinGrowth:.15,width:.82},
+ hammer:{cooldown:1.18,damagePerHit:.5,spinGrowth:.5,width:.82},
  scythe:{cooldown:1.18,poison:.11},
  chakram:{cooldown:.93,spinGrowth:.0475,damagePerHit:.25},
  trident:{damage:1.07,cooldown:.85,damagePerHit:.6},
@@ -910,7 +910,7 @@ function applyHitGrowth(f,target){
   case 'dagger':f.attackSpeedFactor*=1+BALANCE.dagger.speedGrowth*(f.growthMultiplier||1);f.combatDamage+=BALANCE.dagger.damagePerHit*m;notice='ATTACK SPEED +6% · +0.08 DAMAGE';break;
   case 'spear':f.combatDamage+=BALANCE.spear.damagePerHit*m;f.spearLength=Math.min(WEAPON_MAX_LENGTH/((f.baseReach||WEAPON_BASE_LENGTH)*(f.weaponScale||1)),f.spearLength*(1+.08*m));f.reach=(f.baseReach||baseWeaponReach(f.weapon))*f.spearLength;notice='+0.7 DMG · LENGTH '+f.spearLength.toFixed(2)+'×';break;
   case 'axe':f.combatDamage+=BALANCE.axe.damagePerHit*m;f.critChance=clamp((f.critChance||3)+BALANCE.axe.critChancePerHit*m,0,100);notice='+2.5 DAMAGE · CRIT CHANCE +2.5%';break;
-  case 'hammer':f.combatDamage+=BALANCE.hammer.damagePerHit*m;f.hammerMaxSpin+=BALANCE.hammer.spinGrowth*(f.growthMultiplier||1);f.hammerSpin=1;notice='+0.65 DAMAGE · MAX SPIN UP';break;
+  case 'hammer':f.combatDamage+=BALANCE.hammer.damagePerHit*m;f.hammerMaxSpin+=BALANCE.hammer.spinGrowth*(f.growthMultiplier||1);f.hammerSpin=1;notice='+0.5 DAMAGE · MAX SPIN +0.5×';break;
   case 'scythe':target.poisonDps=(target.poisonDps||0)+BALANCE.scythe.poison;target.poisonSourceSide=f.side;notice='+0.11 POISON DPS';floatText(target.x,target.y-39,notice,'#7ccf75');break;
   case 'chakram':f.spinGrowth*=1+BALANCE.chakram.spinGrowth*(f.growthMultiplier||1);f.combatDamage+=BALANCE.chakram.damagePerHit*m;notice='SPIN SPEED +4.75% · +0.25 DAMAGE';break;
   case 'trident':f.combatDamage+=BALANCE.trident.damagePerHit*m;notice='+0.6 DAMAGE';break;
@@ -1283,14 +1283,57 @@ function buildWeaponPixelArt(){
 }
 const WEAPON_PIXEL_ART=buildWeaponPixelArt();
 
+const WEAPON_ART_ASSETS={
+ sword:loadWeaponArt('https://pixor.art/library/files/sword/sword.png',64),
+ dagger:loadWeaponArt('https://pixor.art/library/files/dagger/dagger.png',48),
+ spear:loadWeaponArt('https://pixor.art/library/files/spear/spear.png',64),
+ axe:loadWeaponArt('https://pixor.art/library/files/axe/axe.png',64),
+ hammer:loadWeaponArt('https://pixor.art/library/files/hammer/hammer.png',64),
+ scythe:loadWeaponArt('https://pixor.art/library/files/war-scythe/war-scythe.png',64),
+ chakram:loadWeaponArt('https://pixor.art/library/files/shuriken/shuriken.png',64,'disc'),
+ trident:loadWeaponArt('https://pixor.art/library/files/trident/trident.png',64),
+ bow:loadWeaponArt('https://pixor.art/library/files/bow/bow.png',64),
+ lance:loadWeaponArt('https://pixor.art/library/files/lance/lance.png',64)
+};
+function loadWeaponArt(src,size,mode='held'){
+ const image=new Image();
+ const asset={image,size,mode};
+ image.onload=()=>{if(typeof draw==='function')draw();};
+ image.onerror=()=>{};
+ image.src=src;
+ return asset;
+}
+
+
 function drawWeapon(c,f){
  if(f.weapon.id==='duplicator')return;
- const w=f.weapon,sprite=WEAPON_PIXEL_ART[w.id],unit=WEAPON_ART_SCALE;
+ const w=f.weapon,external=WEAPON_ART_ASSETS[w.id];
+ if(external&&external.image.complete&&external.image.naturalWidth>0){
+  c.save();
+  c.translate(f.x,f.y);
+  c.rotate(f.angle);
+  c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
+  c.imageSmoothingEnabled=false;
+  const scale=f.weaponScale||1;
+  if(external.mode==='disc'){
+   const size=54*scale;
+   c.translate(68*scale,0);
+   c.rotate(Math.PI/4);
+   c.drawImage(external.image,-size/2,-size/2,size,size);
+  }else{
+   const size=96*scale;
+   c.rotate(Math.PI/2);
+   c.drawImage(external.image,-size/2,-size,size,size);
+  }
+  c.restore();
+  return;
+ }
+ // Keep the original local pixel sprites as an offline / load-failure fallback.
+ const sprite=WEAPON_PIXEL_ART[w.id],unit=WEAPON_ART_SCALE;
  if(!sprite)return;
  c.save();
  c.translate(f.x,f.y);
  c.rotate(f.angle);
- // The weapon is drawn behind the orb, leaving only its clear outer silhouette visible.
  c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
  c.scale(unit*(f.weaponScale||1),unit*(f.weaponScale||1));
  if(w.id==='spear')c.scale(f.spearLength||1,1);
