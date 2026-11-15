@@ -1695,7 +1695,7 @@ function ensureDailyQuickFight(){
    }
    $('fight-btn').disabled=false;$('fight-btn').textContent=save.results[today]?'Replay fight':'Start fight';
    $('fight-state-chip').textContent='Most exciting knockout selected';
-   $('arena-status-text').textContent=weapon(dailyQuickWinner).name+' wins in '+dailyQuickTime.toFixed(1)+'s · excitement '+dailyQuickScore.toFixed(2)+' · best of '+DAILY_EXCITEMENT_BATCH_SIZE+' candidates ('+dailyQuickBatchQualified+' quick knockouts). '+dailyQuickBreakdown.hits+' hits, '+dailyQuickBreakdown.parries+' parries, '+dailyQuickBreakdown.clashes+' clashes.';
+   $('arena-status-text').textContent=weapon(dailyQuickWinner).name+' wins in '+dailyQuickTime.toFixed(1)+'s · excitement '+dailyQuickScore.toFixed(2)+' · best of '+DAILY_EXCITEMENT_BATCH_SIZE+' candidates ('+dailyQuickBatchQualified+' quick knockouts). Damage: '+dailyQuickBreakdown.damageDealt.left.toFixed(1)+'–'+dailyQuickBreakdown.damageDealt.right.toFixed(1)+' HP · '+Math.round(dailyQuickBreakdown.activeWindowRatio*100)+'% active windows.';
   }catch(error){
    dailyQuickSearching=false;$('fight-btn').disabled=false;$('fight-btn').textContent='Retry daily fight search';
    $('fight-state-chip').textContent='Search interrupted';
