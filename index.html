@@ -1332,7 +1332,7 @@ function drawWeaponIcon(canvas,w){
  const c=canvas.getContext('2d'),size=canvas.width||180;
  c.clearRect(0,0,size,size);
  // Fit the ball and weapon into the canvas, with the weapon angled up and right.
- const r=25,reach=WEAPON_MAX_LENGTH,width=baseWeaponWidth(w),unit=WEAPON_ART_SCALE,len=w.id==='duplicator'?r:reach,a=-.75,pad=9;
+ const r=30,reach=WEAPON_MAX_LENGTH,width=baseWeaponWidth(w),unit=WEAPON_ART_SCALE,len=w.id==='duplicator'?r:reach,a=-.75,pad=9;
  const tipX=Math.cos(a)*len,tipY=Math.sin(a)*len;
  const minX=-r,maxX=Math.max(r,tipX+pad),minY=Math.min(-r,tipY-pad),maxY=r;
  const scale=size*.88/Math.max(maxX-minX,maxY-minY);
@@ -1340,7 +1340,7 @@ function drawWeaponIcon(canvas,w){
  drawBall(c,{x:0,y:0,r:r,weapon:w,side:'left',angle:a,baseReach:reach,reach:reach,width:width,weaponScale:1,flash:0,hp:100,preview:true});
  c.restore();
 }
-function drawPreviewBall(c,w,x,y,dir){const reach=baseWeaponReach(w),f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,baseReach:reach,reach:reach,width:baseWeaponWidth(w),weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
+function drawPreviewBall(c,w,x,y,dir){const reach=baseWeaponReach(w),f={x:x,y:y,r:30,weapon:w,side:dir>0?'left':'right',angle:dir*.45,baseReach:reach,reach:reach,width:baseWeaponWidth(w),weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
 let activeAudioVoices=0;
 const lastAudioByType=Object.create(null);
 let cachedNoiseBuffer=null,cachedNoiseContext=null;
