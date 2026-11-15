@@ -468,8 +468,8 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
     <div class="card stat-card"><span>Best champion</span><strong id="stat-champion">Sword</strong></div>
   </div>
   <section class="card history-card matchup-card">
-    <div class="side-heading"><h3>Weapon matchup win rates</h3><span class="muted-tag">Historical sample · 86px reach</span></div>
-    <p class="matchup-desc">This older sample predates the current 72px weapon baseline and 90px maximum. Do not treat it as a current ranking. Use the Simulate tab’s Matchup Simulator to test fresh pairings under the live rules.</p>
+    <div class="side-heading"><h3>Weapon matchup win rates</h3><span class="muted-tag">Historical sample · 72px reach</span></div>
+    <p class="matchup-desc">This older sample predates the current 96px weapon baseline and 102px maximum. Do not treat it as a current ranking. Use the Simulate tab’s Matchup Simulator to test fresh pairings under the live rules.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
     <p class="matchup-foot">2,750 seeded fights: 50 per matchup, with 25 starts from each side. No test fight timed out.</p>
@@ -500,7 +500,7 @@ const WEAPONS=[
  {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'The main ball gains +0.2 damage on each of its own hits and creates a full-health clone every 6 team hits, up to 6 balls total. Clones deal 0.45 contact damage and screen near the main ball. If the main dies, the whole swarm is eliminated.',damage:1,reach:25,width:0,spin:0,hp:STARTING_HP,special:'grows main-ball damage and screens behind a six-ball swarm; losing the main ball ends the run',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1,overtimeStart:40};
-const WEAPON_BASE_LENGTH=72,WEAPON_MAX_LENGTH=90,WEAPON_ART_LENGTH=35,WEAPON_ART_SCALE=WEAPON_BASE_LENGTH/WEAPON_ART_LENGTH;
+const WEAPON_BASE_LENGTH=96,WEAPON_MAX_LENGTH=102,WEAPON_ART_LENGTH=35,WEAPON_ART_SCALE=WEAPON_BASE_LENGTH/WEAPON_ART_LENGTH;
 const HIT_STUN_PROFILE={sword:[.08,.045,1.2],dagger:[.02,.002,.10],spear:[.08,.025,.75],axe:[.12,.035,1.1],hammer:[.10,.02,.70],scythe:[.03,.006,.28],chakram:[.02,.003,.12],trident:[.08,.02,.65],bow:[.04,.006,.22],lance:[.12,.035,1.0],duplicator:[.01,.002,.06]};
 const BALANCE={
  sword:{damage:1.02,damagePerHit:.7},
@@ -565,7 +565,7 @@ function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v
 const STAT_DEFS=[
 {id:'baseDamage',name:'Base damage',desc:'Raises damage dealt by every successful hit.',baseGain:.02,available:w=>true},
 {id:'scaling',name:'Scaling',desc:'Increases each weapon’s fixed per-hit bonus. Damage grows by addition, never by a multiplier.',baseGain:.01,available:w=>true},
-{id:'weaponSize',name:'Weapon size',desc:'Increases weapon reach up to a hard maximum of 1.5 ball diameters (90px).',baseGain:.02,available:w=>w.id!=='duplicator'},
+{id:'weaponSize',name:'Weapon size',desc:'Increases weapon reach up to a hard maximum of 1.7 ball diameters (102px).',baseGain:.02,available:w=>w.id!=='duplicator'},
 {id:'projectileRate',name:'Projectile rate',desc:'Reduces the time between ranged attacks.',baseGain:.01,available:w=>!!w.projectile},
 {id:'delay',name:'Attack speed',desc:'Reduces recovery time between attacks.',baseGain:.01,available:w=>true},
 {id:'spinSpeed',name:'Spin speed',desc:'Increases how quickly the weapon rotates.',baseGain:.02,available:w=>true}
