@@ -468,6 +468,8 @@ const WEAPONS=[
  {id:'duplicator',name:'Duplicator',color:'#d92bbd',desc:'Has no weapon. The marked main ball deals damage by direct contact and creates one full-health clone every 8 team hits, up to 6 balls total. Clones deal very low contact damage. Enemies target the main ball; if it dies, every clone is eliminated.',damage:1,reach:25,width:0,spin:0,hp:100,special:'spawns clones from its main ball; lose the main ball and they all go',duplicator:true,hitDelay:.68}
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1.6,overtimeStart:40};
+// Bigger weapon art is matched by longer and thicker collision geometry.
+const WEAPON_SIZE_MULTIPLIER=1.7;
 const BALANCE={
  sword:{hp:1.03,damage:1.02},
  dagger:{hp:1.15,damage:1.12,reach:1.5,width:1.2,weaponScale:1.15,cooldown:.82,speedGrowth:.06},
@@ -525,6 +527,8 @@ function loadSave(){
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
+ function baseWeaponReach(w){const b=BALANCE[w.id]||{};return w.reach*1.12*(b.reach||1)*WEAPON_SIZE_MULTIPLIER;}
+ function baseWeaponWidth(w){const b=BALANCE[w.id]||{};return w.width*1.12*(b.width||1)*WEAPON_SIZE_MULTIPLIER;}
 function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
 {id:'baseDamage',name:'Base damage',desc:'Raises damage dealt by every successful hit.',baseGain:.02,available:w=>true},
@@ -678,7 +682,7 @@ function renderArmoryDetails(){
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
  $('training-reach-label').textContent=w.id==='spear'?'Starting length':'Weapon reach';
- $('training-reach').textContent=w.id==='spear'?'1.00× base':(w.reach*1.12*(1+totalStatBonus(w.id,'weaponSize'))).toFixed(2);
+ $('training-reach').textContent=w.id==='spear'?'1.00× base':(baseWeaponReach(w)*(1+totalStatBonus(w.id,'weaponSize'))*(BALANCE[w.id]?.weaponScale||1)).toFixed(2);
  $('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
   const available=def.available(w),pool=statPool(w.id,def.id);
   const cost=nextStatLevelCost(w.id,def.id),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
@@ -725,7 +729,7 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(105+rng()*140),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?1:0,lanceChargeSpeed:0,reach:w.reach*1.12*(balance.reach||1),width:w.width*1.12*(balance.width||1),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(105+rng()*140),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),maxHp:w.hp*MATCH_RULES.healthMultiplier*(balance.hp||1),damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?1:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:(1+totalStatBonus(w.id,'weaponSize'))*(balance.weaponScale||1),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,r:20.4,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28,lowHorizontalTimer:0});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -845,7 +849,7 @@ function applyHitGrowth(f,target){
  switch(w.id){
   case 'sword':f.combatDamage+=1*m;notice='+1 DAMAGE';break;
   case 'dagger':f.attackSpeedFactor*=1+BALANCE.dagger.speedGrowth*(f.growthMultiplier||1);notice='ATTACK SPEED +6%';break;
-  case 'spear':f.combatDamage+=.5*m;f.spearLength*=(1+.08*m);f.reach=f.weapon.reach*f.spearLength;notice='+0.5 DMG · LENGTH '+f.spearLength.toFixed(2)+'×';break;
+  case 'spear':f.combatDamage+=.5*m;f.spearLength*=(1+.08*m);f.reach=(f.baseReach||baseWeaponReach(f.weapon))*f.spearLength;notice='+0.5 DMG · LENGTH '+f.spearLength.toFixed(2)+'×';break;
   case 'axe':f.combatDamage+=BALANCE.axe.damagePerHit*m;f.critChance=clamp((f.critChance||1)+BALANCE.axe.critChancePerHit*m,0,100);notice='+2 DAMAGE · CRIT CHANCE +2%';break;
   case 'hammer':f.combatDamage+=BALANCE.hammer.damagePerHit*m;f.hammerMaxSpin+=BALANCE.hammer.spinGrowth*(f.growthMultiplier||1);f.hammerSpin=1;notice='+0.65 DAMAGE · MAX SPIN UP';break;
   case 'scythe':target.poisonDps=(target.poisonDps||0)+BALANCE.scythe.poison;notice='+0.275 POISON DPS';floatText(target.x,target.y-39,notice,'#7ccf75');break;
@@ -1327,7 +1331,7 @@ function drawWeapon(c,f){
   'b':'#a67044','C':'#efa66f','D':'#d78570','d':'#723637',
   'e':'#468b70','E':'#91cfa4'
  };
- const unit=w.id==='bow'?2.24:Math.max(1.45,w.reach/40);
+ const unit=w.id==='bow'?2.24*WEAPON_SIZE_MULTIPLIER:Math.max(1.45,(f.baseReach||f.reach)/40);
  c.save();
  c.translate(f.x,f.y);
  c.rotate(f.angle);
@@ -1419,15 +1423,15 @@ function drawWeaponIcon(canvas,w){
  const c=canvas.getContext('2d'),size=canvas.width||180;
  c.clearRect(0,0,size,size);
  // Fit the ball and weapon into the canvas, with the weapon angled up and right.
- const r=25,unit=w.id==='bow'?2.24:Math.max(1.45,w.reach/40),len=w.id==='duplicator'?r:40*unit,a=-.75,pad=11*unit*.75;
+ const r=25,reach=baseWeaponReach(w),width=baseWeaponWidth(w),unit=w.id==='bow'?2.24*WEAPON_SIZE_MULTIPLIER:Math.max(1.45,reach/40),len=w.id==='duplicator'?r:40*unit,a=-.75,pad=11*unit*.75;
  const tipX=Math.cos(a)*len,tipY=Math.sin(a)*len;
  const minX=-r,maxX=Math.max(r,tipX+pad),minY=Math.min(-r,tipY-pad),maxY=r;
  const scale=size*.88/Math.max(maxX-minX,maxY-minY);
  c.save();c.translate(size/2-scale*(minX+maxX)/2,size/2-scale*(minY+maxY)/2);c.scale(scale,scale);
- drawBall(c,{x:0,y:0,r:r,weapon:w,side:'left',angle:a,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100,preview:true});
+ drawBall(c,{x:0,y:0,r:r,weapon:w,side:'left',angle:a,baseReach:reach,reach:reach,width:width,weaponScale:1,flash:0,hp:100,preview:true});
  c.restore();
 }
-function drawPreviewBall(c,w,x,y,dir){const f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,reach:w.reach,width:w.width,weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
+function drawPreviewBall(c,w,x,y,dir){const reach=baseWeaponReach(w),f={x:x,y:y,r:25,weapon:w,side:dir>0?'left':'right',angle:dir*.45,baseReach:reach,reach:reach,width:baseWeaponWidth(w),weaponScale:1,flash:0,hp:100,preview:true};drawBall(c,f);}
 let activeAudioVoices=0;
 const lastAudioByType=Object.create(null);
 let cachedNoiseBuffer=null,cachedNoiseContext=null;
