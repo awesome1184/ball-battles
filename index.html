@@ -1100,256 +1100,145 @@ function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let
 function updateBars(){if(!sim)return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function buildWeaponPixelArt(){
+ const W=36,H=24,art={};
+ function make(){
+  const p=Array.from({length:H},()=>Array(W).fill('.'));
+  const put=(x,y,c)=>{if(x>=0&&x<W&&y>=0&&y<H)p[y][x]=c;};
+  const rect=(x1,y1,x2,y2,c)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)put(x,y,c);};
+  const line=(x1,y1,x2,y2,c,t=1)=>{
+   const n=Math.max(Math.abs(x2-x1),Math.abs(y2-y1),1),r=Math.floor((t-1)/2);
+   for(let i=0;i<=n;i++){const x=Math.round(x1+(x2-x1)*i/n),y=Math.round(y1+(y2-y1)*i/n);for(let yy=y-r;yy<=y+r+(t%2===0?1:0);yy++)for(let xx=x-r;xx<=x+r+(t%2===0?1:0);xx++)put(xx,yy,c);}
+  };
+  const poly=(pts,c)=>{
+   let minX=W,maxX=0,minY=H,maxY=0;
+   for(const [x,y] of pts){minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);}
+   for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){
+    let inside=false;
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+     const [xi,yi]=pts[i],[xj,yj]=pts[j];
+     if(((yi>y+.5)!==(yj>y+.5))&&(x+.5<(xj-xi)*(y+.5-yi)/(yj-yi)+xi))inside=!inside;
+    }
+    if(inside)put(x,y,c);
+   }
+  };
+  const circ=(cx,cy,r,c,inner=0)=>{for(let y=cy-r;y<=cy+r;y++)for(let x=cx-r;x<=cx+r;x++){const d=(x-cx)*(x-cx)+(y-cy)*(y-cy);if(d<=r*r&&d>=inner*inner)put(x,y,c);}};
+  const haft=(x1,x2,cy,thick=4)=>{
+   rect(x1,cy-Math.floor(thick/2),x2,cy+Math.floor(thick/2),'o');
+   rect(x1+1,cy-Math.floor(thick/2)+1,x2-1,cy+Math.floor(thick/2)-1,'g');
+   line(x1+3,cy-1,x2-2,cy-1,'h');line(x1+4,cy+1,x2-3,cy+1,'b');
+  };
+  const wrap=(x,y)=>{line(x,y-2,x+2,y+2,'o');line(x+3,y-2,x+5,y+2,'b');};
+  return {put,rect,line,poly,circ,haft,wrap,finish(){return p.map(row=>row.join(''));}};
+ }
+ // Three passes per sprite: silhouette, material/shading, then highlights/details.
+ {
+  const g=make();g.haft(3,23,12,5);
+  g.poly([[20,7],[29,7],[35,12],[29,17],[20,17],[18,12]],'o');
+  g.poly([[21,8],[29,8],[34,12],[29,16],[21,16],[19,12]],'s');
+  g.rect(19,6,21,18,'o');g.rect(19,7,20,17,'Y');g.rect(20,9,21,15,'y');g.circ(4,12,3,'o');g.circ(4,12,2,'Y',1);
+  g.poly([[22,9],[29,9],[33,12],[29,11],[22,11]],'m');g.line(22,12,32,12,'w');g.poly([[22,14],[29,14],[33,12],[29,16],[22,16]],'k');
+  g.line(6,10,17,10,'b');g.wrap(9,12);g.wrap(14,12);g.line(20,8,20,16,'Y',2);
+  g.put(4,11,'w');g.put(34,12,'w');g.put(25,9,'w');g.put(20,7,'q');art.sword=g.finish();
+ }
+ {
+  const g=make();g.haft(4,21,12,5);
+  g.poly([[19,8],[28,7],[35,12],[29,17],[20,16],[18,12]],'o');
+  g.poly([[20,9],[28,8],[34,12],[29,16],[21,15],[19,12]],'s');
+  g.rect(18,7,20,17,'o');g.rect(18,8,19,16,'E');g.rect(19,10,21,14,'e');g.circ(5,12,3,'o');g.circ(5,12,2,'m',1);
+  g.poly([[22,9],[29,9],[34,12],[28,11],[22,11]],'w');g.poly([[22,14],[29,15],[33,12],[28,16],[21,15]],'k');
+  g.line(6,10,16,10,'b');g.wrap(9,12);g.wrap(13,12);g.line(19,8,19,16,'Y',2);
+  g.put(5,11,'q');g.put(34,12,'w');g.put(26,9,'q');art.dagger=g.finish();
+ }
+ {
+  const g=make();g.haft(2,30,12,3);
+  g.poly([[25,10],[29,6],[33,6],[35,12],[33,18],[29,18],[25,14]],'o');
+  g.poly([[26,10],[29,7],[32,7],[34,12],[32,17],[29,17],[26,14]],'E');
+  g.line(28,9,33,12,'q',2);g.line(28,15,33,12,'e');
+  g.rect(23,9,25,15,'o');g.rect(23,10,24,14,'Y');
+  g.line(4,10,25,10,'h');g.line(4,13,25,13,'b');g.wrap(8,12);g.wrap(13,12);g.wrap(18,12);
+  g.put(34,12,'w');g.put(31,8,'q');g.put(31,16,'e');art.spear=g.finish();
+ }
+ {
+  const g=make();g.haft(3,27,12,5);
+  g.poly([[23,4],[28,2],[33,4],[35,8],[33,11],[30,12],[34,14],[35,18],[32,21],[27,22],[23,19],[25,15],[25,9]],'o');
+  g.poly([[24,5],[28,3],[32,5],[34,8],[32,10],[29,12],[32,14],[34,18],[31,20],[27,21],[24,18],[26,14],[26,9]],'s');
+  g.poly([[27,5],[31,5],[33,8],[30,10],[28,10]],'m');g.poly([[27,14],[31,15],[33,18],[30,20],[27,20]],'k');
+  g.line(28,5,32,8,'w');g.line(28,19,31,17,'m');g.rect(23,8,25,16,'o');g.rect(23,9,24,15,'Y');
+  g.line(5,10,22,10,'h');g.line(5,13,22,13,'b');g.wrap(9,12);g.wrap(14,12);g.wrap(19,12);
+  g.put(34,8,'q');g.put(34,18,'o');g.put(24,10,'w');art.axe=g.finish();
+ }
+ {
+  const g=make();g.haft(3,27,12,4);
+  g.poly([[23,4],[32,4],[35,7],[35,17],[32,20],[23,20],[21,17],[21,7]],'o');
+  g.poly([[24,5],[31,5],[34,8],[34,16],[31,19],[24,19],[22,16],[22,8]],'s');
+  g.rect(25,6,31,7,'m');g.rect(25,17,31,18,'k');g.line(24,8,24,16,'w');g.line(32,8,32,16,'k');
+  g.rect(23,9,24,15,'Y');g.rect(24,10,25,14,'y');
+  g.line(5,10,20,10,'h');g.line(5,13,20,13,'b');g.wrap(9,12);g.wrap(14,12);g.put(4,11,'q');
+  g.put(34,8,'w');g.put(34,16,'k');g.put(28,6,'q');art.hammer=g.finish();
+ }
+ {
+  const g=make();g.haft(3,24,12,4);
+  g.poly([[19,11],[22,8],[24,5],[27,3],[31,2],[34,4],[35,7],[32,6],[29,6],[27,8],[25,11],[24,14],[22,17],[19,19],[16,18],[19,16],[21,14]],'o');
+  g.poly([[20,11],[23,8],[25,5],[28,4],[32,3],[34,5],[31,5],[28,7],[26,10],[24,13],[22,16],[19,17],[18,17],[21,14]],'E');
+  g.poly([[24,7],[28,5],[32,5],[28,7],[25,10]],'q');g.line(21,15,24,11,'e');
+  g.rect(18,9,21,15,'o');g.rect(19,10,20,14,'Y');
+  g.line(5,10,17,10,'h');g.line(5,13,17,13,'b');g.wrap(8,12);g.wrap(13,12);
+  g.put(34,5,'w');g.put(32,4,'q');g.put(18,18,'o');art.scythe=g.finish();
+ }
+ {
+  const g=make();g.haft(3,25,12,4);
+  g.circ(30,12,9,'o');g.circ(30,12,7,'Y',5);g.circ(30,12,5,'.');
+  g.circ(30,12,6,'y',5);g.circ(30,12,4,'.');
+  g.line(30,3,30,6,'w');g.line(23,12,26,12,'m');g.line(34,12,35,12,'w');
+  g.rect(23,9,25,15,'o');g.rect(24,10,25,14,'E');
+  g.line(5,10,21,10,'h');g.line(5,13,21,13,'b');g.wrap(9,12);g.wrap(14,12);g.wrap(19,12);
+  g.put(29,4,'q');g.put(34,8,'b');g.put(34,16,'b');g.put(25,17,'m');
+  for(const [x,y] of [[30,12],[29,11],[30,11],[31,12]])g.put(x,y,'.');art.chakram=g.finish();
+ }
+ {
+  const g=make();g.haft(2,29,12,3);
+  g.line(29,12,32,12,'o',7);g.line(30,5,35,5,'o',3);g.line(30,19,35,19,'o',3);
+  g.line(29,12,32,12,'Y',4);g.line(30,5,35,5,'E');g.line(30,19,35,19,'E');
+  g.line(30,6,30,11,'o',2);g.line(30,13,30,18,'o',2);
+  g.line(31,6,34,6,'q');g.line(31,18,34,18,'e');g.put(35,5,'w');g.put(35,19,'w');g.put(34,12,'q');
+  g.rect(26,8,29,16,'o');g.rect(27,9,28,15,'Y');
+  g.line(4,10,25,10,'h');g.line(4,13,25,13,'b');g.wrap(8,12);g.wrap(14,12);g.wrap(20,12);
+  g.put(34,11,'w');g.put(28,10,'q');g.put(28,14,'y');art.trident=g.finish();
+ }
+ {
+  const g=make();g.haft(3,21,12,4);
+  const arc=[[23,2],[27,3],[30,6],[32,9],[33,12],[32,15],[30,18],[27,21],[23,22]];
+  for(let i=0;i<arc.length-1;i++)g.line(arc[i][0],arc[i][1],arc[i+1][0],arc[i+1][1],'o',5);
+  for(let i=0;i<arc.length-1;i++)g.line(arc[i][0],arc[i][1],arc[i+1][0],arc[i+1][1],'h',3);
+  g.line(23,3,23,21,'o');g.line(23,3,23,21,'m');
+  g.line(25,4,25,9,'b');g.line(25,15,25,20,'b');
+  g.rect(20,9,24,15,'o');g.rect(21,10,23,14,'Y');g.line(22,10,22,14,'w');
+  g.line(25,3,25,8,'q');g.line(25,16,25,21,'q');
+  g.put(32,9,'b');g.put(33,12,'w');g.put(32,15,'b');g.wrap(8,12);g.wrap(13,12);g.put(4,11,'q');art.bow=g.finish();
+ }
+ {
+  const g=make();g.haft(2,29,12,4);
+  g.poly([[27,8],[31,8],[35,12],[31,16],[27,16],[25,12]],'o');
+  g.poly([[28,9],[31,9],[34,12],[31,15],[28,15],[26,12]],'Y');
+  g.poly([[29,10],[32,12],[29,12]],'w');g.poly([[28,13],[31,14],[33,12],[31,15]],'y');
+  g.rect(25,9,27,15,'o');g.rect(26,10,27,14,'Y');
+  g.line(4,10,24,10,'h');g.line(4,13,24,13,'b');g.wrap(8,12);g.wrap(14,12);g.wrap(20,12);
+  g.rect(22,8,23,16,'Y');g.rect(23,9,24,15,'y');
+  g.poly([[21,15],[25,17],[22,21],[20,18]],'o');g.poly([[22,16],[24,17],[22,19]],'D');
+  g.put(34,12,'q');g.put(22,17,'w');g.put(23,18,'C');art.lance=g.finish();
+ }
+ return art;
+}
+const WEAPON_PIXEL_ART=buildWeaponPixelArt();
 function drawWeapon(c,f){
  if(f.weapon.id==='duplicator')return;
  const w=f.weapon;
- const sprites={
-  sword:[
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '.........o..............................',
-   '.........ooo............................',
-   '........oYYooooooooooooooooooo..........',
-   '.oooo...oYyosswwwwwwwwwwwwwwwsoo........',
-   '.oYYooooooyossssssssssssssssssssooo.....',
-   '.owYoghghoyossssmmmmmmmmmmmmmssssssoo...',
-   '.owYoghghgyosssssssssssssssssssssoo.....',
-   '.oYYooooooyosskkkkkkkkkkkkkksssso.......',
-   '.oooo....oyossssssssssssssssssoo........',
-   '........oYYooooooooooooooooooo..........',
-   '........oYoo............................',
-   '.........o..............................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................'
-  ],
-  dagger:[
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '.........o..............................',
-   '.........oooooooooooooooo...............',
-   '........oYYommwwwwwwwwwmmoo.............',
-   '..ooooooooYommmmmmmmmmmmmmmoo...........',
-   '..oYoghghgoommmmmmmmmmmmmmmmmoo.........',
-   '..oYoghghoYommmmmmmmmmmmmmmmo...........',
-   '..ooooooooYommkkkkkkkkkkmmoo............',
-   '........oYYommmmmmmmmmmmmo..............',
-   '........oYooooooooooooooo...............',
-   '.........o..............................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................'
-  ],
-  spear:[
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '..............................o.........',
-   '.............................oooo.......',
-   '............................oooEooo.....',
-   '........................YYYoooEEEEooo...',
-   '.oooooooooooooooooooooooYYooEEwwwwwwEo..',
-   '.oggghggggghggggghggggghYooEEEEEEEEEEEEo',
-   '.oggggggggggggggggggggggYYooEEeeeeeeEo..',
-   '.oooooooooooooooooooooooYYYoooEEEEooo...',
-   '........................YYYYoooEooo.....',
-   '.............................oooo.......',
-   '..............................o.........',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................'
-  ],
-  axe:[
-   '........................................',
-   '........................................',
-   '...............................o........',
-   '...........................oooooDooo....',
-   '...........................ooDDDDDDDo...',
-   '............................oDDDDDDDDo..',
-   '..........................ooooDDDDDCCoo.',
-   '..........................oYYoDDDDDCCDo.',
-   '..........................oYYoddDDDDCCo.',
-   '..oooooooooooooooooooooooooYYoddDDDDCCo.',
-   '..oggggghhggggggghggggggggoYYoddDDDDCCo.',
-   '..oggggghhggggggghggggggggoYYoddDDDDCCo.',
-   '..oooooooooooooooooooooooooYYoddDDDDCCo.',
-   '..........................oYYoddDDDDCCo.',
-   '..........................oYYoDDDDDCCDo.',
-   '..........................oooDDDDDDCCoo.',
-   '............................ooDDDDDDoo..',
-   '...........................ooooDDDDoo...',
-   '.............................ooooooo....',
-   '...............................o........',
-   '........................................',
-   '........................................'
-  ],
-  hammer:[
-   '........................................',
-   '........................................',
-   '........................................',
-   '...........................oooooooooo...',
-   '..........................oooooooooooo..',
-   '........................ookkkkkkkkkkkoo.',
-   '........................oYYsssssssssooo.',
-   '........................oYYswwwwwwwsooo.',
-   '........................oYYswwwwwwwsooo.',
-   '..oooooooooooooooooooooooYYsssssssssooo.',
-   '..ogggghghggggggghghggggoYYsssssssssooo.',
-   '..ogggghghggggggghghggggoYYsssssssssooo.',
-   '..oooooooooooooooooooooooYYsssssssssooo.',
-   '........................oYYskkkkkkksooo.',
-   '........................oYYskkkkkkksooo.',
-   '........................oYYsssssssssooo.',
-   '........................ookkkkkkkkkkkoo.',
-   '..........................oooooooooooo..',
-   '...........................oooooooooo...',
-   '........................................',
-   '........................................',
-   '........................................'
-  ],
-  scythe:[
-   '........................................',
-   '...................................o....',
-   '.................................ooEooo.',
-   '...............................oooEwwwo.',
-   '..............................ooEEEEEEEo',
-   '.............................ooEEEE..ooo',
-   '............................oEEEEE......',
-   '...........................oEEEEE.......',
-   '..........................oEEEEEE.......',
-   '.oooooooooooooooooooooooooEEEEEE........',
-   '.oggggghggggggghggggggghggoEEEEE........',
-   '.oggggghggggggghggggggghggoEEE..........',
-   '.ooooooooooooooooooooooooooooo..........',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................'
-  ],
-  chakram:[
-   '........................................',
-   '........................................',
-   '.............................ooooo......',
-   '...........................ooooooooo....',
-   '..........................owwwwYYYooo...',
-   '.........................oooYYYYYYYooo..',
-   '........................oooYYYYYYYYYooo.',
-   '........................ooYYYY...YYYYoo.',
-   '.......................oCYYYY.....YYYYoo',
-   '.oooooooooooooooooooooooCYYY.......YYYoo',
-   '.ogggghgggggghgggghgggooCYYY.......YYYoo',
-   '.ogggghgggggghgggghgggoooYYY.......YYYoo',
-   '.ooooooooooooooooooooooooYYY.......YYYoo',
-   '.......................ooYYYY.....Yyyyoo',
-   '........................ooYYYY...YYyyyo.',
-   '........................oooYYYYYYYYyyyo.',
-   '.........................oooYYYYYYYooo..',
-   '..........................oooYYYYYooo...',
-   '...........................ooooooooo....',
-   '.............................ooooo......',
-   '........................................',
-   '........................................'
-  ],
-  trident:[
-   '........................................',
-   '........................................',
-   '.................................oooo...',
-   '................................oEEEo...',
-   '...............................oEEEooo..',
-   '..............................oEEEE.....',
-   '.............................oEEEE......',
-   '...........................YYEEEE.......',
-   '...........................Yooooo.......',
-   '.ooooooooooooooooooooooooooYYoooooo.....',
-   '.ogggghggggggghggggggghggggYYoEEEEEooo..',
-   '.ogggghggggggghggggggghggggYYoEEEEEEEEoo',
-   '.ooooooooooooooooooooooooooYYoEEEEEooo..',
-   '...........................YYoooooo.....',
-   '...........................Yooooo.......',
-   '.............................EEEE.......',
-   '.............................oEEEE......',
-   '..............................oEEEE.....',
-   '...............................oEEEooo..',
-   '................................oEEEo...',
-   '.................................oooo...',
-   '........................................'
-  ],
-  bow:[
-   '........................................',
-   '.........................o..............',
-   '....................oooooohoooo.........',
-   '....................woohhhhhhhho........',
-   '....................wooohhhhhhhhoo......',
-   '....................wo.ohhhhhhhhhho.....',
-   '....................wo.o.hhhhhhhhhho....',
-   '....................wo.........hhhhh....',
-   '....................wo..........hhhho...',
-   '...................owooo.........hhhho..',
-   '...................owYbbb.........hhho..',
-   '...................owYbbb.........hhhoo.',
-   '...................owooo..........hhho..',
-   '....................wo...........hhhoo..',
-   '....................wo..........hhhho...',
-   '....................wo.........hhhho....',
-   '....................wo.o.hhhhhhhhhho....',
-   '....................wooohhhhhhhhhoo.....',
-   '....................woohhhhhhhhooo......',
-   '....................oooooohooooo........',
-   '.......................oooooooo.........',
-   '.........................o..............'
-  ],
-  lance:[
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '..........................ooo...........',
-   '..........................oYo...........',
-   '..........................oYoooooo......',
-   '.ooooooooooooooooooooooooooYomwwwwwo....',
-   '.osssswssssssskssssssswsssoYommmmmmmoo..',
-   '.osssswssssssskssssssswsssoYommmmmmmmmoo',
-   '.ooooooooooooooooooooooooooYommmmmmmoo..',
-   '..........................oYommmmmoo....',
-   '..........................oYoooooo......',
-   '..........................ooo...........',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................',
-   '........................................'
-  ]
- };
+ const sprites=WEAPON_PIXEL_ART;
  const palette={
-  'o':'#1f232c','k':'#46515e','s':'#8b9dae','m':'#becdd8','w':'#eff4f0',
-  'g':'#79522b','h':'#b87e4b','y':'#82582a','Y':'#ebbe5c',
-  'b':'#a67044','C':'#efa66f','D':'#d78570','d':'#723637',
-  'e':'#468b70','E':'#91cfa4'
+  '.':null,o:'#17212c',k:'#344353',s:'#778b9b',m:'#b8c9d4',w:'#f4f7f3',
+  g:'#49352d',h:'#956342',b:'#d5a06b',y:'#795821',Y:'#f2c85b',
+  C:'#a85d42',D:'#ed9270',e:'#2c7773',E:'#75c9b7',q:'#dff4e8'
  };
  const unit=WEAPON_ART_SCALE;
  c.save();
@@ -1366,7 +1255,7 @@ function drawWeapon(c,f){
    const row=rows[y];
    for(let x=0;x<row.length;x++){
     const color=palette[row[x]];
-    if(color){c.fillStyle=color;c.fillRect(x,y-11,1,1);}
+    if(color){c.fillStyle=color;c.fillRect(x,y-12,1,1);}
    }
   }
  }
@@ -1377,7 +1266,7 @@ function drawWhirlpool(c,f){
  const x=f.x+Math.cos(f.angle)*f.reach*f.weaponScale,y=f.y+Math.sin(f.angle)*f.reach*f.weaponScale;
  const t=sim?sim.elapsed:0;
  c.save();c.translate(x,y);c.rotate(-t*2.2);c.strokeStyle='#42bdb5';c.lineWidth=2;c.globalAlpha=.28;
- c.beginPath();c.arc(0,0,122,0,Math.PI*2);c.stroke();
+ c.beginPath();c.arc(0,0,165,0,Math.PI*2);c.stroke();
  c.globalAlpha=.45;c.lineWidth=3;
  for(let i=0;i<3;i++){const a=i*Math.PI*2/3;c.beginPath();c.arc(0,0,82+i*13,a+t*.35,a+1.35+t*.35);c.stroke();}
  c.globalAlpha=.14;c.fillStyle='#59d8cb';c.beginPath();c.arc(0,0,48,0,Math.PI*2);c.fill();
