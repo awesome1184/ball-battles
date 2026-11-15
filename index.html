@@ -622,7 +622,7 @@ let payoutAnimationDay='';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
 let matchupIconWeapons={left:null,right:null};
 let dailyQuickSeed=null,dailyQuickTime=0,dailyQuickWinner=null,dailyQuickScore=0,dailyQuickBreakdown=null,dailyQuickSelectedAttempt=null,dailyQuickAttempt=0,dailyQuickBatchCount=0,dailyQuickBatchQualified=0,dailyQuickBatchBest=null,dailyQuickMaxAttempts=2000,dailyQuickSearching=false,dailyQuickSearchFrame=0;
-const DAILY_QUICK_TARGET_SECONDS=60,DAILY_EXCITEMENT_BATCH_SIZE=500;
+const DAILY_QUICK_TARGET_SECONDS=120,DAILY_EXCITEMENT_THRESHOLD=2,DAILY_EXCITEMENT_BATCH_SIZE=500;
 let audio=null,audioMaster=null;
 let soundOn=save.sound!==false;
 const canvas=$('arena-canvas');
@@ -817,17 +817,17 @@ function spawnDuplicates(side){
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
 }
 const WEAPON_MOVEMENT={
- sword:{speed:205,accel:680,range:150,vertical:125,lunge:66},
- dagger:{speed:245,accel:900,range:125,vertical:125,lunge:100},
- spear:{speed:185,accel:650,range:165,vertical:135,lunge:92},
- axe:{speed:155,accel:520,range:150,vertical:125,lunge:58},
- hammer:{speed:130,accel:430,range:160,vertical:125,lunge:46},
- scythe:{speed:200,accel:700,range:145,vertical:135,lunge:72},
- chakram:{speed:235,accel:820,range:140,vertical:130,lunge:86},
- trident:{speed:180,accel:620,range:155,vertical:140,lunge:64},
- bow:{speed:195,accel:620,range:290,vertical:150,lunge:0,retreat:.9},
- lance:{speed:185,accel:610,range:155,vertical:140,lunge:20},
- duplicator:{speed:175,accel:590,range:135,vertical:130,lunge:0}
+ sword:{speed:205,accel:680,range:96,vertical:125,lunge:66},
+ dagger:{speed:245,accel:900,range:96,vertical:125,lunge:100},
+ spear:{speed:185,accel:650,range:96,vertical:135,lunge:92},
+ axe:{speed:155,accel:520,range:96,vertical:125,lunge:58},
+ hammer:{speed:130,accel:430,range:96,vertical:125,lunge:46},
+ scythe:{speed:200,accel:700,range:96,vertical:135,lunge:72},
+ chakram:{speed:235,accel:820,range:96,vertical:130,lunge:86},
+ trident:{speed:180,accel:620,range:96,vertical:140,lunge:64},
+ bow:{speed:195,accel:620,range:135,vertical:150,lunge:0,retreat:.6},
+ lance:{speed:185,accel:610,range:96,vertical:140,lunge:20},
+ duplicator:{speed:175,accel:590,range:60,vertical:130,lunge:0}
 };
 function steerWeaponMovement(f,target,dt){
  const p=WEAPON_MOVEMENT[f.weapon.id]||WEAPON_MOVEMENT.sword;
@@ -848,11 +848,7 @@ function steerWeaponMovement(f,target,dt){
  f.vx+=clamp(desired-f.vx,-change,change);
  f.vx=clamp(f.vx,-p.speed*1.25,p.speed*1.25);
 }
-function applySeededRebound(f,maxAngle){
-  const speed=Math.hypot(f.vx,f.vy);if(speed<1)return;
-  const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
-  f.vx=Math.cos(angle)*speed;f.vy=Math.sin(angle)*speed;
- }
+
  function stopCurrentFight(){
   if(sim&&sim.active)sim.active=false;
   if(raf)cancelAnimationFrame(raf);
@@ -1054,17 +1050,15 @@ function step(dt){
   if(f.x<arena.x+f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=Math.abs(f.vx);
-   applySeededRebound(f,.10);
+   else f.vx=Math.abs(f.vx)*.92;
   }
   if(f.x>arena.x+arena.w-f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+arena.w-f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=-Math.abs(f.vx);
-   applySeededRebound(f,.10);
+   else f.vx=-Math.abs(f.vx)*.92;
   }
-  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);applySeededRebound(f,.12);playWallTick(wallImpact);}
-  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;applySeededRebound(f,.12);playWallTick(wallImpact);}
+  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy)*.82;playWallTick(wallImpact);}
+  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.max(150,Math.abs(f.vy)*.78);f.grounded=true;playWallTick(wallImpact);}
   
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
@@ -1114,25 +1108,36 @@ function step(dt){
    const normalVelocity=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
    if(normalVelocity>0){
     playBallBump(normalVelocity);
-    const impulse=2*normalVelocity/(1/massA+1/massB);
+    const impulse=1.82*normalVelocity/(1/massA+1/massB);
     a.vx-=impulse/massA*nx;a.vy-=impulse/massA*ny;
     b.vx+=impulse/massB*nx;b.vy+=impulse/massB*ny;
    }
   }
  }
+ for(const f of all){
+  if(f.hp<=0)continue;
+  const minX=arena.x+f.r,maxX=arena.x+arena.w-f.r,minY=arena.y+f.r,maxY=floor-f.r;
+  if(f.x<minX){f.x=minX;if(f.vx<0)f.vx=0;}else if(f.x>maxX){f.x=maxX;if(f.vx>0)f.vx=0;}
+  if(f.y<minY){f.y=minY;if(f.vy<0)f.vy=0;}else if(f.y>maxY){f.y=maxY;if(f.vy>0)f.vy=0;}
+ }
  for(let i=sim.projectiles.length-1;i>=0;i--){
   const p=sim.projectiles[i];p.life-=dt;p.vy+=gravity*.42*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
   if(p.life<=0||p.x<arena.x||p.x>arena.x+arena.w||p.y>floor+18){sim.projectiles.splice(i,1);continue;}
-  const target=nearestEnemy(p.owner);
-  if(target&&target.hp>0&&target.weapon.id!=='duplicator'&&!target.lanceCharging&&target.parryCd<=0){
-   const guard=weaponSegment(target);
-   if(distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2)<target.width*.5+5){
-    target.parryCd=.82;target.parryFlash=.3;recordExcitement('parry',target.side,0);reverseWeaponRotation(target);p.owner.stagger=Math.max(p.owner.stagger,.2);
-    floatText(target.x,target.y-42,'PARRY!','#eac65e');burst(p.x,p.y,'#f3c65f',10);playMetalClang('parry');
-    sim.projectiles.splice(i,1);continue;
+  const enemies=sim.teams[p.owner.side==='left'?'right':'left'].filter(target=>target.hp>0&&!target.lanceCharging);
+  let collision=null,collisionType='',collisionDistance=Infinity;
+  for(const target of enemies){
+   if(target.weapon.id!=='duplicator'&&target.parryCd<=0){
+    const guard=weaponSegment(target),guardDistance=distPointSegment(p.x,p.y,guard.x1,guard.y1,guard.x2,guard.y2);
+    if(guardDistance<target.width*.5+5&&guardDistance<collisionDistance){collision=target;collisionType='parry';collisionDistance=guardDistance;}
    }
+   const bodyDistance=Math.hypot(p.x-target.x,p.y-target.y);
+   if(bodyDistance<target.r+7&&bodyDistance<collisionDistance){collision=target;collisionType='hit';collisionDistance=bodyDistance;}
   }
-  if(target&&Math.hypot(p.x-target.x,p.y-target.y)<target.r+7){damage(p.owner,target,dt);burst(p.x,p.y,p.color,7);sim.projectiles.splice(i,1);}
+  if(collisionType==='parry'){
+   collision.parryCd=.82;collision.parryFlash=.3;recordExcitement('parry',collision.side,0);reverseWeaponRotation(collision);p.owner.stagger=Math.max(p.owner.stagger,.2);
+   floatText(collision.x,collision.y-42,'PARRY!','#eac65e');burst(p.x,p.y,'#f3c65f',10);playMetalClang('parry');sim.projectiles.splice(i,1);continue;
+  }
+  if(collisionType==='hit'){damage(p.owner,collision,dt);burst(p.x,p.y,p.color,7);sim.projectiles.splice(i,1);}
  }
  for(let i=sim.particles.length-1;i>=0;i--){const p=sim.particles[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=gravity*.2*dt;p.vx*=.97;if(p.life<=0)sim.particles.splice(i,1);}
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
@@ -1765,14 +1770,14 @@ function ensureDailyQuickFight(){
  dailyQuickSearching=true;dailyQuickBatchCount=0;dailyQuickBatchQualified=0;dailyQuickBatchBest=null;
  $('fight-btn').disabled=true;$('fight-btn').textContent='Scoring '+DAILY_EXCITEMENT_BATCH_SIZE+' fights…';
  $('fight-state-chip').textContent='Finding the most exciting fight';
- $('arena-status-text').textContent='Simulating '+DAILY_EXCITEMENT_BATCH_SIZE+' seeded knockouts and comparing real combat activity…';
+ $('arena-status-text').textContent='Simulating '+DAILY_EXCITEMENT_BATCH_SIZE+' candidates for a knockout with at least '+DAILY_EXCITEMENT_THRESHOLD.toFixed(2)+' excitement…';
  const searchNext=()=>{
   if(!dailyQuickSearching)return;
   if(sim&&sim.active){dailyQuickSearchFrame=requestAnimationFrame(searchNext);return;}
   try{
    const result=simulateDailyQuickCandidate(dailyQuickAttempt++);
    dailyQuickBatchCount++;
-   if(result.finished&&result.winnerId&&result.seconds<DAILY_QUICK_TARGET_SECONDS){
+   if(result.finished&&result.winnerId&&result.excitement.score>=DAILY_EXCITEMENT_THRESHOLD){
     dailyQuickBatchQualified++;
     if(!dailyQuickBatchBest||result.excitement.score>dailyQuickBatchBest.excitement.score||(result.excitement.score===dailyQuickBatchBest.excitement.score&&result.seconds<dailyQuickBatchBest.seconds))dailyQuickBatchBest=result;
    }
@@ -1786,13 +1791,13 @@ function ensureDailyQuickFight(){
    if(!dailyQuickBatchBest){
     if(dailyQuickAttempt<dailyQuickMaxAttempts){
      const batchStart=dailyQuickAttempt-DAILY_EXCITEMENT_BATCH_SIZE;
-     $('arena-status-text').textContent='No knockout under 60s in candidates '+(batchStart+1)+'–'+dailyQuickAttempt+'. Testing the next 500…';
+     $('arena-status-text').textContent='No knockout cleared the '+DAILY_EXCITEMENT_THRESHOLD.toFixed(2)+' excitement threshold in candidates '+(batchStart+1)+'–'+dailyQuickAttempt+'. Testing the next 500…';
      dailyQuickBatchCount=0;dailyQuickBatchQualified=0;dailyQuickBatchBest=null;
      dailyQuickSearchFrame=requestAnimationFrame(searchNext);return;
     }
     dailyQuickSearching=false;$('fight-btn').disabled=false;$('fight-btn').textContent='Search another 500 fights';
     $('fight-state-chip').textContent='No quick knockout found yet';
-    $('arena-status-text').textContent='No knockout under 60 seconds found in '+dailyQuickAttempt+' candidates. Press to score another batch of 500.';
+    $('arena-status-text').textContent='No knockout cleared the '+DAILY_EXCITEMENT_THRESHOLD.toFixed(2)+' excitement threshold in '+dailyQuickAttempt+' candidates. Press to score another batch of 500.';
     return;
    }
    const best=dailyQuickBatchBest;
@@ -1808,7 +1813,7 @@ function ensureDailyQuickFight(){
    }
    $('fight-btn').disabled=false;$('fight-btn').textContent=save.results[today]?'Replay fight':'Start fight';
    $('fight-state-chip').textContent='Most exciting knockout selected';
-   $('arena-status-text').textContent=weapon(dailyQuickWinner).name+' wins in '+dailyQuickTime.toFixed(1)+'s · excitement '+dailyQuickScore.toFixed(2)+' · best of '+DAILY_EXCITEMENT_BATCH_SIZE+' candidates ('+dailyQuickBatchQualified+' quick knockouts). Damage: '+dailyQuickBreakdown.damageDealt.left.toFixed(1)+'–'+dailyQuickBreakdown.damageDealt.right.toFixed(1)+' HP · '+Math.round(dailyQuickBreakdown.activeWindowRatio*100)+'% active windows.';
+   $('arena-status-text').textContent=weapon(dailyQuickWinner).name+' wins in '+dailyQuickTime.toFixed(1)+'s · excitement '+dailyQuickScore.toFixed(2)+' · threshold met · best of '+DAILY_EXCITEMENT_BATCH_SIZE+' candidates ('+dailyQuickBatchQualified+' threshold clears). Damage: '+dailyQuickBreakdown.damageDealt.left.toFixed(1)+'–'+dailyQuickBreakdown.damageDealt.right.toFixed(1)+' HP · '+Math.round(dailyQuickBreakdown.activeWindowRatio*100)+'% active windows.';
   }catch(error){
    dailyQuickSearching=false;$('fight-btn').disabled=false;$('fight-btn').textContent='Retry daily fight search';
    $('fight-state-chip').textContent='Search interrupted';
