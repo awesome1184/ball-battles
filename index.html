@@ -827,6 +827,7 @@ function applySeededRebound(f,maxAngle){
 
 function startFight(mode,forced,practiceId,opponentId){
  if(sim&&sim.active)return;
+ if(mode==='daily'&&dailyQuickSeed===null){ensureDailyQuickFight();return;}
  unlockAudio();if(raf)cancelAnimationFrame(raf);lastFrame=0;accumulator=0;const seed=mode==='daily'?(dailyQuickSeed===null?hashString('ball-battles-'+today):dailyQuickSeed):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
  if(mode==='daily'){a=createFighter(leftWeapon,'left',rng,false);b=createFighter(rightWeapon,'right',rng,false);}else{
   const main=weapon(practiceId||save.favorite);
@@ -1393,12 +1394,13 @@ function draw(){
  function sideMetrics(team,opponents,fallback){
   const fighter=team.length?(team.find(f=>f.hp>0&&f.mainBall)||team.find(f=>f.hp>0)||team[0]):null;
   const w=fighter?fighter.weapon:fallback;
-  const fixed=value=>Number(value||0).toFixed(1).replace(/\.0$/,'');
+  const fixed=value=>String(Number(Number(value||0).toFixed(1)));
+  const precise=value=>String(Number(Number(value||0).toFixed(2)));
   const dmg=fighter?(fighter.combatDamage||fighter.damage||1):w.damage;
   const stun=fighter?(fighter.stunDuration||0):HIT_STUN_PROFILE[w.id][0];
   const spin=fighter?(fighter.spin||0):w.spin*MATCH_RULES.spinMultiplier;
   const hitRate=fighter?1/Math.max(.01,fighter.hitDelay*fighter.delayMultiplier/Math.max(1,fighter.attackSpeedFactor||1)):1/Math.max(.01,w.hitDelay||.68);
-  let first='DAMAGE: '+fixed(dmg),second='STUN DURATION: '+fixed(stun)+'s',third='',fourth='';
+  let first='DAMAGE: '+fixed(dmg),second='STUN DURATION: '+precise(stun)+'s',third='',fourth='';
   switch(w.id){
    case 'sword':
     third='MAX SPIN: '+fixed(spin)+'×';fourth='SPIN/DAMAGE: '+fixed(spin/Math.max(.1,dmg));break;
