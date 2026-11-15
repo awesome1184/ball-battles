@@ -1094,10 +1094,12 @@ function step(dt){
  for(let i=sim.texts.length-1;i>=0;i--){const t=sim.texts[i];t.life-=dt;t.y-=25*dt;if(t.life<=0)sim.texts.splice(i,1);}
  if(sim.elapsed>=MATCH_RULES.overtimeStart&&!sim.overtimeAnnounced){
   sim.overtimeAnnounced=true;
-  $('fight-state-chip').textContent='Knockout only';
-  $('arena-status-text').textContent='Overtime. No time limit or tiebreak. A knockout is required.';
-  floatText(arena.x+arena.w/2,arena.y+24,'Knockout only','#d94b50');
-  playUiConfirm();
+  if(sim.mode!=='simulation'){
+   $('fight-state-chip').textContent='Knockout only';
+   $('arena-status-text').textContent='Overtime. No time limit or tiebreak. A knockout is required.';
+   floatText(arena.x+arena.w/2,arena.y+24,'Knockout only','#d94b50');
+   playUiConfirm();
+  }
  }
  updateBars();
  const leftAlive=sim.teams.left.filter(f=>f.hp>0),rightAlive=sim.teams.right.filter(f=>f.hp>0);
@@ -1108,6 +1110,7 @@ function step(dt){
 }
 function finishFight(winner){
  if(!sim||!sim.active)return;
+ if(sim.mode==='simulation'){sim.active=false;sim.result=winner.side;sim.winner=winner;return;}
  sim.active=false;sim.result=winner.side;
  $('live-pulse').classList.remove('live');
  $('fight-state-chip').textContent='Fight complete';
@@ -1136,7 +1139,7 @@ function finishFight(winner){
  }
 }
 function loop(time){if(!sim||!sim.active)return;if(!lastFrame)lastFrame=time;let elapsed=Math.min(.05,(time-lastFrame)/1000);lastFrame=time;accumulator+=elapsed*speed;let n=0;while(accumulator>=1/60&&n<12&&sim&&sim.active){step(1/60);accumulator-=1/60;n++;}draw();if(sim&&sim.active)raf=requestAnimationFrame(loop);}
-function updateBars(){if(!sim)return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
+function updateBars(){if(!sim||sim.mode==='simulation')return;const left=sim.teams.left,right=sim.teams.right;const lhp=left.reduce((n,f)=>n+Math.max(0,f.hp),0),rhp=right.reduce((n,f)=>n+Math.max(0,f.hp),0),lmax=left.reduce((n,f)=>n+f.maxHp,0),rmax=right.reduce((n,f)=>n+f.maxHp,0);$('left-hp-bar').style.width=clamp(lhp/Math.max(1,lmax)*100,0,100)+'%';$('right-hp-bar').style.width=clamp(rhp/Math.max(1,rmax)*100,0,100)+'%';$('left-label-name').textContent='RED · '+left.filter(f=>f.hp>0).length+' BALLS';$('right-label-name').textContent='GREEN · '+right.filter(f=>f.hp>0).length+' BALLS';}
 function resizeCanvas(){const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.max(1,Math.floor(rect.width*dpr));canvas.height=Math.max(1,Math.floor(rect.height*dpr));draw();}
 function roundRect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
 function buildWeaponPixelArt(){
@@ -1545,9 +1548,95 @@ function renderSimulations(){
  const w=weapon(save.favorite);
  $('simulation-champion').textContent=w.name;
  drawWeaponIcon($('simulation-orb'),w);
- 
+ const left=$('simulation-left-weapon'),right=$('simulation-right-weapon');
+ const ids=WEAPONS.map(x=>x.id),previousLeft=left.value,previousRight=right.value;
+ const options=WEAPONS.map(x=>'<option value="'+x.id+'">'+x.name+'</option>').join('');
+ left.innerHTML=options;right.innerHTML=options;
+ left.value=ids.includes(previousLeft)?previousLeft:save.favorite;
+ right.value=ids.includes(previousRight)&&previousRight!==left.value?previousRight:(WEAPONS.find(x=>x.id!==left.value)||WEAPONS[1]).id;
+ $('simulation-count').value=$('simulation-count').value||'25';
  renderSimulationHistory();
 }
+
+const SIMULATION_MAX_SECONDS=360;
+function simulateOneMatchup(leftId,rightId,runIndex){
+ const previousSim=sim,wasSoundOn=soundOn;
+ const seed=hashString('battle-lab-v1:'+leftId+':'+rightId+':'+runIndex);
+ const rng=mulberry32(seed),swapSides=runIndex%2===1;
+ const leftIdOnSide=swapSides?rightId:leftId,rightIdOnSide=swapSides?leftId:rightId;
+ const a=createFighter(weapon(leftIdOnSide),'left',rng,false);
+ const b=createFighter(weapon(rightIdOnSide),'right',rng,false);
+ sim={mode:'simulation',active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,winner:null,seed:seed,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false}};
+ soundOn=false;
+ let steps=0;
+ try{
+  while(sim.active&&steps<SIMULATION_MAX_SECONDS*60){step(1/60);steps++;}
+  const timedOut=sim.active;
+  if(timedOut)sim.active=false;
+  return {winnerId:sim.winner?sim.winner.weapon.id:null,seconds:sim.elapsed,timedOut:timedOut,swapped:swapSides};
+ }finally{
+  sim=previousSim;soundOn=wasSoundOn;
+ }
+}
+let matchupBatchActive=false,matchupBatchFrame=0;
+function runMatchupBatch(){
+ if(matchupBatchActive)return;
+ if(sim&&sim.active){toast('Finish the live fight before running a batch.');return;}
+ const leftId=$('simulation-left-weapon').value,rightId=$('simulation-right-weapon').value;
+ const count=clamp(Math.floor(Number($('simulation-count').value)||25),1,100);
+ if(!leftId||!rightId||leftId===rightId){toast('Choose two different weapons.');return;}
+ const button=$('run-matchup-simulations-btn'),leftSelect=$('simulation-left-weapon'),rightSelect=$('simulation-right-weapon'),countSelect=$('simulation-count');
+ const status=$('simulation-batch-status'),results=$('simulation-batch-results'),progress=$('simulation-progress'),fill=$('simulation-progress-fill');
+ const stats={leftWins:0,rightWins:0,draws:0,times:[],timeouts:0};
+ let completed=0;
+ const wasSoundOn=soundOn;
+ matchupBatchActive=true;soundOn=false;
+ button.disabled=true;leftSelect.disabled=true;rightSelect.disabled=true;countSelect.disabled=true;
+ button.textContent='Running…';progress.classList.add('running');progress.classList.remove('done');fill.style.width='0%';
+ results.innerHTML='';
+ status.textContent='Preparing '+count+' seeded fights…';
+ const restore=()=>{
+  soundOn=wasSoundOn;matchupBatchActive=false;
+  button.disabled=false;leftSelect.disabled=false;rightSelect.disabled=false;countSelect.disabled=false;
+  button.textContent='Run simulations';progress.classList.remove('running');progress.classList.add('done');
+ };
+ const finish=()=>{
+  restore();
+  const decisive=stats.leftWins+stats.rightWins;
+  const leftRate=decisive?stats.leftWins/decisive*100:0,rightRate=decisive?stats.rightWins/decisive*100:0;
+  const average=stats.times.length?stats.times.reduce((sum,t)=>sum+t,0)/stats.times.length:0;
+  const sorted=stats.times.slice().sort((a,b)=>a-b),median=sorted.length?sorted[Math.floor(sorted.length/2)]:0;
+  status.textContent='Completed '+completed+' of '+count+' fights. The starting sides alternated.';
+  results.innerHTML=
+   '<div class="sim-result"><span>'+weapon(leftId).name+' wins</span><strong>'+stats.leftWins+' / '+count+'</strong><small>'+leftRate.toFixed(1)+'% of decisive fights</small></div>'+
+   '<div class="sim-result"><span>'+weapon(rightId).name+' wins</span><strong>'+stats.rightWins+' / '+count+'</strong><small>'+rightRate.toFixed(1)+'% of decisive fights</small></div>'+
+   '<div class="sim-result"><span>Draws / timeouts</span><strong>'+stats.draws+'</strong><small>'+stats.timeouts+' reached the '+SIMULATION_MAX_SECONDS+'s test cap</small></div>'+
+   '<div class="sim-result"><span>Average fight</span><strong>'+(stats.times.length?average.toFixed(1)+'s':'—')+'</strong><small>Median '+(stats.times.length?median.toFixed(1)+'s':'—')+'</small></div>'+
+   '<div class="sim-result"><span>Fastest knockout</span><strong>'+(stats.times.length?Math.min(...stats.times).toFixed(1)+'s':'—')+'</strong><small>Among decisive fights</small></div>'+
+   '<div class="sim-result"><span>Longest knockout</span><strong>'+(stats.times.length?Math.max(...stats.times).toFixed(1)+'s':'—')+'</strong><small>Among decisive fights</small></div>';
+ };
+ const runNext=()=>{
+  if(!matchupBatchActive)return;
+  try{
+   const result=simulateOneMatchup(leftId,rightId,completed);
+   if(result.winnerId===leftId)stats.leftWins++;
+   else if(result.winnerId===rightId)stats.rightWins++;
+   else stats.draws++;
+   if(result.timedOut)stats.timeouts++;
+   else stats.times.push(result.seconds);
+   completed++;
+   fill.style.width=(completed/count*100).toFixed(1)+'%';
+   status.textContent='Running '+completed+' / '+count+' fights · '+stats.leftWins+' '+weapon(leftId).name+' wins · '+stats.rightWins+' '+weapon(rightId).name+' wins · '+stats.draws+' draws';
+   if(completed<count)matchupBatchFrame=requestAnimationFrame(runNext);
+   else finish();
+  }catch(error){
+   restore();
+   status.textContent='Simulation stopped: '+(error&&error.message?error.message:'unexpected error')+'. No save data was changed.';
+  }
+ };
+ matchupBatchFrame=requestAnimationFrame(runNext);
+}
+
 function openUpgradeFromDaily(){
  const bet=save.bets[today];
  selectedWeapon=bet?weapon(bet.side==='left'?leftWeapon.id:rightWeapon.id).id:(save.lastPayout?.pick||save.favorite);
@@ -1565,6 +1654,7 @@ document.querySelectorAll('[data-bet-amount]').forEach(b=>b.addEventListener('cl
 $('stat-upgrades').addEventListener('click',event=>{const button=event.target.closest('[data-stat]');if(button&&!button.disabled)buyStat(button.dataset.stat);});$('set-favorite-btn').addEventListener('click',setFavorite);
 $('go-armory-btn').addEventListener('click',()=>switchView('armory'));$('practice-btn').addEventListener('click',()=>startPractice(save.favorite));$('armory-practice-btn').addEventListener('click',()=>startPractice(selectedWeapon));
 $('run-simulation-btn').addEventListener('click',()=>startPractice(save.favorite));
+$('run-matchup-simulations-btn').addEventListener('click',runMatchupBatch);
 $('choose-champion-btn').addEventListener('click',()=>switchView('armory'));
 $('upgrade-from-payout').addEventListener('click',openUpgradeFromDaily);
 $('sim-from-payout').addEventListener('click',()=>switchView('simulations'));
