@@ -527,7 +527,7 @@ function loadSave(){
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
- function baseWeaponReach(w){const b=BALANCE[w.id]||{};return w.reach*1.12*(b.reach||1)*WEAPON_SIZE_MULTIPLIER;}
+ function baseWeaponReach(w){const b=BALANCE[w.id]||{};return w.reach*1.12*(b.reach||1)*(w.duplicator?1:WEAPON_SIZE_MULTIPLIER);}
  function baseWeaponWidth(w){const b=BALANCE[w.id]||{};return w.width*1.12*(b.width||1)*WEAPON_SIZE_MULTIPLIER;}
 function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
