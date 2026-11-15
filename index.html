@@ -803,7 +803,7 @@ function collapseDuplicatorSwarm(side){
 function spawnDuplicates(side){
  const team=sim.teams[side],main=team.find(f=>f.mainBall);if(!main||main.hp<=0||team.length>=BALANCE.duplicator.cap)return;
  const parent=main;
- const clone=cloneFighter(parent,sim.rng,team.length);recordExcitement('clone',.45,side);team.push(clone);
+ const clone=cloneFighter(parent,sim.rng,team.length);recordExcitement('clone',side,0);team.push(clone);
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
 }
@@ -879,7 +879,7 @@ function tryParry(attacker,defender){
  
  const px=(a.x2+d.x2)*.5,py=(a.y2+d.y2)*.5;
  burst(px,py,'#f3c65f',12);floatText(defender.x,defender.y-42,'PARRY!','#eac65e');
- recordExcitement('parry',2.2,defender.side);playMetalClang('parry');return true;
+ recordExcitement('parry',defender.side,0);playMetalClang('parry');return true;
 }
 function resolveWeaponClash(a,b){
  if(a.side===b.side||a.hp<=0||b.hp<=0||a.weapon.id==='duplicator'||b.weapon.id==='duplicator'||a.lanceCharging||b.lanceCharging)return false;
@@ -897,7 +897,7 @@ function resolveWeaponClash(a,b){
  const px=(sa.x2+sb.x2)*.5,py=(sa.y2+sb.y2)*.5;
  burst(px,py,'#f3c65f',10);
  floatText(a.x,a.y-43,'PARRY!','#eac65e');floatText(b.x,b.y-43,'PARRY!','#eac65e');
- recordExcitement('clash',1.2);playMetalClang('clash');
+ recordExcitement('clash',null,0);playMetalClang('clash');
  return true;
 }
 function burst(x,y,color,count){for(let i=0;i<count;i++){const a=sim.rng()*Math.PI*2,s=35+sim.rng()*190;sim.particles.push({x:x,y:y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:.35+sim.rng()*.55,max:.9,color:color,size:2+sim.rng()*4});}}
@@ -938,7 +938,7 @@ function damage(attacker,target,dt){
  }else{
   amount=Math.max(attacker.clone?BALANCE.duplicator.cloneDamageFloor:.5,attacker.combatDamage||attacker.damage);
  }
- const hpBefore=target.hp;target.hp=Math.max(0,target.hp-amount);const damageDealt=hpBefore-target.hp;recordExcitement('hit',1.6+Math.min(4,damageDealt*.10),attacker.side,damageDealt);if(crit)recordExcitement('crit',1.1,attacker.side);if(target.hp<=0&&target.mainBall)collapseDuplicatorSwarm(target.side);target.flash=.16;
+ const hpBefore=target.hp;target.hp=Math.max(0,target.hp-amount);const damageDealt=hpBefore-target.hp;recordExcitement('hit',attacker.side,damageDealt);if(crit)recordExcitement('crit',attacker.side,0);if(target.hp<=0&&target.mainBall)collapseDuplicatorSwarm(target.side);target.flash=.16;
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
  applyHitGrowth(attacker,target);
@@ -963,7 +963,7 @@ function launchArrow(f,target){
  const muzzleY=f.y+Math.sin(f.angle)*stringOffset;
  const leadX=target.x+target.vx*.18,leadY=target.y+target.vy*.18;
  const ax=leadX-muzzleX,ay=leadY-muzzleY,aim=Math.max(1,Math.hypot(ax,ay)),shotSpeed=f.projectileSpeed||455;
- sim.projectiles.push({x:muzzleX,y:muzzleY,vx:ax/aim*shotSpeed,vy:ay/aim*shotSpeed,life:2.5,owner:f,target:target,color:f.weapon.color});recordExcitement('shot',.08,f.side);
+ sim.projectiles.push({x:muzzleX,y:muzzleY,vx:ax/aim*shotSpeed,vy:ay/aim*shotSpeed,life:2.5,owner:f,target:target,color:f.weapon.color});recordExcitement('shot',f.side,0);
  burst(muzzleX,muzzleY,f.weapon.color,3);playBowTwang();
  return true;
 }
@@ -982,7 +982,7 @@ function step(dt){
  for(const f of fs){
   if(f.hp<=0)continue;
   if(f.poisonDps>0&&!f.lanceCharging){
-   const poisonBefore=f.hp;f.hp=Math.max(0,f.hp-f.poisonDps*dt);const poisonDamage=poisonBefore-f.hp;if(poisonDamage>0)recordExcitement('poison',poisonDamage*.10,f.poisonSourceSide,poisonDamage,false);if(f.hp<=0&&f.mainBall)collapseDuplicatorSwarm(f.side);
+   const poisonBefore=f.hp;f.hp=Math.max(0,f.hp-f.poisonDps*dt);const poisonDamage=poisonBefore-f.hp;if(poisonDamage>0)recordExcitement('poison',f.poisonSourceSide,poisonDamage,false);if(f.hp<=0&&f.mainBall)collapseDuplicatorSwarm(f.side);
    f.poisonPulse=(f.poisonPulse||0)+dt;
    if(f.poisonPulse>=1){floatText(f.x,f.y-40,'-'+Math.floor(f.poisonDps)+' POISON DPS','#70b96b');f.poisonPulse%=1;}
   }
@@ -1000,7 +1000,7 @@ function step(dt){
   if(lance&&!f.lanceCharging){
    f.lanceChargeCooldown-=dt;
    if(f.lanceChargeCooldown<=0){
-    f.lanceCharging=true;recordExcitement('charge',.12,f.side);f.lanceChargeDirection=dir;f.lanceChargeCooldown=BALANCE.lance.chargeInterval;
+    f.lanceCharging=true;recordExcitement('charge',f.side,0);f.lanceChargeDirection=dir;f.lanceChargeCooldown=BALANCE.lance.chargeInterval;
     f.lanceChargeSpeed=BALANCE.lance.chargeStartSpeed;f.vx=dir*f.lanceChargeSpeed;f.vy=Math.min(0,f.vy);
     floatText(f.x,f.y-48,'CHARGING!','#e9cf55');burst(f.x,f.y,'#e9cf55',8);
    }
@@ -1615,23 +1615,28 @@ function renderSimulations(){
 
 const SIMULATION_MAX_SECONDS=360;
 
-function recordExcitement(type,points,side,damage,countEvent){
+
+function recordExcitement(type,side,damage,countEvent){
  if(!sim||!sim.excitement)return;
- const tracker=sim.excitement,amount=Math.max(0,Number(points)||0);
- const index=Math.max(0,Math.floor(Math.max(0,sim.elapsed)/5));
+ const tracker=sim.excitement,index=Math.max(0,Math.floor(Math.max(0,sim.elapsed)/5));
  let bucket=tracker.windows[index];
- if(!bucket)bucket=tracker.windows[index]={points:0,events:{}};
- bucket.points+=amount;tracker.total+=amount;
+ if(!bucket)bucket=tracker.windows[index]={events:{},damageBySide:{left:0,right:0}};
  if(countEvent!==false){
   tracker.events[type]=(tracker.events[type]||0)+1;
   bucket.events[type]=(bucket.events[type]||0)+1;
  }
- if(side&&damage>0)tracker.damageBySide[side]+=damage;
+ if(side&&damage>0){
+  tracker.damageBySide[side]+=damage;
+  bucket.damageBySide[side]+=damage;
+ }
 }
-function calculateExcitementScore(excitement,seconds,winner){
+function calculateExcitementScore(excitement,seconds){
  const windowCount=Math.max(1,Math.ceil(seconds/5));
- const values=Array.from({length:windowCount},(_,i)=>excitement.windows[i]?excitement.windows[i].points:0);
- const average=excitement.total/windowCount;
+ const values=Array.from({length:windowCount},(_,i)=>{
+  const damage=excitement.windows[i]?.damageBySide||{left:0,right:0};
+  return Math.log1p(damage.left)+Math.log1p(damage.right);
+ });
+ const average=values.reduce((sum,value)=>sum+value,0)/windowCount;
  const top=values.slice().sort((a,b)=>b-a).slice(0,Math.min(3,windowCount));
  const peakAverage=top.reduce((sum,value)=>sum+value,0)/Math.max(1,top.length);
  const activeWindows=values.filter(value=>value>0).length;
@@ -1639,20 +1644,15 @@ function calculateExcitementScore(excitement,seconds,winner){
  const leftDamage=excitement.damageBySide.left,rightDamage=excitement.damageBySide.right;
  const totalDamage=leftDamage+rightDamage;
  const damageBalance=totalDamage>0?2*Math.min(leftDamage,rightDamage)/totalDamage:0;
- const winnerHealth=winner?clamp(winner.hp/Math.max(1,winner.maxHp),0,1):0;
- const activity=(.60*average)+(.40*peakAverage);
- const coverageFactor=.75+.25*coverage;
- const exchangeFactor=.85+.15*damageBalance;
- const knockoutBonus=winner?1.5+2.5*(1-winnerHealth):0;
- const score=activity*coverageFactor*exchangeFactor+knockoutBonus;
+ const activity=.65*average+.35*peakAverage;
+ const score=activity*(.75+.25*coverage);
  return {
   score:Math.round(score*100)/100,
-  averageWindowPoints:Math.round(average*100)/100,
-  peakWindowPoints:Math.round(peakAverage*100)/100,
+  averageWindowIntensity:Math.round(average*1000)/1000,
+  peakWindowIntensity:Math.round(peakAverage*1000)/1000,
   activeWindowRatio:Math.round(coverage*1000)/1000,
   damageBalance:Math.round(damageBalance*1000)/1000,
   damageDealt:{left:Math.round(leftDamage*10)/10,right:Math.round(rightDamage*10)/10},
-  winnerHealthPercent:Math.round(winnerHealth*1000)/10,
   hits:excitement.events.hit||0,
   criticalHits:excitement.events.crit||0,
   parries:excitement.events.parry||0,
@@ -1666,13 +1666,13 @@ function simulateDailyQuickCandidate(attempt){
  const seed=hashString('ball-battles-daily-quick-v1:'+today+':'+leftWeapon.id+':'+rightWeapon.id+':'+attempt);
  const previousSim=sim,previousSound=soundOn,rng=mulberry32(seed);
  const a=createFighter(leftWeapon,'left',rng,false),b=createFighter(rightWeapon,'right',rng,false);
- sim={mode:'simulation',active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,winner:null,seed:seed,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false},excitement:{windows:[],total:0,events:{},damageBySide:{left:0,right:0}}};
+ sim={mode:'simulation',active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,winner:null,seed:seed,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false},excitement:{windows:[],events:{},damageBySide:{left:0,right:0}}};
  soundOn=false;
  let steps=0;
  try{
   while(sim.active&&steps<DAILY_QUICK_TARGET_SECONDS*60){step(1/60);steps++;}
   const seconds=sim.elapsed,winner=sim.winner;
-  const excitement=calculateExcitementScore(sim.excitement,seconds,winner);
+  const excitement=calculateExcitementScore(sim.excitement,seconds);
   return {seed:seed,attempt:attempt,finished:!!winner&&!sim.active,winnerId:winner?winner.weapon.id:null,seconds:seconds,excitement:excitement};
  }finally{sim=previousSim;soundOn=previousSound;}
 }
