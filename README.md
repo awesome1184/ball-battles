@@ -27,7 +27,7 @@ The live page follows the visual guide in `DESIGN.md`: a flat blue backdrop, cre
 
 ## Earclacks-inspired fight presentation
 
-The battle stage uses a square arena, compact matchup header with weapon icons, larger weapon-specific stat readouts, and distinct attack-hit indicators. Fighters now actively steer horizontally according to weapon-specific movement profiles; successful melee hits add a short forward lunge. Bow maintains a ranged gap, while other weapons close to different preferred distances. This is a movement and combat presentation change only; daily coins, predictions, upgrades, simulation tools, records, and the battle engine remain in place.
+The battle stage uses a square arena, compact matchup header with weapon icons, larger weapon-specific stat readouts, and distinct attack-hit indicators. Fighters now actively steer horizontally according to weapon-specific movement profiles; successful melee hits add a short forward lunge. Bow maintains a ranged gap, its limbs are oriented perpendicular to its firing axis, and arrows travel strictly along the bow's current rotation without auto-aim or target-leading. Other weapons close to different preferred distances. This is a movement and combat presentation change only; daily coins, predictions, upgrades, simulation tools, records, and the battle engine remain in place.
 
 ## Weapon art
 
