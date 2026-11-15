@@ -1663,7 +1663,7 @@ function calculateExcitementScore(excitement,seconds,winner){
  };
 }
 function simulateDailyQuickCandidate(attempt){
- const seed=hashString('ball-battles-daily-excitement-v1:'+today+':'+leftWeapon.id+':'+rightWeapon.id+':'+attempt);
+ const seed=hashString('ball-battles-daily-quick-v1:'+today+':'+leftWeapon.id+':'+rightWeapon.id+':'+attempt);
  const previousSim=sim,previousSound=soundOn,rng=mulberry32(seed);
  const a=createFighter(leftWeapon,'left',rng,false),b=createFighter(rightWeapon,'right',rng,false);
  sim={mode:'simulation',active:true,elapsed:0,rng:rng,teams:{left:[a],right:[b]},fighters:[a,b],particles:[],projectiles:[],texts:[],result:null,winner:null,seed:seed,duplicateHits:{left:0,right:0},swarmCollapsed:{left:false,right:false},excitement:{windows:[],total:0,events:{},damageBySide:{left:0,right:0}}};
