@@ -199,7 +199,7 @@ h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3vw,34px);font-weight:850;line-h
 .footer{margin-top:28px;border-top:1px solid #ffffff55;padding-top:12px;color:#dce3ef;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 330px;gap:20px}.armory-layout{grid-template-columns:minmax(0,1fr) 320px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:900px){.app{padding:16px 14px 42px}.layout,.armory-layout{grid-template-columns:1fr}.main-col,.side-col{width:100%;max-width:560px;margin:0 auto}.side-col{gap:0}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.app{padding:13px 11px 38px}.brand-mark{width:36px;height:36px;font-size:19px}.brand-name{font-size:22px}.brand-sub{font-size:11px}.top-actions{gap:6px}.wallet{padding:7px 8px}.wallet small{display:none}.icon-btn{padding:8px}.tabs{gap:4px;margin-bottom:18px}.tab{padding:8px 10px;font-size:12px}.match-head{align-items:flex-start}.arena-card{padding:8px}.arena-top{align-items:center}.versus{font-size:15px;gap:5px}.matchup-icon{width:36px;height:36px;flex-basis:36px}.matchup-side{gap:4px}.arena-status{width:100%}.arena-bottom{align-items:stretch;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}
+@media(max-width:600px){.app{padding:13px 11px 38px}.brand-mark{width:36px;height:36px;font-size:19px}.brand-name{font-size:22px}.brand-sub{font-size:11px}.top-actions{gap:6px}.wallet{padding:7px 8px}.wallet small{display:none}.icon-btn{padding:8px}.tabs{gap:4px;margin-bottom:18px}.tab{padding:8px 10px;font-size:12px}.match-head{align-items:flex-start}.arena-card{padding:8px}.arena-top{align-items:center;flex-wrap:wrap}.status-chip{order:-1;margin-left:auto;font-size:9px;padding:3px 5px}.versus{font-size:13px;gap:4px;flex-basis:100%;max-width:none}.matchup-icon{width:30px;height:30px;flex-basis:30px}.matchup-side{gap:3px}.matchup-side span{font-size:12px}.arena-status{width:100%}.arena-bottom{align-items:stretch;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}
 .slip-wager{grid-template-columns:1fr auto;padding:13px}.quick-wagers{gap:4px}.quick-wagers .soft-btn{padding:7px 8px}.slip-pick{padding:13px}.side-col>.side-card{padding:13px 0}
 .weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.weapon-card{min-height:138px;padding:10px}.weapon-glyph{width:70px;height:70px}.history-row{grid-template-columns:1fr 65px 65px;gap:8px}.payout-main{align-items:flex-start}.payout-amount{font-size:22px}.footer{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
@@ -587,6 +587,7 @@ function nextStatContributionGain(id,key){const def=STAT_DEFS.find(x=>x.id===key
 function totalStatBonus(id,key){return statContributionBonus(id,key);}
 function totalStatCoins(id){return Object.values(save.statPools[id]||{}).reduce((n,p)=>n+Number(p.totalContributed||0),0);}
 function setMatchHead(l,r,mode){
+ matchupIconWeapons.left=l;matchupIconWeapons.right=r;
  const leftColor=l.ballColor||l.color||'#ee5265',rightColor=r.ballColor||r.color||'#35cd5d';
  drawWeaponIcon($('left-matchup-icon'),l);drawWeaponIcon($('right-matchup-icon'),r);
  $('match-title').innerHTML='<span class="corner red" style="color:'+leftColor+'">'+l.name+'</span><span class="vs">vs</span><span class="corner green" style="color:'+rightColor+'">'+r.name+'</span>';
@@ -614,6 +615,7 @@ let speed=1;
 let selectedWeapon=save.favorite;
 let payoutAnimationDay='';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
+let matchupIconWeapons={left:null,right:null};
 let dailyQuickSeed=null,dailyQuickTime=0,dailyQuickWinner=null,dailyQuickScore=0,dailyQuickBreakdown=null,dailyQuickSelectedAttempt=null,dailyQuickAttempt=0,dailyQuickBatchCount=0,dailyQuickBatchQualified=0,dailyQuickBatchBest=null,dailyQuickMaxAttempts=2000,dailyQuickSearching=false,dailyQuickSearchFrame=0;
 const DAILY_QUICK_TARGET_SECONDS=60,DAILY_EXCITEMENT_BATCH_SIZE=500;
 let audio=null,audioMaster=null;
@@ -1338,7 +1340,7 @@ const WEAPON_ART_ASSETS={
 function loadWeaponArt(src,size,mode='held'){
  const image=new Image();
  const asset={image,size,mode};
- image.onload=()=>{if(typeof draw==='function')draw();};
+ image.onload=()=>{if(typeof draw==='function')draw();if(matchupIconWeapons.left)drawWeaponIcon($('left-matchup-icon'),matchupIconWeapons.left);if(matchupIconWeapons.right)drawWeaponIcon($('right-matchup-icon'),matchupIconWeapons.right);};
  image.onerror=()=>{};
  image.src=src;
  return asset;
@@ -1462,8 +1464,8 @@ function draw(){
   for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
   for(const f of sim.fighters){if(f.hp>0&&f.weapon.id==='trident')drawWhirlpool(ctx,f);}
   for(const f of sim.fighters){if(f.hp>0&&f.lungeFlash>0)drawLungeCue(ctx,f);}
-  for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}
   for(const effect of (sim.attackEffects||[]))drawAttackCue(ctx,effect);
+  for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}
   for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
  }else{drawPreviewBall(ctx,leftWeapon,265,340,1);drawPreviewBall(ctx,rightWeapon,475,340,-1);}ctx.restore();
 
