@@ -770,7 +770,12 @@ function spawnDuplicates(side){
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
 }
-function rescueStalledHorizontalMotion(f,dt){
+function applySeededRebound(f,maxAngle){
+  const speed=Math.hypot(f.vx,f.vy);if(speed<1)return;
+  const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
+  f.vx=Math.cos(angle)*speed;f.vy=Math.sin(angle)*speed;
+ }
+ function rescueStalledHorizontalMotion(f,dt){
  if(f.lanceCharging){f.lowHorizontalTimer=0;return;}
  if(Math.abs(f.vx)>=40){f.lowHorizontalTimer=0;return;}
  f.lowHorizontalTimer=(f.lowHorizontalTimer||0)+dt;
@@ -974,14 +979,16 @@ function step(dt){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
    else f.vx=Math.abs(f.vx);
+   applySeededRebound(f,.10);
   }
   if(f.x>arena.x+arena.w-f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+arena.w-f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
    else f.vx=-Math.abs(f.vx);
+   applySeededRebound(f,.10);
   }
-  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);playWallTick(wallImpact);}
-  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;playWallTick(wallImpact);}
+  if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);applySeededRebound(f,.12);playWallTick(wallImpact);}
+  if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;applySeededRebound(f,.12);playWallTick(wallImpact);}
   rescueStalledHorizontalMotion(f,dt);
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
