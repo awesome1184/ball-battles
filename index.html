@@ -1416,6 +1416,8 @@ function drawAttackCue(c,e){
   c.lineWidth=3;c.beginPath();c.arc(0,0,r,-1.1,1.1);c.stroke();c.beginPath();c.arc(0,0,r*.62,Math.PI-.9,Math.PI+.9);c.stroke();
  }else if(e.weaponId==='trident'){
   c.lineWidth=3;for(let k=-1;k<=1;k++){c.beginPath();c.moveTo(-15,k*8);c.lineTo(27,k*8);c.stroke();}
+ }else if(e.weaponId==='bow'){
+  c.lineWidth=2.5;for(let k=0;k<8;k++){const a=k*Math.PI/4;c.beginPath();c.moveTo(Math.cos(a)*7,Math.sin(a)*7);c.lineTo(Math.cos(a)*r*.8,Math.sin(a)*r*.8);c.stroke();}
  }else{
   c.lineWidth=e.weaponId==='axe'?5:3;c.beginPath();c.arc(0,0,r,-.95,.95);c.stroke();c.beginPath();c.arc(0,0,r*.68,-.65,.65);c.stroke();
  }
