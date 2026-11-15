@@ -126,16 +126,16 @@ button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allow
 .icon-btn:hover,.soft-btn:hover,.small-btn:hover{background:var(--paper-dim)}.icon-btn:active,.soft-btn:active,.small-btn:active,.primary-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
 .tabs{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 24px;border-bottom:2px solid #ffffff55;padding-bottom:7px}.tab{padding:9px 15px;border:3px solid transparent;border-radius:var(--r);background:transparent;color:var(--paper);font-size:14px;font-weight:700;letter-spacing:0;text-transform:none}
 .tab:hover{border-color:#ffffff80}.tab.active{background:var(--paper);color:var(--ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
-.view{display:none}.view.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:26px;align-items:start}.main-col,.side-col{display:grid;gap:16px;min-width:0}
+.view{display:none}.view.active{display:block}.layout{display:grid;grid-template-columns:minmax(0,620px) minmax(0,1fr);gap:20px;align-items:start}.main-col,.side-col{display:grid;gap:16px;min-width:0}
 .match-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}.eyebrow{display:none}
 h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3vw,34px);font-weight:850;line-height:1.12;letter-spacing:-.025em;margin:0;color:var(--paper)}h2{font-size:20px;font-weight:800;line-height:1.15}h3{font-size:17px;font-weight:800;line-height:1.2}
 .subline{margin-top:6px;color:#e0e5ef;font-size:13px;line-height:1.45}.date-chip{display:none}
 .card{background:var(--paper);color:var(--ink);border:var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}.card h1,.card h2,.card h3{color:var(--ink)}
 .section-desc{font-size:13px;line-height:1.5;color:var(--muted)}.section-title{font-size:17px;font-weight:800;letter-spacing:0}.muted-tag{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0;text-transform:none}
-.arena-card{padding:10px}.arena-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.versus{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:850;letter-spacing:0}
+.arena-card{padding:10px}.arena-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:7px}.versus{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1;max-width:520px;font-size:20px;font-weight:900;letter-spacing:0}.matchup-side{display:flex;align-items:center;gap:8px;min-width:0}.matchup-side span{white-space:nowrap}.matchup-icon{display:block;width:48px;height:48px;flex:0 0 48px;image-rendering:pixelated}
 .versus .red{color:#b32636}.versus .green{color:#16893a}.versus .vs{display:inline-block;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;background:var(--sun);color:var(--ink);font-size:12px;font-weight:900;transform:rotate(-4deg)}
 .status-chip{padding:4px 8px;border:2px solid var(--ink);border-radius:4px;background:var(--paper-dim);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:0;white-space:nowrap}
-.arena-canvas-wrap{position:relative;min-height:0;overflow:hidden;background:var(--paper);border:3px solid var(--ink);border-radius:4px}.arena-canvas-wrap:after{display:none}.arena-canvas{display:block;width:100%;height:auto;aspect-ratio:540/740;background:var(--paper)}.fighter-labels{display:none}
+.arena-canvas-wrap{position:relative;min-height:0;overflow:hidden;background:var(--paper);border:3px solid var(--ink);border-radius:4px}.arena-canvas-wrap:after{display:none}.arena-canvas{display:block;width:100%;height:auto;aspect-ratio:740/750;background:var(--paper)}.fighter-labels{display:none}
 .arena-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 2px 2px}.arena-status{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:12px;line-height:1.4}
 .pulse{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:#7b8190;border:1px solid var(--ink)}.pulse.live{background:var(--green);box-shadow:none;animation:none}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .primary-btn{border:var(--border);border-radius:var(--r);background:var(--sun);color:var(--ink);font-weight:800;letter-spacing:0;text-transform:none;padding:10px 14px;box-shadow:3px 3px 0 var(--ink);transition:transform .06s,box-shadow .06s}
@@ -199,7 +199,7 @@ h1,h2,h3,p{margin-top:0}h1{font-size:clamp(25px,3vw,34px);font-weight:850;line-h
 .footer{margin-top:28px;border-top:1px solid #ffffff55;padding-top:12px;color:#dce3ef;font-size:11px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr) 330px;gap:20px}.armory-layout{grid-template-columns:minmax(0,1fr) 320px}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:900px){.app{padding:16px 14px 42px}.layout,.armory-layout{grid-template-columns:1fr}.main-col,.side-col{width:100%;max-width:560px;margin:0 auto}.side-col{gap:0}.weapon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stats-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.app{padding:13px 11px 38px}.brand-mark{width:36px;height:36px;font-size:19px}.brand-name{font-size:22px}.brand-sub{font-size:11px}.top-actions{gap:6px}.wallet{padding:7px 8px}.wallet small{display:none}.icon-btn{padding:8px}.tabs{gap:4px;margin-bottom:18px}.tab{padding:8px 10px;font-size:12px}.match-head{align-items:flex-start}.arena-card{padding:8px}.arena-top{align-items:flex-start}.arena-status{width:100%}.arena-bottom{align-items:stretch;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}
+@media(max-width:600px){.app{padding:13px 11px 38px}.brand-mark{width:36px;height:36px;font-size:19px}.brand-name{font-size:22px}.brand-sub{font-size:11px}.top-actions{gap:6px}.wallet{padding:7px 8px}.wallet small{display:none}.icon-btn{padding:8px}.tabs{gap:4px;margin-bottom:18px}.tab{padding:8px 10px;font-size:12px}.match-head{align-items:flex-start}.arena-card{padding:8px}.arena-top{align-items:center}.versus{font-size:15px;gap:5px}.matchup-icon{width:36px;height:36px;flex-basis:36px}.matchup-side{gap:4px}.arena-status{width:100%}.arena-bottom{align-items:stretch;flex-direction:column}.controls{width:100%}.controls .primary-btn{flex:1}
 .slip-wager{grid-template-columns:1fr auto;padding:13px}.quick-wagers{gap:4px}.quick-wagers .soft-btn{padding:7px 8px}.slip-pick{padding:13px}.side-col>.side-card{padding:13px 0}
 .weapon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.weapon-card{min-height:138px;padding:10px}.weapon-glyph{width:70px;height:70px}.history-row{grid-template-columns:1fr 65px 65px;gap:8px}.payout-main{align-items:flex-start}.payout-amount{font-size:22px}.footer{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
@@ -335,7 +335,7 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
         <div class="date-chip" id="date-chip">Today</div>
       </div>
       <section class="card arena-card" id="arena-stage">
-        <div class="arena-top"><div class="versus"><span class="red" id="left-name-top">Sword</span><span class="vs">vs</span><span class="green" id="right-name-top">Dagger</span></div><span class="status-chip" id="fight-state-chip">Ready</span></div>
+        <div class="arena-top"><div class="versus"><div class="matchup-side"><canvas class="matchup-icon" id="left-matchup-icon" width="96" height="96" aria-hidden="true"></canvas><span class="red" id="left-name-top">Sword</span></div><span class="vs">VS</span><div class="matchup-side"><span class="green" id="right-name-top">Dagger</span><canvas class="matchup-icon" id="right-matchup-icon" width="96" height="96" aria-hidden="true"></canvas></div></div><span class="status-chip" id="fight-state-chip">Ready</span></div>
         <div class="arena-canvas-wrap">
           <div class="fighter-labels">
             <div class="fighter-label"><div class="fighter-name" id="left-label-name">Red corner</div><div class="fighter-weapon" id="left-label-weapon">Sword</div><div class="bar"><div class="bar-fill" id="left-hp-bar"></div></div></div>
@@ -588,6 +588,7 @@ function totalStatBonus(id,key){return statContributionBonus(id,key);}
 function totalStatCoins(id){return Object.values(save.statPools[id]||{}).reduce((n,p)=>n+Number(p.totalContributed||0),0);}
 function setMatchHead(l,r,mode){
  const leftColor=l.ballColor||l.color||'#ee5265',rightColor=r.ballColor||r.color||'#35cd5d';
+ drawWeaponIcon($('left-matchup-icon'),l);drawWeaponIcon($('right-matchup-icon'),r);
  $('match-title').innerHTML='<span class="corner red" style="color:'+leftColor+'">'+l.name+'</span><span class="vs">vs</span><span class="corner green" style="color:'+rightColor+'">'+r.name+'</span>';
  $('left-name-top').style.color=leftColor;$('right-name-top').style.color=rightColor;
  $('match-subtitle').innerHTML=mode==='daily'
@@ -619,8 +620,8 @@ let audio=null,audioMaster=null;
 let soundOn=save.sound!==false;
 const canvas=$('arena-canvas');
 const ctx=canvas.getContext('2d');
-const W=540,H=740;
-const arena={x:55,y:78,w:430,h:565,r:5};
+const W=740,H=750;
+const arena={x:70,y:40,w:600,h:600,r:5};
 let view='arena';
 
 function renderWallet(){$('coin-count').textContent=money(save.coins);}
@@ -676,6 +677,7 @@ $('bet-card').style.display='';
 renderPayout();
 $('date-chip').textContent=dayLabel;
 $('left-name-top').textContent=leftWeapon.name;$('right-name-top').textContent=rightWeapon.name;
+ drawWeaponIcon($('left-matchup-icon'),leftWeapon);drawWeaponIcon($('right-matchup-icon'),rightWeapon);
 $('left-label-name').textContent='Red corner';$('right-label-name').textContent='Green corner';
 $('left-label-weapon').textContent=leftWeapon.name;$('right-label-weapon').textContent=rightWeapon.name;
 $('bet-left-name').textContent=leftWeapon.name;$('bet-right-name').textContent=rightWeapon.name;
@@ -767,7 +769,7 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(105+rng()*140),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?250:490,y:210,vx:(side==='left'?1:-1)*(75+rng()*95),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,r:30,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28,lowHorizontalTimer:0});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -806,6 +808,38 @@ function spawnDuplicates(side){
  const clone=cloneFighter(parent,sim.rng,team.length);recordExcitement('clone',side,0);team.push(clone);
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
+}
+const WEAPON_MOVEMENT={
+ sword:{speed:205,accel:680,range:150,vertical:125,lunge:66},
+ dagger:{speed:245,accel:900,range:125,vertical:125,lunge:100},
+ spear:{speed:185,accel:650,range:165,vertical:135,lunge:92},
+ axe:{speed:155,accel:520,range:150,vertical:125,lunge:58},
+ hammer:{speed:130,accel:430,range:160,vertical:125,lunge:46},
+ scythe:{speed:200,accel:700,range:145,vertical:135,lunge:72},
+ chakram:{speed:235,accel:820,range:140,vertical:130,lunge:86},
+ trident:{speed:180,accel:620,range:155,vertical:140,lunge:64},
+ bow:{speed:195,accel:620,range:290,vertical:150,lunge:0,retreat:.9},
+ lance:{speed:185,accel:610,range:155,vertical:140,lunge:20},
+ duplicator:{speed:175,accel:590,range:135,vertical:130,lunge:0}
+};
+function steerWeaponMovement(f,target,dt){
+ const p=WEAPON_MOVEMENT[f.weapon.id]||WEAPON_MOVEMENT.sword;
+ const dx=target.x-f.x,dy=target.y-f.y,dir=Math.sign(dx)||(f.side==='left'?1:-1),gap=Math.abs(dx),vertical=Math.abs(dy);
+ let desired=0;
+ if(f.weapon.id==='bow'){
+  const distance=Math.hypot(dx,dy);
+  if(distance>p.range+55)desired=dir*p.speed;
+  else if(distance<p.range-65)desired=-dir*p.speed*p.retreat;
+  else desired=dir*p.speed*.08;
+ }else if(vertical>p.vertical){
+  desired=dir*p.speed*.68;
+ }else{
+  const error=gap-p.range;
+  desired=dir*p.speed*clamp(error/100,-.28,1);
+ }
+ const change=p.accel*dt;
+ f.vx+=clamp(desired-f.vx,-change,change);
+ f.vx=clamp(f.vx,-p.speed*1.25,p.speed*1.25);
 }
 function applySeededRebound(f,maxAngle){
   const speed=Math.hypot(f.vx,f.vy);if(speed<1)return;
@@ -941,6 +975,10 @@ function damage(attacker,target,dt){
  const hpBefore=target.hp;target.hp=Math.max(0,target.hp-amount);const damageDealt=hpBefore-target.hp;recordExcitement('hit',attacker.side,damageDealt);if(crit)recordExcitement('crit',attacker.side,0);if(target.hp<=0&&target.mainBall)collapseDuplicatorSwarm(target.side);target.flash=.16;
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
+ const movement=WEAPON_MOVEMENT[attacker.weapon.id];
+ if(movement&&movement.lunge){const direction=Math.sign(target.x-attacker.x)||(attacker.side==='left'?1:-1);attacker.vx=clamp(attacker.vx+direction*movement.lunge,-movement.speed*1.35,movement.speed*1.35);attacker.lungeFlash=.16;}
+ sim.attackEffects=sim.attackEffects||[];
+ sim.attackEffects.push({x:target.x,y:target.y,angle:Math.atan2(target.y-attacker.y,target.x-attacker.x),weaponId:attacker.weapon.id,color:w.color,life:.24,max:.24});
  applyHitGrowth(attacker,target);
   target.stagger=Math.max(target.stagger,HIT_IMPACT_FRAME_SECONDS);
  const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;
@@ -976,6 +1014,7 @@ function fireArrow(f,target){
 function step(dt){
  if(!sim||!sim.active)return;
  sim.elapsed+=dt;const gravity=520,floor=arena.y+arena.h;
+ if(sim.attackEffects)sim.attackEffects=sim.attackEffects.filter(effect=>(effect.life-=dt)>0);
  syncFighters();const fs=sim.fighters;
  for(const f of fs){
   if(f.hp<=0)continue;
@@ -1009,6 +1048,7 @@ function step(dt){
    f.vy+=gravity*.45*dt;
   }else{
    f.vy+=gravity*dt;
+   steerWeaponMovement(f,o,dt);
   }
   f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
   if(f.x<arena.x+f.r){
@@ -1035,7 +1075,7 @@ function step(dt){
   f.spin=Math.min(32,f.spin);
   if(f.stagger<=0&&(!lance||!f.lanceCharging))f.angle=((f.angle+f.spin*dt*(f.spinDirection||1))%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
   f.hitCd=Math.max(0,f.hitCd-dt);f.contactHitCd=Math.max(0,(f.contactHitCd||0)-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.12;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
-  f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
+  f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);f.lungeFlash=Math.max(0,(f.lungeFlash||0)-dt);
   if(f.stagger<=0){
    if(f.weapon.projectile){if((f.projectileQueue||0)<=0&&f.projectileCd<=0&&o.hp>0)fireArrow(f,o);}
    else if(f.weapon.id!=='duplicator'&&f.hitCd<=0&&o.hp>0){
@@ -1363,6 +1403,29 @@ function drawCloneMarker(c,r){
  for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rad=i%2===0?5.6:2.5,x=Math.cos(a)*rad,y=Math.sin(a)*rad;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}
  c.closePath();c.fillStyle='#ffd64d';c.strokeStyle='#191919';c.lineWidth=1.4;c.lineJoin='round';c.fill();c.stroke();c.restore();
 }
+function drawLungeCue(c,f){
+ const alpha=clamp((f.lungeFlash||0)/.16,0,1),dir=Math.sign(f.vx)||(f.side==='left'?1:-1);
+ if(alpha<=0)return;
+ c.save();c.globalAlpha=alpha*.72;c.strokeStyle=teamBallColor(f);c.lineWidth=3;c.lineCap='square';
+ for(let i=0;i<3;i++){const y=f.y-9+i*9,x=f.x-dir*(f.r+7+i*6);c.beginPath();c.moveTo(x,y);c.lineTo(x-dir*(10+i*3),y);c.stroke();}
+ c.restore();
+}
+function drawAttackCue(c,e){
+ const t=clamp(e.life/e.max,0,1),r=17+(1-t)*26;
+ c.save();c.translate(e.x,e.y);c.rotate(e.angle);c.globalAlpha=t*.9;c.strokeStyle=e.color;c.fillStyle=e.color;c.lineCap='square';
+ if(e.weaponId==='spear'||e.weaponId==='lance'){
+  c.lineWidth=4;c.beginPath();c.moveTo(-23,0);c.lineTo(30,0);c.stroke();c.beginPath();c.moveTo(30,0);c.lineTo(20,-7);c.lineTo(20,7);c.closePath();c.fill();
+ }else if(e.weaponId==='hammer'){
+  c.lineWidth=4;c.beginPath();c.arc(0,0,r*.9,0,Math.PI*2);c.stroke();c.lineWidth=2;c.beginPath();c.arc(0,0,r*.55,0,Math.PI*2);c.stroke();
+ }else if(e.weaponId==='chakram'){
+  c.lineWidth=3;c.beginPath();c.arc(0,0,r,-1.1,1.1);c.stroke();c.beginPath();c.arc(0,0,r*.62,Math.PI-.9,Math.PI+.9);c.stroke();
+ }else if(e.weaponId==='trident'){
+  c.lineWidth=3;for(let k=-1;k<=1;k++){c.beginPath();c.moveTo(-15,k*8);c.lineTo(27,k*8);c.stroke();}
+ }else{
+  c.lineWidth=e.weaponId==='axe'?5:3;c.beginPath();c.arc(0,0,r,-.95,.95);c.stroke();c.beginPath();c.arc(0,0,r*.68,-.65,.65);c.stroke();
+ }
+ c.restore();
+}
 function drawBall(c,f){
  c.save();c.translate(f.x,f.y);
  const color=teamBallColor(f),r=f.r;
@@ -1398,9 +1461,11 @@ function draw(){
  if(sim){for(const arrow of (sim.projectiles||[])){ctx.save();ctx.translate(arrow.x,arrow.y);ctx.rotate(Math.atan2(arrow.vy,arrow.vx));ctx.strokeStyle='#171717';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(10,0);ctx.stroke();ctx.fillStyle=arrow.color;ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(5,-5);ctx.lineTo(5,5);ctx.closePath();ctx.fill();ctx.restore();}
   for(const p of sim.particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;
   for(const f of sim.fighters){if(f.hp>0&&f.weapon.id==='trident')drawWhirlpool(ctx,f);}
+  for(const f of sim.fighters){if(f.hp>0&&f.lungeFlash>0)drawLungeCue(ctx,f);}
   for(const f of sim.fighters){if(f.hp>0)drawBall(ctx,f);}
+  for(const effect of (sim.attackEffects||[]))drawAttackCue(ctx,effect);
   for(const t of sim.texts){ctx.globalAlpha=clamp(t.life/t.max,0,1);ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillStyle=t.color;ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeText(t.text,t.x,t.y);ctx.fillText(t.text,t.x,t.y);}ctx.globalAlpha=1;
- }else{drawPreviewBall(ctx,leftWeapon,180,330,1);drawPreviewBall(ctx,rightWeapon,360,330,-1);}ctx.restore();
+ }else{drawPreviewBall(ctx,leftWeapon,265,340,1);drawPreviewBall(ctx,rightWeapon,475,340,-1);}ctx.restore();
 
  function sideMetrics(team,opponents,fallback){
   const fighter=team.length?(team.find(f=>f.hp>0&&f.mainBall)||team.find(f=>f.hp>0)||team[0]):null;
@@ -1452,9 +1517,9 @@ function draw(){
   const maxWidth=arena.w*.48;
   const lines=[stats.first+'   '+stats.third,stats.fourth];
   for(let row=0;row<2;row++){
-   let size=10;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';
-   while(ctx.measureText(lines[row]).width>maxWidth&&size>7.5){size-=.25;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';}
-   ctx.fillText(lines[row],edge,row===0?682:701);
+   let size=row===0?15:12;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';
+   while(ctx.measureText(lines[row]).width>maxWidth&&size>(row===0?10:9)){size-=.5;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';}
+   ctx.fillText(lines[row],edge,row===0?684:718);
   }
   ctx.restore();
  }
