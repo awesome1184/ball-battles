@@ -575,7 +575,7 @@ let speed=1;
 let selectedWeapon=save.favorite;
 let payoutAnimationDay='';
 let sim=null, raf=0, lastFrame=0, accumulator=0;
-let audio=null;
+let audio=null,audioMaster=null;
 let soundOn=save.sound!==false;
 const canvas=$('arena-canvas');
 const ctx=canvas.getContext('2d');
@@ -1450,6 +1450,7 @@ function getAudioContext(){
   const Ctor=window.AudioContext||window.webkitAudioContext;
   if(!Ctor)return null;
   audio=audio||new Ctor();
+  if(!audioMaster){audioMaster=audio.createGain();audioMaster.gain.value=soundOn?1:0;audioMaster.connect(audio.destination);}
   if(audio.state==='suspended'){const resume=audio.resume();if(resume&&resume.catch)resume.catch(()=>{});}
   return audio;
  }catch(e){return null;}
@@ -1482,7 +1483,7 @@ function addNoiseVoice(bus,duration,frequency,amount,q=1.1){
  const c=bus.ctx,source=trackAudioVoice(bus,c.createBufferSource()),filter=c.createBiquadFilter(),gain=c.createGain();
  source.buffer=noiseBuffer(c);filter.type='bandpass';filter.frequency.setValueAtTime(frequency,bus.now);filter.Q.setValueAtTime(q,bus.now);
  audioEnvelope(gain.gain,bus.now,amount,duration,.003);
- source.connect(filter);filter.connect(gain);gain.connect(c.destination);
+ source.connect(filter);filter.connect(gain);gain.connect(audioMaster||c.destination);
  source.start(bus.now);source.stop(bus.now+duration);
 }
 function addToneVoice(bus,startFrequency,endFrequency,duration,amount,wave='sine',filterType=null){
@@ -1492,13 +1493,13 @@ function addToneVoice(bus,startFrequency,endFrequency,duration,amount,wave='sine
  audioEnvelope(gain.gain,bus.now,amount,duration,.004);
  if(filterType){const filter=c.createBiquadFilter();filter.type=filterType;filter.frequency.setValueAtTime(700,bus.now);source.connect(filter);filter.connect(gain);}
  else source.connect(gain);
- gain.connect(c.destination);source.start(bus.now);source.stop(bus.now+duration);
+ gain.connect(audioMaster||c.destination);source.start(bus.now);source.stop(bus.now+duration);
 }
 function playWeaponImpact(weaponId,hitCount,critical){
  const p=HIT_AUDIO[weaponId]||HIT_AUDIO.sword,ring=weaponId==='chakram',bus=reserveAudio('impact:'+weaponId,ring?3:2);
  if(!bus)return;
  const rise=clamp((Math.max(1,hitCount)-1)/24,0,1),crit=critical?1:0;
- const pitch=1+rise*.24+crit*.14,brightness=1+rise*.48+crit*.38,volume=critical?1.18:1;
+ const variation=.97+Math.random()*.06,pitch=(1+rise*.24+crit*.14)*variation,brightness=(1+rise*.48+crit*.38)*variation,volume=critical?1.18:1;
  addNoiseVoice(bus,p.noiseTime,p.filter*brightness,p.noise*(1+rise*.2)*volume,weaponId==='scythe'?.7:1.15);
  addToneVoice(bus,p.thump*pitch,p.thump*.82*pitch,p.thumpTime,p.thumpGain*volume,'sine');
  if(ring)addToneVoice(bus,620*pitch,860*pitch,.16,.045,'sine');
@@ -1590,7 +1591,7 @@ $('choose-champion-btn').addEventListener('click',()=>switchView('armory'));
 $('upgrade-from-payout').addEventListener('click',openUpgradeFromDaily);
 $('sim-from-payout').addEventListener('click',()=>switchView('simulations'));
 $('speed-btn').addEventListener('click',()=>{speed=speed===1?2:1;$('speed-btn').textContent=speed+'×';});
-function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();$('sound-toggle').textContent=soundOn?'Sound on':'Sound off';$('sound-hit-btn').textContent=soundOn?'Sound on':'Sound off';if(soundOn)playUiConfirm();}
+function toggleSound(){soundOn=!soundOn;save.sound=soundOn;persist();if(audioMaster&&audio)audioMaster.gain.setTargetAtTime(soundOn?1:0,audio.currentTime,.008);$('sound-toggle').textContent=soundOn?'Sound on':'Sound off';$('sound-hit-btn').textContent=soundOn?'Sound on':'Sound off';if(soundOn)playUiConfirm();}
 $('sound-toggle').addEventListener('click',toggleSound);$('sound-hit-btn').addEventListener('click',toggleSound);
 document.querySelectorAll('.tab').forEach(b=>{b.addEventListener('click',()=>switchView(b.dataset.view));b.addEventListener('keydown',event=>{const tabs=[...document.querySelectorAll('.tab')],index=tabs.indexOf(b);let next=index;if(event.key==='ArrowRight')next=(index+1)%tabs.length;else if(event.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;else if(event.key==='Home')next=0;else if(event.key==='End')next=tabs.length-1;else return;event.preventDefault();tabs[next].focus();switchView(tabs[next].dataset.view);});});
 $('dev-toggle').addEventListener('click',()=>$('dev-panel').classList.toggle('open'));$('dev-close').addEventListener('click',()=>$('dev-panel').classList.remove('open'));
