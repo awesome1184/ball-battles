@@ -309,6 +309,12 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
  .stat-card strong{font-size:30px}
 }
 </style>
+<style>
+/* Earclacks-inspired matchup polish */
+.match-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:0}
+.match-head h1{font-size:18px}
+.match-head .subline{display:none}
+</style>
 </head>
 <body>
 <div class="app">
@@ -848,20 +854,7 @@ function applySeededRebound(f,maxAngle){
   const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
   f.vx=Math.cos(angle)*speed;f.vy=Math.sin(angle)*speed;
  }
- function rescueStalledHorizontalMotion(f,dt){
- if(f.lanceCharging){f.lowHorizontalTimer=0;return;}
- if(Math.abs(f.vx)>=40){f.lowHorizontalTimer=0;return;}
- f.lowHorizontalTimer=(f.lowHorizontalTimer||0)+dt;
- if(f.lowHorizontalTimer<2)return;
- let direction=sim.rng()<.5?-1:1;
- if(f.x<=arena.x+f.r+12)direction=1;
- else if(f.x>=arena.x+arena.w-f.r-12)direction=-1;
- f.vx+=direction*55;
- if(Math.abs(f.vx)<45)f.vx=direction*45;
- f.lowHorizontalTimer=0;
-}
-
-function startFight(mode,forced,practiceId,opponentId){
+ function startFight(mode,forced,practiceId,opponentId){
  if(sim&&sim.active)return;
  if(mode==='daily'&&dailyQuickSeed===null){ensureDailyQuickFight();return;}
  unlockAudio();if(raf)cancelAnimationFrame(raf);lastFrame=0;accumulator=0;const seed=mode==='daily'?(dailyQuickSeed===null?hashString('ball-battles-'+today):dailyQuickSeed):hashString('practice-'+Date.now()+'-'+Math.random()),rng=mulberry32(seed);let a,b;
@@ -1067,7 +1060,7 @@ function step(dt){
   }
   if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);applySeededRebound(f,.12);playWallTick(wallImpact);}
   if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;applySeededRebound(f,.12);playWallTick(wallImpact);}
-  rescueStalledHorizontalMotion(f,dt);
+  
   f.combatSpeed=Math.round(10*(f.attackSpeedFactor||1));
   if(f.weapon.id==='hammer'){
    f.hammerSpin=Math.min(f.hammerMaxSpin,f.hammerSpin+dt*.9);
