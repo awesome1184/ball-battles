@@ -39,7 +39,7 @@ The live page follows the visual guide in `DESIGN.md`: a flat blue backdrop, cre
 - Per-weapon, per-stat level pools for base damage, scaling, weapon size, projectile rate, attack speed, and spin speed. Each contribution adds 50 coins to that stat's progress bar; the next level costs 50 × (level + 1)² coins. Stat gains start at 1% or 2% per level, and the gain per new level increases linearly (for example, a 2% stat gains +2%, then +4%, then +6%). The prototype stores these pools locally; global cross-player sharing requires the Devvit backend.
 - The daily path is: watch the current daily fight, receive the previous day's bet payout on the next daily visit with a one-time animated win/loss reveal, then upgrade the weapon you backed or open Simulations.
 - Simulations use your trained favorite weapon against a randomly selected opponent. Opponents cannot be chosen; simulations use the same battle engine, hide daily betting controls, and are recorded separately from daily showdowns.
-- Fight records, a matchup win-rate matrix (2,750 neutral simulations: 50 per pairing, 25 from each starting side), and a local developer test panel. The displayed matchup matrix is an archived pre-physics-update snapshot. Its win-rate estimates must be rerun after the new free-movement and elastic-collision system before they can be used to assess balance.
+- Fight records, a matchup win-rate matrix recalculated after the free-movement and elastic-collision update (2,750 simulations: 50 per pairing, 25 from each starting side), and a local developer test panel. The rates are a seeded, build-specific balance snapshot rather than live results.
 - Sound toggle and 1× / 2× battle speed.
 
 ## Current prototype boundaries
