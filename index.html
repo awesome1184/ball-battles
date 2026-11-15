@@ -776,7 +776,11 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?250:490,y:210,vx:(side==='left'?1:-1)*(75+rng()*95),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ // Launch each fighter independently. Side determines its starting lane, never its travel direction.
+ const launchX=(rng()<.5?-1:1)*(155+rng()*105);
+ const launchY=(rng()<.5?-1:1)*(45+rng()*155);
+ const spawnY=arena.y+arena.h*(.42+rng()*.16);
+ return {weapon:w,side,mainBall:true,x:side==='left'?250:490,y:spawnY,vx:launchX,vy:launchY,r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,r:30,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -816,36 +820,7 @@ function spawnDuplicates(side){
  burst(clone.x,clone.y,'#e65ad2',10);syncFighters();updateBars();
  floatText(clone.x,clone.y-34,'+1 CLONE','#d94bc5');
 }
-const WEAPON_MOVEMENT={
- sword:{speed:205,accel:680,range:96,vertical:125,lunge:66},
- dagger:{speed:245,accel:900,range:96,vertical:125,lunge:100},
- spear:{speed:185,accel:650,range:96,vertical:135,lunge:92},
- axe:{speed:155,accel:520,range:96,vertical:125,lunge:58},
- hammer:{speed:130,accel:430,range:96,vertical:125,lunge:46},
- scythe:{speed:200,accel:700,range:96,vertical:135,lunge:72},
- chakram:{speed:235,accel:820,range:96,vertical:130,lunge:86},
- trident:{speed:180,accel:620,range:96,vertical:140,lunge:64},
- bow:{speed:195,accel:620,range:135,vertical:150,lunge:0,retreat:.6},
- lance:{speed:185,accel:610,range:96,vertical:140,lunge:20},
- duplicator:{speed:175,accel:590,range:60,vertical:130,lunge:0}
-};
-function steerWeaponMovement(f,target,dt){
- const p=WEAPON_MOVEMENT[f.weapon.id]||WEAPON_MOVEMENT.sword;
- const dx=target.x-f.x,dy=target.y-f.y,dir=Math.sign(dx)||(f.side==='left'?1:-1),vertical=Math.abs(dy);
- let desired;
- if(f.weapon.id==='bow'){
-  const distance=Math.hypot(dx,dy);
-  if(distance>p.range+45)desired=dir*p.speed*.82;
-  else if(distance<p.range-55)desired=-dir*p.speed*.22;
-  else desired=dir*p.speed*.10;
- }else{
-  // Melee fighters always close. Never reverse just because they have entered weapon range.
-  desired=dir*p.speed*(vertical>p.vertical?1:.78);
- }
- const change=p.accel*dt;
- f.vx+=clamp(desired-f.vx,-change,change);
- f.vx=clamp(f.vx,-p.speed*1.25,p.speed*1.25);
-}
+// Fighters move ballistically; opponent position never steers ordinary motion.
 function applySeededRebound(f,maxAngle){
  const velocity=Math.hypot(f.vx,f.vy);if(velocity<1)return;
  const angle=Math.atan2(f.vy,f.vx)+(sim.rng()<.5?-1:1)*(.35+sim.rng()*.65)*maxAngle;
@@ -972,8 +947,6 @@ function damage(attacker,target,dt){
  const hpBefore=target.hp;target.hp=Math.max(0,target.hp-amount);const damageDealt=hpBefore-target.hp;recordExcitement('hit',attacker.side,damageDealt);if(crit)recordExcitement('crit',attacker.side,0);if(target.hp<=0&&target.mainBall)collapseDuplicatorSwarm(target.side);target.flash=.16;
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
- const movement=WEAPON_MOVEMENT[attacker.weapon.id];
- if(movement&&movement.lunge){const direction=Math.sign(target.x-attacker.x)||(attacker.side==='left'?1:-1);attacker.vx=clamp(attacker.vx+direction*movement.lunge,-movement.speed*1.35,movement.speed*1.35);attacker.lungeFlash=.16;}
  sim.attackEffects=sim.attackEffects||[];
  sim.attackEffects.push({x:target.x,y:target.y,angle:Math.atan2(target.y-attacker.y,target.x-attacker.x),weaponId:attacker.weapon.id,color:w.color,life:.24,max:.24});
  applyHitGrowth(attacker,target);
@@ -1045,19 +1018,19 @@ function step(dt){
    f.vx=f.lanceChargeDirection*f.lanceChargeSpeed;
    f.vy+=gravity*.45*dt;
   }else{
+   // Ordinary motion is gravity plus retained momentum. Only explicit weapon abilities steer.
    f.vy+=gravity*dt;
-   steerWeaponMovement(f,o,dt);
   }
   f.x+=f.vx*dt;f.y+=f.vy*dt;f.grounded=false;
   if(f.x<arena.x+f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=Math.abs(f.vx);
+   else {f.vx=Math.abs(f.vx);applySeededRebound(f,.12);}
   }
   if(f.x>arena.x+arena.w-f.r){
    const wallImpact=Math.abs(f.vx);f.x=arena.x+arena.w-f.r;playWallTick(wallImpact);
    if(lance&&f.lanceCharging){f.lanceCharging=false;f.lanceChargeSpeed=0;f.vx=-Math.abs(f.vx);floatText(f.x,f.y-42,'CHARGE ENDED','#e9cf55');}
-   else f.vx=-Math.abs(f.vx);
+   else {f.vx=-Math.abs(f.vx);applySeededRebound(f,.12);}
   }
   if(f.y<arena.y+f.r){const wallImpact=Math.abs(f.vy);f.y=arena.y+f.r;f.vy=Math.abs(f.vy);applySeededRebound(f,.12);playWallTick(wallImpact);}
   if(f.y+f.r>floor){const wallImpact=Math.abs(f.vy);f.y=floor-f.r;f.vy=-Math.abs(f.vy);f.grounded=true;applySeededRebound(f,.12);playWallTick(wallImpact);}
