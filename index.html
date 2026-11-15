@@ -445,11 +445,11 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
   </section>
   <section class="card side-card matchup-lab">
     <div class="side-heading"><h3>Matchup simulator</h3><span class="muted-tag">Seeded battle tests</span></div>
-    <p class="section-desc">Choose both weapons and run up to 100 fights using the actual battle engine. Starting sides alternate to reduce arena-side advantage. These tests are unupgraded and do not change your save.</p>
+    <p class="section-desc">Choose both weapons and run up to 500 fights using the actual battle engine. Starting sides alternate to reduce arena-side advantage. These tests are unupgraded and do not change your save.</p>
     <div class="simulation-controls">
       <label class="simulation-field">Red side<select class="simulation-select" id="simulation-left-weapon"></select></label>
       <label class="simulation-field">Green side<select class="simulation-select" id="simulation-right-weapon"></select></label>
-      <label class="simulation-field">Fights<select class="simulation-select" id="simulation-count"><option value="10">10</option><option value="25" selected>25</option><option value="50">50</option><option value="100">100</option></select></label>
+      <label class="simulation-field">Fights<select class="simulation-select" id="simulation-count"><option value="10">10</option><option value="25" selected>25</option><option value="50">50</option><option value="100">100</option><option value="250">250</option><option value="500">500</option></select></label>
       <button class="primary-btn simulation-run-btn" id="run-matchup-simulations-btn">Run simulations</button>
     </div>
     <div class="simulation-progress" id="simulation-progress"><span id="simulation-progress-fill"></span></div>
@@ -501,7 +501,7 @@ const WEAPONS=[
 ];
 const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1,overtimeStart:40};
 const WEAPON_BASE_LENGTH=96,WEAPON_MAX_LENGTH=102,WEAPON_ART_LENGTH=35,WEAPON_ART_SCALE=WEAPON_BASE_LENGTH/WEAPON_ART_LENGTH;
-const HIT_STUN_PROFILE={sword:[.08,.045,1.2],dagger:[.02,.002,.10],spear:[.08,.025,.75],axe:[.12,.035,1.1],hammer:[.10,.02,.70],scythe:[.03,.006,.28],chakram:[.02,.003,.12],trident:[.08,.02,.65],bow:[.04,.006,.22],lance:[.12,.035,1.0],duplicator:[.01,.002,.06]};
+const HIT_IMPACT_FRAME_SECONDS=.05;
 const BALANCE={
  sword:{damage:1.02,damagePerHit:.7},
  dagger:{damage:1.12,cooldown:.82,speedGrowth:.06,damagePerHit:.08},
@@ -767,7 +767,7 @@ function createFighter(w,side,rng,trained){
  const trainedDamage=1+totalStatBonus(w.id,'baseDamage');
  const baseDamage=1*trainedDamage;
  const balance=BALANCE[w.id]||{};
- return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(105+rng()*140),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,stunDuration:HIT_STUN_PROFILE[w.id][0],stunGrowth:HIT_STUN_PROFILE[w.id][1],stunMax:HIT_STUN_PROFILE[w.id][2],stunGuard:0,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?165:375,y:170,vx:(side==='left'?1:-1)*(105+rng()*140),vy:(rng()<.5?-1:1)*(30+rng()*90),r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,lanceChargeSpeed:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpin:.08,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0,lowHorizontalTimer:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,r:30,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28,lowHorizontalTimer:0});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
@@ -942,9 +942,7 @@ function damage(attacker,target,dt){
  attacker.lastHit=sim.elapsed;
  attacker.hitCd=attacker.hitDelay*attacker.delayMultiplier/Math.max(1,attacker.attackSpeedFactor||1);
  applyHitGrowth(attacker,target);
-  const hitStun=attacker.stunDuration||0;
-  attacker.stunDuration=Math.min(attacker.stunMax||0,hitStun+(attacker.stunGrowth||0)*(attacker.growthMultiplier||1));
-  if(hitStun>0&&target.stunGuard<=0){target.stagger=Math.max(target.stagger,hitStun);target.stunGuard=.28;}
+  target.stagger=Math.max(target.stagger,HIT_IMPACT_FRAME_SECONDS);
  const dx=target.x-attacker.x,dy=target.y-attacker.y,d=Math.hypot(dx,dy)||1;
  burst(target.x-dx/d*target.r*.65,target.y-dy/d*target.r*.65,w.color,10);
  floatText(target.x,target.y-25,'-'+(Number.isInteger(amount)?amount:amount.toFixed(1)),'#fff1df');
@@ -1037,7 +1035,7 @@ function step(dt){
   f.spin=Math.min(32,f.spin);
   if(f.stagger<=0&&(!lance||!f.lanceCharging))f.angle=((f.angle+f.spin*dt*(f.spinDirection||1))%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
   f.hitCd=Math.max(0,f.hitCd-dt);f.contactHitCd=Math.max(0,(f.contactHitCd||0)-dt);if(f.weapon.projectile&&(f.projectileQueue||0)<=0)f.projectileCd-=dt;if(f.weapon.projectile&&f.projectileQueue>0){f.projectileQueueTimer-=dt;if(f.projectileQueueTimer<=0){const nextTarget=nearestEnemy(f);if(nextTarget)launchArrow(f,nextTarget);f.projectileQueue--;f.projectileQueueTimer=.12;if(f.projectileQueue<=0)f.projectileCd=projectileCooldown(f);}}
-  f.parryCd=Math.max(0,f.parryCd-dt);f.stunGuard=Math.max(0,(f.stunGuard||0)-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
+  f.parryCd=Math.max(0,f.parryCd-dt);f.weaponClashCd=Math.max(0,f.weaponClashCd-dt);f.parryFlash=Math.max(0,f.parryFlash-dt);f.stagger=Math.max(0,f.stagger-dt);f.flash=Math.max(0,f.flash-dt);
   if(f.stagger<=0){
    if(f.weapon.projectile){if((f.projectileQueue||0)<=0&&f.projectileCd<=0&&o.hp>0)fireArrow(f,o);}
    else if(f.weapon.id!=='duplicator'&&f.hitCd<=0&&o.hp>0){
@@ -1367,10 +1365,9 @@ function draw(){
   const fixed=value=>String(Number(Number(value||0).toFixed(1)));
   const precise=value=>String(Number(Number(value||0).toFixed(2)));
   const dmg=fighter?(fighter.combatDamage||fighter.damage||1):w.damage;
-  const stun=fighter?(fighter.stunDuration||0):HIT_STUN_PROFILE[w.id][0];
   const spin=fighter?(fighter.spin||0):w.spin*MATCH_RULES.spinMultiplier;
   const hitRate=fighter?1/Math.max(.01,fighter.hitDelay*fighter.delayMultiplier/Math.max(1,fighter.attackSpeedFactor||1)):1/Math.max(.01,w.hitDelay||.68);
-  let first='DAMAGE: '+fixed(dmg),second='STUN DURATION: '+precise(stun)+'s',third='',fourth='';
+  let first='DAMAGE: '+fixed(dmg),third='',fourth='';
   switch(w.id){
    case 'sword':
     third='MAX SPIN: '+fixed(spin)+'×';fourth='SPIN/DAMAGE: '+fixed(spin/Math.max(.1,dmg));break;
@@ -1402,7 +1399,7 @@ function draw(){
     fourth='SWARM: '+team.filter(f=>f.hp>0).length+'/'+BALANCE.duplicator.cap;break;
   }
   const color=fighter?teamBallColor(fighter):teamBallColor({weapon:w,side:'left'});
-  return {name:w.name,color,first,second,third,fourth};
+  return {name:w.name,color,first,third,fourth};
  }
  const leftTeam=sim?sim.teams.left:[],rightTeam=sim?sim.teams.right:[];
  const left=sideMetrics(leftTeam,rightTeam,leftWeapon),right=sideMetrics(rightTeam,leftTeam,rightWeapon);
@@ -1410,7 +1407,7 @@ function draw(){
   ctx.save();ctx.textAlign=align;ctx.fillStyle=stats.color;
   const edge=align==='left'?arena.x:arena.x+arena.w;
   const maxWidth=arena.w*.48;
-  const lines=[stats.first+'   '+stats.third,stats.second+'   '+stats.fourth];
+  const lines=[stats.first+'   '+stats.third,stats.fourth];
   for(let row=0;row<2;row++){
    let size=10;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';
    while(ctx.measureText(lines[row]).width>maxWidth&&size>7.5){size-=.25;ctx.font='900 '+size+'px "Pixelify Sans",system-ui';}
@@ -1673,13 +1670,13 @@ function ensureDailyQuickFight(){
    if(!dailyQuickBatchBest){
     if(dailyQuickAttempt<dailyQuickMaxAttempts){
      const batchStart=dailyQuickAttempt-DAILY_EXCITEMENT_BATCH_SIZE;
-     $('arena-status-text').textContent='No knockout under 60s in candidates '+(batchStart+1)+'–'+dailyQuickAttempt+'. Testing the next 100…';
+     $('arena-status-text').textContent='No knockout under 60s in candidates '+(batchStart+1)+'–'+dailyQuickAttempt+'. Testing the next 500…';
      dailyQuickBatchCount=0;dailyQuickBatchQualified=0;dailyQuickBatchBest=null;
      dailyQuickSearchFrame=requestAnimationFrame(searchNext);return;
     }
-    dailyQuickSearching=false;$('fight-btn').disabled=false;$('fight-btn').textContent='Search another 100 fights';
+    dailyQuickSearching=false;$('fight-btn').disabled=false;$('fight-btn').textContent='Search another 500 fights';
     $('fight-state-chip').textContent='No quick knockout found yet';
-    $('arena-status-text').textContent='No knockout under 60 seconds found in '+dailyQuickAttempt+' candidates. Press to score another batch of 100.';
+    $('arena-status-text').textContent='No knockout under 60 seconds found in '+dailyQuickAttempt+' candidates. Press to score another batch of 500.';
     return;
    }
    const best=dailyQuickBatchBest;
@@ -1728,7 +1725,7 @@ function runMatchupBatch(){
  if(matchupBatchActive)return;
  if(sim&&sim.active){toast('Finish the live fight before running a batch.');return;}
  const leftId=$('simulation-left-weapon').value,rightId=$('simulation-right-weapon').value;
- const count=clamp(Math.floor(Number($('simulation-count').value)||25),1,100);
+ const count=clamp(Math.floor(Number($('simulation-count').value)||25),1,500);
  if(!leftId||!rightId||leftId===rightId){toast('Choose two different weapons.');return;}
  const button=$('run-matchup-simulations-btn'),leftSelect=$('simulation-left-weapon'),rightSelect=$('simulation-right-weapon'),countSelect=$('simulation-count');
  const status=$('simulation-batch-status'),results=$('simulation-batch-results'),progress=$('simulation-progress'),fill=$('simulation-progress-fill');
