@@ -1393,7 +1393,7 @@ function draw(){
  function sideMetrics(team,opponents,fallback){
   const fighter=team.length?(team.find(f=>f.hp>0&&f.mainBall)||team.find(f=>f.hp>0)||team[0]):null;
   const w=fighter?fighter.weapon:fallback;
-  const fixed=value=>Number(value||0).toFixed(1).replace(/\\.0$/,'');
+  const fixed=value=>Number(value||0).toFixed(1).replace(/\.0$/,'');
   const dmg=fighter?(fighter.combatDamage||fighter.damage||1):w.damage;
   const stun=fighter?(fighter.stunDuration||0):HIT_STUN_PROFILE[w.id][0];
   const spin=fighter?(fighter.spin||0):w.spin*MATCH_RULES.spinMultiplier;
