@@ -575,7 +575,7 @@ function loadSave(){
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
- function baseWeaponReach(w){return w.duplicator?25:WEAPON_BASE_LENGTH;}
+ function baseWeaponReach(w){return w.duplicator?25:(w.id==='spear'?48:WEAPON_BASE_LENGTH);}
  function baseWeaponWidth(w){const b=BALANCE[w.id]||{};return w.duplicator?0:clamp(w.width*.6,8,13)*(b.width||1);}
 function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
@@ -738,9 +738,9 @@ function renderArmoryDetails(){
  $('training-damage').textContent=(w.damage*(1+totalStatBonus(w.id,'baseDamage'))).toFixed(3);
  $('training-speed').textContent=(w.spin*(1+totalStatBonus(w.id,'spinSpeed'))).toFixed(3);
  $('training-reach-label').textContent=w.id==='spear'?'Starting length':'Weapon reach';
- $('training-reach').textContent=(Math.min(WEAPON_MAX_LENGTH,baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH))).toFixed(0)+' / '+WEAPON_MAX_LENGTH+' px';
+ $('training-reach').textContent=(Math.min(WEAPON_MAX_LENGTH,baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/baseWeaponReach(w)))).toFixed(0)+' / '+WEAPON_MAX_LENGTH+' px';
  $('stat-upgrades').innerHTML=STAT_DEFS.map(def=>{
-  const available=def.available(w),pool=statPool(w.id,def.id),sizeMaxed=def.id==='weaponSize'&&baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH)>=WEAPON_MAX_LENGTH-.001;
+  const available=def.available(w),pool=statPool(w.id,def.id),sizeMaxed=def.id==='weaponSize'&&baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/baseWeaponReach(w))>=WEAPON_MAX_LENGTH-.001;
   const cost=nextStatLevelCost(w.id,def.id),bonus=totalStatBonus(w.id,def.id),gain=nextStatContributionGain(w.id,def.id);
   const percent=available?clamp(pool.progress/cost*100,0,100):0;
   const label='Level '+pool.level+' (+'+percentText(bonus)+')';
@@ -753,7 +753,7 @@ function renderArmoryDetails(){
 function buyStat(statId){
  const w=weapon(selectedWeapon),def=STAT_DEFS.find(x=>x.id===statId);
  if(!def||!def.available(w))return;
-  if(statId==='weaponSize'&&baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH)>=WEAPON_MAX_LENGTH-.001){toast('This weapon is already at the 1.5× ball-size limit.');return;}
+  if(statId==='weaponSize'&&baseWeaponReach(w)*clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/baseWeaponReach(w))>=WEAPON_MAX_LENGTH-.001){toast('This weapon is already at the 102px weapon-reach limit.');return;}
  if(save.coins<STAT_CONTRIBUTION_COST){toast('You need 50 coins to contribute.');return;}
  const pool=statPool(w.id,statId),before=pool.level;
  save.coins-=STAT_CONTRIBUTION_COST;
@@ -790,7 +790,7 @@ function createFighter(w,side,rng,trained){
  const launchX=(rng()<.5?-1:1)*(155+rng()*105);
  const launchY=(rng()<.5?-1:1)*(45+rng()*155);
  const spawnY=arena.y+arena.h*(.42+rng()*.16);
- return {weapon:w,side,mainBall:true,x:side==='left'?250:490,y:spawnY,vx:launchX,vy:launchY,r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,critDamageMultiplier:1.5,pullRadius:165,pullPower:420,lanceChargeSpeed:0,lanceChargeAngle:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/WEAPON_BASE_LENGTH),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpinSpeed:1,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:w.id==='bow'?3:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
+ return {weapon:w,side,mainBall:true,x:side==='left'?250:490,y:spawnY,vx:launchX,vy:launchY,r:30,hp:STARTING_HP,maxHp:STARTING_HP,damage:baseDamage*(balance.damage||1),combatDamage:baseDamage*(balance.damage||1),critChance:w.id==='axe'?3:0,critDamageMultiplier:1.5,pullRadius:165,pullPower:420,lanceChargeSpeed:0,lanceChargeAngle:0,baseReach:baseWeaponReach(w),reach:baseWeaponReach(w),width:baseWeaponWidth(w),weaponScale:clamp(1+totalStatBonus(w.id,'weaponSize'),1,WEAPON_MAX_LENGTH/baseWeaponReach(w)),baseSpin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spin:w.spin*MATCH_RULES.spinMultiplier*(1+totalStatBonus(w.id,'spinSpeed')),spinGrowth:1,attackSpeedFactor:1,projectileSpeed:455,hitDelay:(w.hitDelay||.68)*(balance.cooldown||1),angle:rng()*Math.PI*2,spinDirection:1,hitCd:.45+rng()*.35,projectileCd:.7+rng()*.5,projectileRateLevel:0,projectileRateBonus:totalStatBonus(w.id,'projectileRate'),delayMultiplier:Math.max(.25,1-totalStatBonus(w.id,'delay')),growthMultiplier:1+totalStatBonus(w.id,'scaling'),spearLength:1,hammerSpinSpeed:1,hammerMaxSpin:1,poisonDps:0,poisonPulse:0,projectileShots:w.id==='bow'?3:1,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.2+rng()*.25,lanceChargeCooldown:2.8+rng()*.8,lanceCharging:false,lanceChargeDirection:0,parryCd:.2+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,dead:false,level:0,aiPhase:rng()*6.28,kills:0,grounded:false,clone:false,cloneIndex:0};
 }
 function cloneFighter(parent,rng,index){const cloneDamage=BALANCE.duplicator.cloneDamage;return Object.assign({},parent,{x:clamp(parent.x+(rng()-.5)*70,arena.x+30,arena.x+arena.w-30),y:clamp(parent.y+(rng()-.5)*90,arena.y+45,arena.y+arena.h-50),vx:parent.vx,vy:parent.vy,hp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,maxHp:sim.teams[parent.side].find(f=>f.mainBall).maxHp,damage:cloneDamage,combatDamage:cloneDamage,reach:parent.reach*.88,width:parent.width*.9,weaponScale:parent.weaponScale*.9,angle:rng()*Math.PI*2,hitCd:.35+rng()*.5,projectileCd:.8+rng()*.6,parryCd:.3+rng()*.3,weaponClashCd:rng()*.15,parryFlash:0,stagger:0,flash:0,grounded:false,projectileQueue:0,projectileQueueTimer:0,contactHitCd:.25+rng()*.2,r:30,clone:true,mainBall:false,cloneIndex:index,aiPhase:rng()*6.28});}
 function syncFighters(){if(sim)sim.fighters=[...sim.teams.left,...sim.teams.right];}
