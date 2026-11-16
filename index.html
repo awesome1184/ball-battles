@@ -493,7 +493,7 @@ const STARTING_HP=100;
 const WEAPONS=[
  {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Every successful hit adds +0.7 damage for the rest of the fight.',damage:1,reach:86,width:14,spin:3.25,hp:STARTING_HP,special:'gains +0.7 damage every hit',hitDelay:.68},
  {id:'dagger',name:'Dagger',color:'#71b9e9',ballColor:'#26d83f',desc:'Every hit increases spin speed by 6%, compounding throughout the fight.',damage:1,reach:86,width:10,spin:5.15,hp:STARTING_HP,special:'spins 6% faster every hit',hitDelay:.52},
- {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Starts with 36px reach. Every hit adds 0.5 damage and +18px reach, with no cap on growth.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'starts at 36px; gains +0.5 damage and +18px reach per hit',hitDelay:.74},
+ {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Starts with 36px of reach extending from the ball edge. Every hit adds 0.5 damage and +3.6px reach, with no cap on growth.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'36px starting reach from ball edge; gains +0.5 damage and +3.6px reach per hit',hitDelay:.74},
  {id:'axe',name:'Axe',color:'#d78e72',ballColor:'#a95535',desc:'Starts with 3% critical chance and 3 critical damage. Every hit adds +2 percentage points of critical chance and +2 critical damage. Non-critical hits always deal 1 damage.',damage:1,reach:86,width:22,spin:2.65,hp:STARTING_HP,special:'starts at 3% crit chance / 3 crit damage; gains +2 to each per hit',hitDelay:.76},
  {id:'hammer',name:'Hammer',color:'#bea0e8',ballColor:'#d92c9c',desc:'Starts at 1 spin speed. Spin speed is also damage. Each hit raises its maximum by 0.5, then it winds up from 1 again. Hammer strikes cannot be parried.',damage:1,reach:86,width:25,spin:1,hp:STARTING_HP,special:'gains +0.5 max spin speed per hit; spin speed = damage',hitDelay:.94},
  {id:'scythe',name:'Scythe',color:'#a1d17a',ballColor:'#77bd55',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.11 damage per second.',damage:1,reach:86,width:18,spin:3.05,hp:STARTING_HP,special:'adds +0.11 poison damage per second every hit',hitDelay:.68},
@@ -509,7 +509,7 @@ const HIT_IMPACT_FRAME_SECONDS=.05;
 const BALANCE={
  sword:{damage:1.02,damagePerHit:.7},
  dagger:{damage:1.12,cooldown:.82,speedGrowth:.06},
- spear:{cooldown:.85,reachPerHit:.5,damagePerHit:.5},
+ spear:{cooldown:.85,reachPerHit:.1,damagePerHit:.5,width:1.5,visualWidth:1.5},
  axe:{critChancePerHit:2,critDamagePerHit:2},
  hammer:{cooldown:1.18,spinGrowth:.5,width:.82},
  scythe:{cooldown:1.18,poison:.11},
@@ -866,8 +866,7 @@ function applySeededRebound(f,maxAngle){
 function distPointSegment(px,py,x1,y1,x2,y2){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy;let t=l?((px-x1)*dx+(py-y1)*dy)/l:0;t=clamp(t,0,1);const x=x1+t*dx,y=y1+t*dy;return Math.hypot(px-x,py-y);}
 function weaponSegment(f){
  if(f.weapon.id==='duplicator')return {x1:f.x,y1:f.y,x2:f.x,y2:f.y};
- const ux=Math.cos(f.angle),uy=Math.sin(f.angle),reach=f.reach*(f.weaponScale||1);
- const inner=Math.min(reach*.58,f.r*.95),outer=reach;
+ const ux=Math.cos(f.angle),uy=Math.sin(f.angle),inner=f.r,outer=f.r+f.reach*(f.weaponScale||1);
  return {x1:f.x+ux*inner,y1:f.y+uy*inner,x2:f.x+ux*outer,y2:f.y+uy*outer};
 }
 function cross2(ax,ay,bx,by){return ax*by-ay*bx;}
@@ -886,7 +885,8 @@ function tryParry(attacker,defender){
  if(defender.weapon.id==='duplicator'||attacker.weapon.id==='duplicator'||defender.parryCd>0||defender.hp<=0||defender.lanceCharging)return false;
  const a=weaponSegment(attacker),d=weaponSegment(defender);
  const separation=Math.hypot(attacker.x-defender.x,attacker.y-defender.y);
- if(separation>attacker.reach+defender.reach*.85)return false;
+ const attackerOuter=attacker.r+attacker.reach*(attacker.weaponScale||1),defenderOuter=defender.r+defender.reach*(defender.weaponScale||1);
+ if(separation>attackerOuter+defenderOuter*.85)return false;
  if(segmentGap(a,d)>(attacker.width+defender.width)*.5+8)return false;
  defender.parryCd=.82;defender.parryFlash=.3;attacker.parryCd=Math.max(attacker.parryCd,.3);
  reverseWeaponRotation(attacker);reverseWeaponRotation(defender);
@@ -900,7 +900,7 @@ function tryParry(attacker,defender){
 function resolveWeaponClash(a,b){
  if(a.side===b.side||a.hp<=0||b.hp<=0||a.weapon.id==='duplicator'||b.weapon.id==='duplicator'||a.lanceCharging||b.lanceCharging)return false;
  if(a.weaponClashCd>0||b.weaponClashCd>0)return false;
- const reachA=a.reach*(a.weaponScale||1),reachB=b.reach*(b.weaponScale||1);
+ const reachA=a.r+a.reach*(a.weaponScale||1),reachB=b.r+b.reach*(b.weaponScale||1);
  if(Math.hypot(a.x-b.x,a.y-b.y)>reachA+reachB+28)return false;
  const sa=weaponSegment(a),sb=weaponSegment(b),gap=segmentGap(sa,sb);
  if(gap>(a.width+b.width)*.5+9)return false;
@@ -936,7 +936,7 @@ function applyHitGrowth(f,target){
    f.spearLength+=BALANCE.spear.reachPerHit*m;
    f.reach=startingReach*f.spearLength;
    f.combatDamage+=BALANCE.spear.damagePerHit*m;
-   notice='+'+Number((BALANCE.spear.damagePerHit*m).toFixed(2))+' DAMAGE · REACH +'+Math.round(addedReach)+'px';
+   notice='+'+Number((BALANCE.spear.damagePerHit*m).toFixed(2))+' DAMAGE · REACH +'+Number(addedReach.toFixed(1))+'px';
    break;
   }
   case 'axe':
@@ -1099,8 +1099,8 @@ function step(dt){
   if(f.stagger<=0){
    if(f.weapon.projectile){if((f.projectileQueue||0)<=0&&f.projectileCd<=0&&o.hp>0)fireArrow(f,o);}
    else if(f.weapon.id!=='duplicator'&&f.hitCd<=0&&o.hp>0){
-    const reach=f.reach*f.weaponScale,tx=f.x+Math.cos(f.angle)*reach,ty=f.y+Math.sin(f.angle)*reach;
-    const distance=distPointSegment(o.x,o.y,f.x,f.y,tx,ty);
+    const reach=f.reach*f.weaponScale,ux=Math.cos(f.angle),uy=Math.sin(f.angle),tx=f.x+ux*(f.r+reach),ty=f.y+uy*(f.r+reach);
+    const distance=distPointSegment(o.x,o.y,f.x+ux*f.r,f.y+uy*f.r,tx,ty);
     if(distance<o.r+f.width*f.weaponScale*.5+2)damage(f,o,dt);
    }
   }
@@ -1108,8 +1108,9 @@ function step(dt){
  // The Trident whirlpool follows its weapon head and pulls every nearby living ball.
  for(const vortex of fs){
   if(vortex.hp<=0||vortex.weapon.id!=='trident')continue;
-  const tx=vortex.x+Math.cos(vortex.angle)*vortex.reach*vortex.weaponScale;
-  const ty=vortex.y+Math.sin(vortex.angle)*vortex.reach*vortex.weaponScale;
+  const tridentTip=vortex.r+vortex.reach*vortex.weaponScale;
+  const tx=vortex.x+Math.cos(vortex.angle)*tridentTip;
+  const ty=vortex.y+Math.sin(vortex.angle)*tridentTip;
   const radius=vortex.pullRadius||165;
   for(const ball of fs){
    if(ball===vortex||ball.hp<=0)continue;
@@ -1382,20 +1383,21 @@ function drawWeapon(c,f){
   const scale=f.weaponScale||1;
   if(external.mode==='disc'){
    const size=54*scale;
-   c.translate(68*scale,0);
+   c.translate(f.r+27*scale,0);
    c.rotate(Math.PI/4);
    c.drawImage(external.image,-size/2,-size/2,size,size);
   }else{
-   const size=(w.id==='spear'?baseWeaponReach(w):96)*(w.artScale||1)*scale;
+   const weaponLength=(w.id==='spear'?baseWeaponReach(w):96)*(w.artScale||1)*scale;
    if(w.id==='bow'){
-    // Move the grip to the front edge of the orb so the bow is fully visible.
-    // Its limbs stay perpendicular to the shot and +X remains the firing direction.
-    c.translate(f.r+8,0);
-    c.drawImage(external.image,-size/2,-size/2,size,size);
+    // The bow's grip sits on the orb's outer edge; the bow limbs extend outward.
+    c.translate(f.r,0);
+    c.drawImage(external.image,-weaponLength/2,-weaponLength/2,weaponLength,weaponLength);
    }else{
+    // External held-weapon images have their haft at the bottom of the source image.
+    c.translate(f.r,0);
     c.rotate(Math.PI/2);
-    if(w.id==='spear')c.scale(1,f.spearLength||1);
-    c.drawImage(external.image,-size/2,-size,size,size);
+    if(w.id==='spear')c.scale(BALANCE.spear.visualWidth||1.5,f.spearLength||1);
+    c.drawImage(external.image,-weaponLength/2,-weaponLength,weaponLength,weaponLength);
    }
   }
   c.restore();
@@ -1409,9 +1411,11 @@ function drawWeapon(c,f){
  c.rotate(f.angle);
  c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
  const spearBaseScale=w.id==='spear'?baseWeaponReach(w)/WEAPON_BASE_LENGTH:1;
- c.scale(unit*(w.artScale||1)*(f.weaponScale||1)*spearBaseScale,unit*(w.artScale||1)*(f.weaponScale||1)*spearBaseScale);
- if(w.id==='bow')c.translate(f.r-22,0);
- if(w.id==='spear')c.scale(f.spearLength||1,1);
+ const pixelScale=unit*(w.artScale||1)*(f.weaponScale||1)*spearBaseScale;
+ // Pixel sprites are authored from a haft at x=2; put that point exactly on the orb edge.
+ c.translate(f.r-2*pixelScale,0);
+ c.scale(pixelScale,pixelScale);
+ if(w.id==='spear')c.scale(f.spearLength||1,BALANCE.spear.visualWidth||1.5);
  for(let y=0;y<sprite.rows.length;y++){
   const row=sprite.rows[y];
   for(let x=0;x<row.length;x++){
@@ -1423,7 +1427,8 @@ function drawWeapon(c,f){
 }
 function teamBallColor(f){return f.weapon.ballColor||f.weapon.color|| (f.side==='left'?'#ee5265':'#35cd5d');}
 function drawWhirlpool(c,f){
- const x=f.x+Math.cos(f.angle)*f.reach*f.weaponScale,y=f.y+Math.sin(f.angle)*f.reach*f.weaponScale;
+ const tridentTip=f.r+f.reach*f.weaponScale;
+ const x=f.x+Math.cos(f.angle)*tridentTip,y=f.y+Math.sin(f.angle)*tridentTip;
  const t=sim?sim.elapsed:0;
  c.save();c.translate(x,y);c.rotate(-t*2.2);c.strokeStyle='#42bdb5';c.lineWidth=2;c.globalAlpha=.28;
  c.beginPath();c.arc(0,0,165,0,Math.PI*2);c.stroke();
@@ -1548,7 +1553,7 @@ function drawWeaponIcon(canvas,w){
  const c=canvas.getContext('2d'),size=canvas.width||180;
  c.clearRect(0,0,size,size);
  // Fit the ball and weapon into the canvas, with the weapon angled up and right.
- const r=30,reach=baseWeaponReach(w),width=baseWeaponWidth(w),unit=WEAPON_ART_SCALE,len=w.id==='duplicator'?r:reach*(w.artScale||1),a=-.75,pad=9;
+ const r=30,reach=baseWeaponReach(w),width=baseWeaponWidth(w),unit=WEAPON_ART_SCALE,len=w.id==='duplicator'?r:r+reach*(w.artScale||1),a=-.75,pad=9;
  const tipX=Math.cos(a)*len,tipY=Math.sin(a)*len;
  const minX=-r,maxX=Math.max(r,tipX+pad),minY=Math.min(-r,tipY-pad),maxY=r;
  const scale=size*.88/Math.max(maxX-minX,maxY-minY);
