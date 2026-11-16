@@ -491,13 +491,13 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
 'use strict';
 const STARTING_HP=100;
 const WEAPONS=[
- {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Every successful hit adds +1 damage for the rest of the fight. Its shorter 72px reach gives it less range than most weapons.',damage:1,reach:86,width:14,spin:2.6,hp:STARTING_HP,special:'gains +1 damage per hit · 72px reach',hitDelay:.68},
+ {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Every successful hit adds +1 damage for the rest of the fight. Its shorter 72px reach gives it less range than most weapons.',damage:1,reach:86,width:14,spin:2.2,hp:STARTING_HP,special:'gains +1 damage per hit · 72px reach',hitDelay:.68},
  {id:'dagger',name:'Dagger',color:'#71b9e9',ballColor:'#26d83f',desc:'Every hit increases spin speed by 8%, compounding throughout the fight.',damage:1,reach:86,width:10,spin:5.15,hp:STARTING_HP,special:'spins 8% faster every hit',hitDelay:.52},
  {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Starts with 36px of reach extending from the ball edge. Every hit adds 0.5 damage and +3.6px reach, with no cap on growth.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'36px starting reach from ball edge; gains +0.5 damage and +3.6px reach per hit',hitDelay:.74},
  {id:'axe',name:'Axe',color:'#d78e72',ballColor:'#a95535',desc:'Starts with 3% critical chance and 3 critical damage. Every hit adds +1 percentage point of critical chance and +0.5 critical damage. Non-critical hits always deal 1 damage.',damage:1,reach:86,width:22,spin:2.65,hp:STARTING_HP,special:'starts at 3% crit chance / 3 crit damage; gains +1% crit chance and +0.5 crit damage per hit',hitDelay:.76},
  {id:'hammer',name:'Hammer',color:'#bea0e8',ballColor:'#d92c9c',desc:'Starts at 1 spin speed. Spin speed is also damage. Each hit raises its maximum by 0.5, then it winds up from 1 again at 1.25 spin-speed units per second. Hammer strikes cannot be parried.',damage:1,reach:86,width:25,spin:1,hp:STARTING_HP,special:'gains +0.5 max spin speed per hit; spin speed = damage',hitDelay:.94},
  {id:'scythe',name:'Scythe',color:'#a1d17a',ballColor:'#77bd55',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.09 damage per second.',damage:1,reach:86,width:18,spin:3.05,hp:STARTING_HP,special:'adds +0.09 poison damage per second every hit',hitDelay:.68},
- {id:'chakram',name:'Chakram',color:'#e4c36c',ballColor:'#e4bd42',desc:'Every hit increases rotation speed by 4.75%, compounding with each strike, and adds 0.15 damage.',damage:1,reach:86,width:18,spin:4.45,hp:STARTING_HP,special:'spins 4.75% faster and gains +0.15 damage every hit',hitDelay:.46},
+ {id:'chakram',name:'Chakram',color:'#e4c36c',ballColor:'#e4bd42',desc:'Every hit increases rotation speed by 4.75%, compounding with each strike, and adds 0.05 damage.',damage:1,reach:86,width:18,spin:4.45,hp:STARTING_HP,special:'spins 4.75% faster and gains +0.05 damage every hit',hitDelay:.46},
  {id:'trident',name:'Trident',color:'#73c9c5',ballColor:'#37b9bf',desc:'Starts with 300 pull strength. Each hit adds 0.5 damage and 20 pull strength. Its whirlpool radius stays fixed at 165px.',damage:1,reach:86,width:20,spin:2.85,hp:STARTING_HP,special:'starts at 300 pull strength; gains +0.5 damage and +20 pull strength per hit; radius stays 165px',hitDelay:.64},
  {id:'bow',name:'Bow',color:'#d6a6ed',ballColor:'#b8b8c9',desc:'Fires arrows at 500px/s with a 1.485-second base volley cooldown. Starts with three arrows per volley; every arrow that hits adds one projectile to future volleys, with no maximum. Every arrow in a volley shares its firing angle.',damage:1,reach:86,width:7,spin:.7,hp:STARTING_HP,special:'500px/s arrows; 3 starting arrows; +1 arrow per landed hit, no cap',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',color:'#edd04d',ballColor:'#f1d761',desc:'Charges in the direction its lance is pointing, accelerating from a very slow start. Its larger weapon gives the thrust a more imposing silhouette.',damage:1,reach:86,width:13,spin:2.4,artScale:1.28,hp:STARTING_HP,special:'gains +2 charge damage every hit',hitDelay:.78},
@@ -513,7 +513,7 @@ const BALANCE={
  axe:{critChancePerHit:1,critDamagePerHit:.5},
  hammer:{cooldown:1.18,spinGrowth:.5,width:.82,windupRate:1.25},
  scythe:{cooldown:1.18,poison:.09},
- chakram:{cooldown:.93,spinGrowth:.0475,damagePerHit:.15},
+ chakram:{cooldown:.93,spinGrowth:.0475,damagePerHit:.05},
  trident:{cooldown:.85,damagePerHit:.5,pullPowerPerHit:20,startingPullPower:300},
  bow:{damage:.98,cooldown:.9,maxVolley:Infinity},
  lance:{cooldown:.95,chargeDamagePerHit:2,chargeStartSpeed:16,chargeAcceleration:420,chargeMaxSpeed:440,chargeInterval:2.5},
