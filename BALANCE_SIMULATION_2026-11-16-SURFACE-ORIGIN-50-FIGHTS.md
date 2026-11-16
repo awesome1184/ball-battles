@@ -128,7 +128,7 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 ## Findings
 
 - **Trident is the leader at 86.6%.** It beat Sword 30–20, Chakram 32–18, and swept Scythe and Duplicator. Its reduced pull values still produce a strong advantage.
-- **Chakram is second at 83.4%.** The +0.05 damage-per-hit addition makes it competitive without the 93% runaway seen with the initial +0.15 test. It still won 49/50 against Dagger, Axe, and Spear, and swept Bow and Duplicator.
+- **Chakram is second at 83.4%.** The +0.05 damage-per-hit addition makes it competitive without the 93% runaway seen with the initial +0.15 test. It still won 49/50 against Dagger and Axe, and 47/50 against Spear; it swept Bow and Duplicator.
 - **Sword is third at 80.8%.** The shorter 72px reach and 2.2 base rotation speed lowered its win rate from 89.0% on the prior run, despite its requested +1 damage-per-hit growth. It split nearly evenly with Chakram (23–27), but still swept Axe and Duplicator and won 49/50 against Bow.
 - **The middle group is substantially closer:** Scythe 55.6%, Lance 54.2%, and Spear 52.4%.
 - **Bow remains the clear outlier at 2.8%**, with 14 wins in 500 fights. Same-angle volleys raised it from the previous 1.0% run, but it remains far below the field. Its two timeouts were against Spear and Trident.
