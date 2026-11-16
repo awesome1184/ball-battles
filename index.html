@@ -478,7 +478,7 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
     <p class="matchup-desc">This older sample predates the current 96px weapon baseline and 102px maximum. Do not treat it as a current ranking. Use the Simulate tab’s Matchup Simulator to test fresh pairings under the live rules.</p>
     <p class="matchup-summary" id="matchup-summary"></p>
     <div class="matchup-scroll"><table class="matchup-table"><thead id="matchup-head"></thead><tbody id="matchup-body"></tbody></table></div>
-    <p class="matchup-foot">2,750 seeded fights: 50 per matchup, with 25 starts from each side. No test fight timed out.</p>
+    <p class="matchup-foot">2,750 seeded fights: 50 per pairing, with 25 starts from each side. 437 reached the 360-second test cap and counted as draws. Matrix percentages show wins out of all 50 attempts.</p>
   </section>
   <section class="card history-card"><div class="side-heading"><h3>Match history</h3></div><div id="history-list"><div class="empty-state">No fights recorded yet. Watch today's showdown to get started.</div></div></section>
 </section>
@@ -521,7 +521,19 @@ const BALANCE={
  lance:{cooldown:.95,chargeDamagePerHit:2,chargeStartSpeed:65,chargeAcceleration:900,chargeMaxSpeed:500,chargeInterval:2.5},
  duplicator:{cloneDamage:.45,cloneDamageFloor:.45,screenPadding:15,cap:6,hitsPerClone:6}
 };
-const MATCHUP_WIN_RATES=[[null,56,46,46,32,70,62,76,58,62,100],[44,null,46,32,22,52,76,60,70,60,100],[54,54,null,48,74,70,70,56,74,92,100],[54,68,52,null,32,46,46,74,34,80,98],[68,78,26,68,null,54,66,82,46,82,90],[30,48,30,54,46,null,54,44,50,74,60],[38,24,30,54,34,46,null,66,56,52,100],[24,40,44,26,18,56,34,null,30,46,100],[42,30,26,66,54,50,44,70,null,40,4],[38,40,8,20,18,26,48,54,60,null,68],[0,0,0,2,10,40,0,0,96,32,null]];
+const MATCHUP_WIN_RATES=[
+ [null,86,100,98,100,44,84,100,100,40,100],
+ [4,null,62,80,38,0,72,94,74,0,20],
+ [0,0,null,0,0,0,0,40,4,0,0],
+ [0,2,78,null,54,0,12,100,60,0,50],
+ [0,4,28,10,null,0,0,24,14,0,4],
+ [56,100,100,100,100,null,100,100,100,56,100],
+ [8,8,62,52,30,0,null,90,66,0,6],
+ [0,4,40,0,30,0,6,null,64,0,0],
+ [0,0,0,0,4,0,0,4,null,0,0],
+ [60,100,100,100,100,44,100,100,100,null,100],
+ [0,66,92,42,86,0,82,100,88,0,null]
+ ];
 const MATCHUP_SHORT=['SWD','DAG','SPR','AXE','HAM','SCY','CHK','TRI','BOW','LNC','DUP'];
 const SAVE_KEY='ball-battles-save-v1';
 const today= new Date().toISOString().slice(0,10);
