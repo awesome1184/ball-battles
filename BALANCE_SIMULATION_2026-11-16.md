@@ -1,5 +1,7 @@
 # Ball Battles balance simulation
 
+> **Historical baseline:** This report predates the Bow, Hammer, and Lance revisions. The 27 pairings involving those weapons were rerun after the changes; see [`BALANCE_SIMULATION_2026-11-16-weapon-updates.md`](BALANCE_SIMULATION_2026-11-16-weapon-updates.md) for the current blended matrix and updated results. The other 28 pairings retain the baseline sample below.
+
 **Run date:** 2026-11-16  
 **Game revision:** `f255df1` (before this results-only refresh)  
 **Arena:** 560×560  
