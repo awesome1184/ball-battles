@@ -493,12 +493,12 @@ const STARTING_HP=100;
 const WEAPONS=[
  {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Every successful hit adds +0.7 damage for the rest of the fight.',damage:1,reach:86,width:14,spin:3.25,hp:STARTING_HP,special:'gains +0.7 damage every hit',hitDelay:.68},
  {id:'dagger',name:'Dagger',color:'#71b9e9',ballColor:'#26d83f',desc:'Every hit increases spin speed by 6%, compounding throughout the fight.',damage:1,reach:86,width:10,spin:5.15,hp:STARTING_HP,special:'spins 6% faster every hit',hitDelay:.52},
- {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Every hit increases reach by 8%, compounding until it reaches the shared weapon-length cap.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'gains 8% reach every hit, up to the size cap',hitDelay:.74},
+ {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Every hit adds 0.5 damage and half its starting reach (+48px). Per-hit reach growth has no cap.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'gains +0.5 damage and +48px reach per hit',hitDelay:.74},
  {id:'axe',name:'Axe',color:'#d78e72',ballColor:'#a95535',desc:'Every hit adds 2.5 percentage points of critical chance and +0.12× critical damage.',damage:1,reach:86,width:22,spin:2.65,hp:STARTING_HP,special:'gains +2.5% crit chance and +0.12× crit damage every hit',hitDelay:.76},
  {id:'hammer',name:'Hammer',color:'#bea0e8',ballColor:'#d92c9c',desc:'Starts at 1 spin speed. Spin speed is also damage. Each hit raises its maximum by 0.5, then it winds up from 1 again. Hammer strikes cannot be parried.',damage:1,reach:86,width:25,spin:1,hp:STARTING_HP,special:'gains +0.5 max spin speed per hit; spin speed = damage',hitDelay:.94},
  {id:'scythe',name:'Scythe',color:'#a1d17a',ballColor:'#77bd55',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.11 damage per second.',damage:1,reach:86,width:18,spin:3.05,hp:STARTING_HP,special:'adds +0.11 poison damage per second every hit',hitDelay:.68},
  {id:'chakram',name:'Chakram',color:'#e4c36c',ballColor:'#e4bd42',desc:'Every hit increases rotation speed by 4.75%, compounding with each strike.',damage:1,reach:86,width:18,spin:4.45,hp:STARTING_HP,special:'spins 4.75% faster every hit',hitDelay:.46},
- {id:'trident',name:'Trident',color:'#73c9c5',ballColor:'#37b9bf',desc:'Each hit expands its whirlpool by 8px and increases pull strength by 35.',damage:1,reach:86,width:20,spin:2.85,hp:STARTING_HP,special:'gains +8px pull radius and +35 pull strength every hit',hitDelay:.64},
+ {id:'trident',name:'Trident',color:'#73c9c5',ballColor:'#37b9bf',desc:'Each hit adds 0.5 damage and 35 pull strength. Its whirlpool radius stays fixed at 165px.',damage:1,reach:86,width:20,spin:2.85,hp:STARTING_HP,special:'gains +0.5 damage and +35 pull strength per hit; radius stays 165px',hitDelay:.64},
  {id:'bow',name:'Bow',color:'#d6a6ed',ballColor:'#b8b8c9',desc:'Starts with three large arrows per volley. Every arrow that hits adds one projectile to future volleys, with no maximum.',damage:1,reach:86,width:7,spin:.7,hp:STARTING_HP,special:'starts with 3 arrows; each hit adds one more, with no cap',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',color:'#edd04d',ballColor:'#f1d761',desc:'Charges in the direction its lance is pointing, accelerating from a very slow start. Its larger weapon gives the thrust a more imposing silhouette.',damage:1,reach:86,width:13,spin:2.4,artScale:1.28,hp:STARTING_HP,special:'gains +2 charge damage every hit',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',color:'#d92bbd',ballColor:'#e900d1',desc:'Every 6 successful team hits creates a full-health clone, up to 6 balls total. Clones deal 0.45 contact damage and screen near the main ball. If the main dies, the whole swarm is eliminated.',damage:1,reach:25,width:0,spin:0,hp:STARTING_HP,special:'creates one clone every 6 team hits, up to 6 balls',duplicator:true,hitDelay:.68}
@@ -509,12 +509,12 @@ const HIT_IMPACT_FRAME_SECONDS=.05;
 const BALANCE={
  sword:{damage:1.02,damagePerHit:.7},
  dagger:{damage:1.12,cooldown:.82,speedGrowth:.06},
- spear:{damage:1.2,cooldown:.85,reachGrowth:.08},
+ spear:{damage:1.2,cooldown:.85,reachPerHit:.5,damagePerHit:.5},
  axe:{critChancePerHit:2.5,critDamagePerHit:.12},
  hammer:{cooldown:1.18,spinGrowth:.5,width:.82},
  scythe:{cooldown:1.18,poison:.11},
  chakram:{cooldown:.93,spinGrowth:.0475},
- trident:{damage:1.07,cooldown:.85,pullRadiusPerHit:8,pullPowerPerHit:35},
+ trident:{damage:1.07,cooldown:.85,damagePerHit:.5,pullPowerPerHit:35},
  bow:{damage:.98,cooldown:1.2,maxVolley:Infinity},
  lance:{cooldown:.95,chargeDamagePerHit:2,chargeStartSpeed:16,chargeAcceleration:420,chargeMaxSpeed:440,chargeInterval:2.5},
  duplicator:{cloneDamage:.45,cloneDamageFloor:.45,screenPadding:15,cap:6,hitsPerClone:6}
@@ -930,11 +930,15 @@ function applyHitGrowth(f,target){
    f.spinGrowth*=1+BALANCE.dagger.speedGrowth*m;
    notice='SPIN SPEED +6%';
    break;
-  case 'spear':
-   f.spearLength=Math.min(WEAPON_MAX_LENGTH/((f.baseReach||WEAPON_BASE_LENGTH)*(f.weaponScale||1)),f.spearLength*(1+BALANCE.spear.reachGrowth*m));
-   f.reach=(f.baseReach||baseWeaponReach(f.weapon))*f.spearLength;
-   notice='REACH '+Math.round(f.reach*f.weaponScale)+'px';
+  case 'spear':{
+   const startingReach=f.baseReach||WEAPON_BASE_LENGTH;
+   const addedReach=startingReach*BALANCE.spear.reachPerHit*m;
+   f.spearLength+=BALANCE.spear.reachPerHit*m;
+   f.reach=startingReach*f.spearLength;
+   f.combatDamage+=BALANCE.spear.damagePerHit*m;
+   notice='+'+Number((BALANCE.spear.damagePerHit*m).toFixed(2))+' DAMAGE · REACH +'+Math.round(addedReach)+'px';
    break;
+  }
   case 'axe':
    f.critChance=clamp((f.critChance||3)+BALANCE.axe.critChancePerHit*m,0,100);
    f.critDamageMultiplier=(f.critDamageMultiplier||1.5)+BALANCE.axe.critDamagePerHit*m;
@@ -956,9 +960,9 @@ function applyHitGrowth(f,target){
    notice='SPIN SPEED +4.75%';
    break;
   case 'trident':
-   f.pullRadius+=BALANCE.trident.pullRadiusPerHit*m;
+   f.combatDamage+=BALANCE.trident.damagePerHit*m;
    f.pullPower+=BALANCE.trident.pullPowerPerHit*m;
-   notice='PULL +8px · POWER +35';
+   notice='+'+Number((BALANCE.trident.damagePerHit*m).toFixed(2))+' DAMAGE · PULL +'+Math.round(BALANCE.trident.pullPowerPerHit*m);
    break;
   case 'bow':
    f.projectileShots=Math.min(BALANCE.bow.maxVolley,(f.projectileShots||1)+1);
@@ -1506,7 +1510,7 @@ function draw(){
   switch(w.id){
    case 'sword': lines=['DAMAGE '+fixed(fighter?fighter.combatDamage:w.damage*(BALANCE.sword.damage||1))]; break;
    case 'dagger': lines=['SPIN SPEED '+fixed(fighter?fighter.spin:w.spin*MATCH_RULES.spinMultiplier)+' rad/s']; break;
-   case 'spear': lines=['REACH '+Math.round(fighter?fighter.reach*fighter.weaponScale:baseWeaponReach(w))+'px']; break;
+   case 'spear': lines=['DAMAGE '+fixed(fighter?fighter.combatDamage:w.damage*(BALANCE.spear.damage||1)),'REACH '+Math.round(fighter?fighter.reach*fighter.weaponScale:baseWeaponReach(w))+'px']; break;
    case 'axe': lines=['CRIT CHANCE '+fixed(fighter?fighter.critChance:3)+'%','CRIT DAMAGE '+fixed(fighter?fighter.critDamageMultiplier:1.5)+'×']; break;
    case 'hammer': lines=['SPIN / DAMAGE '+fixed(fighter?fighter.hammerSpinSpeed:1)+' → '+fixed(fighter?fighter.hammerMaxSpin:1)]; break;
    case 'scythe':{
@@ -1514,7 +1518,7 @@ function draw(){
     lines=['POISON DPS '+fixed(poison)];break;
    }
    case 'chakram': lines=['SPIN SPEED '+fixed(fighter?fighter.spin:w.spin*MATCH_RULES.spinMultiplier)+' rad/s']; break;
-   case 'trident': lines=['PULL RADIUS '+Math.round(fighter?(fighter.pullRadius||165):165)+'px','PULL STRENGTH '+Math.round(fighter?(fighter.pullPower||420):420)]; break;
+   case 'trident': lines=['DAMAGE '+fixed(fighter?fighter.combatDamage:w.damage*(BALANCE.trident.damage||1)),'PULL POWER '+Math.round(fighter?(fighter.pullPower||420):420)]; break;
    case 'bow': lines=['ARROWS/VOLLEY '+(fighter?fighter.projectileShots:1)]; break;
    case 'lance': lines=['CHARGE DAMAGE '+fixed(fighter?fighter.combatDamage:1)]; break;
    case 'duplicator': lines=['SWARM '+(team.length?team.filter(f=>f.hp>0).length:1)+'/'+BALANCE.duplicator.cap]; break;
