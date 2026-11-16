@@ -491,7 +491,7 @@ button:focus-visible,.tab:focus-visible,input:focus-visible{outline:3px solid #b
 'use strict';
 const STARTING_HP=100;
 const WEAPONS=[
- {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Every successful hit adds +0.3 damage for the rest of the fight.',damage:1,reach:86,width:14,spin:3.25,hp:STARTING_HP,special:'gains +0.3 damage every hit',hitDelay:.68},
+ {id:'sword',name:'Sword',color:'#e99b62',ballColor:'#e65368',desc:'Deals 1 damage per hit. Its shorter 72px reach gives it less range than most weapons.',damage:1,reach:86,width:14,spin:3.25,hp:STARTING_HP,special:'1 damage per hit · 72px reach',hitDelay:.68},
  {id:'dagger',name:'Dagger',color:'#71b9e9',ballColor:'#26d83f',desc:'Every hit increases spin speed by 8%, compounding throughout the fight.',damage:1,reach:86,width:10,spin:5.15,hp:STARTING_HP,special:'spins 8% faster every hit',hitDelay:.52},
  {id:'spear',name:'Spear',color:'#83c49c',ballColor:'#4269e8',desc:'Starts with 36px of reach extending from the ball edge. Every hit adds 0.5 damage and +3.6px reach, with no cap on growth.',damage:1,reach:86,width:14,spin:2.35,hp:STARTING_HP,special:'36px starting reach from ball edge; gains +0.5 damage and +3.6px reach per hit',hitDelay:.74},
  {id:'axe',name:'Axe',color:'#d78e72',ballColor:'#a95535',desc:'Starts with 3% critical chance and 3 critical damage. Every hit adds +1 percentage point of critical chance and +0.5 critical damage. Non-critical hits always deal 1 damage.',damage:1,reach:86,width:22,spin:2.65,hp:STARTING_HP,special:'starts at 3% crit chance / 3 crit damage; gains +1% crit chance and +0.5 crit damage per hit',hitDelay:.76},
@@ -507,7 +507,7 @@ const MATCH_RULES={spinMultiplier:1.5,healthMultiplier:1,overtimeStart:40};
 const WEAPON_BASE_LENGTH=96,WEAPON_MAX_LENGTH=102,WEAPON_ART_LENGTH=35,WEAPON_ART_SCALE=WEAPON_BASE_LENGTH/WEAPON_ART_LENGTH;
 const HIT_IMPACT_FRAME_SECONDS=.05;
 const BALANCE={
- sword:{damage:1.02,damagePerHit:.3},
+ sword:{damage:1,damagePerHit:0},
  dagger:{damage:1.12,cooldown:.82,speedGrowth:.08},
  spear:{cooldown:.85,reachPerHit:.1,damagePerHit:.5,visualWidth:1.5},
  axe:{critChancePerHit:1,critDamagePerHit:.5},
@@ -575,7 +575,7 @@ function loadSave(){
 let save=loadSave();
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){toast('Browser storage is unavailable. Progress may not persist.');}}
 function weapon(id){return WEAPONS.find(w=>w.id===id)||WEAPONS[0];}
- function baseWeaponReach(w){return w.duplicator?25:(w.id==='spear'?36:WEAPON_BASE_LENGTH);}
+ function baseWeaponReach(w){return w.duplicator?25:(w.id==='spear'?36:(w.id==='sword'?72:WEAPON_BASE_LENGTH));}
  function baseWeaponWidth(w){const b=BALANCE[w.id]||{};return w.duplicator?0:clamp(w.width*.6,8,13)*(b.width||1);}
 function level(id){return Object.values(statLevels(id)).reduce((n,v)=>n+Number(v||0),0);}
 const STAT_DEFS=[
@@ -923,8 +923,7 @@ function applyHitGrowth(f,target){
  let notice='';
  switch(w.id){
   case 'sword':
-   f.combatDamage+=BALANCE.sword.damagePerHit*m;
-   notice='+0.3 DAMAGE';
+   // Sword deals fixed base damage; it has no per-hit damage scaling.
    break;
   case 'dagger':
    f.spinGrowth*=1+BALANCE.dagger.speedGrowth*m;
