@@ -881,7 +881,7 @@ function segmentGap(a,b){
  if(segmentsIntersect(a,b))return 0;
  return Math.min(distPointSegment(a.x1,a.y1,b.x1,b.y1,b.x2,b.y2),distPointSegment(a.x2,a.y2,b.x1,b.y1,b.x2,b.y2),distPointSegment(b.x1,b.y1,a.x1,a.y1,a.x2,a.y2),distPointSegment(b.x2,b.y2,a.x1,a.y1,a.x2,a.y2));
 }
-function reverseWeaponRotation(f){if(f&&f.weapon.id!=='duplicator')f.spinDirection=-(f.spinDirection||1);}
+function reverseWeaponRotation(f){if(f&&f.weapon.id!=='duplicator'&&f.weapon.id!=='hammer')f.spinDirection=-(f.spinDirection||1);}
 function tryParry(attacker,defender){
  if(defender.weapon.id==='duplicator'||attacker.weapon.id==='duplicator'||defender.parryCd>0||defender.hp<=0||defender.lanceCharging)return false;
  const a=weaponSegment(attacker),d=weaponSegment(defender);
