@@ -1,7 +1,7 @@
 # Ball Battles balance simulation: 50 fights per pairing
 
 **Date:** 2026-11-16  
-**Source game file blob used for the run:** `9687e253c993c3abff824eab530b9aa48c468c27`
+**Source game file blob used for the run:** `b05550722f09eb182e2b2feb5820dda236e6abdf`
 
 ## Test method
 
@@ -15,25 +15,25 @@
 
 ## Geometry and balance used
 
-All armed weapon lengths are now measured outward from the edge of the 60px diameter fighter ball. Melee attack and parry segments begin at the ball surface and extend outward by the listed reach; loaded art, fallback pixel art, and weapon icons use the same surface attachment. The Trident's whirlpool remains centered at its weapon tip. Bow arrows still launch from the forward side of the orb. Duplicator intentionally has no weapon.
+All armed weapon lengths are measured outward from the edge of the 60px diameter fighter ball. Melee attack and parry segments begin at the ball surface and extend outward by the listed reach; loaded art, fallback pixel art, and weapon icons use the same surface attachment. The Trident's whirlpool remains centered on its weapon tip. Bow arrows launch from the forward side of the orb. Duplicator intentionally has no weapon.
 
-Spear's reach is 36px from the ball edge and gains **+3.6px per successful hit** (down 80% from the previous +18px), plus +0.5 damage per hit. Its shaft is 1.5× wider in the sprite and hitbox.
+Spear starts with 36px of reach from the ball edge and gains **+3.6px per successful hit** (an 80% reduction from the prior +18px), plus +0.5 damage per hit. Its sprite shaft is **1.5× wider visually**; its attack and parry hitbox width remains unchanged.
 
 ## Overall ranking
 
 | Rank | Weapon | Wins | Win rate |
 |---:|---|---:|---:|
-| 1 | Sword | 446 / 500 | 89.2% |
-| 2 | Trident | 427 / 500 | 85.4% |
+| 1 | Sword | 445 / 500 | 89.0% |
+| 2 | Trident | 426 / 500 | 85.2% |
 | 3 | Axe | 397 / 500 | 79.4% |
-| 4 | Scythe | 323 / 500 | 64.6% |
-| 5 | Spear | 280 / 500 | 56.0% |
-| 6 | Lance | 256 / 500 | 51.2% |
-| 7 | Duplicator | 211 / 500 | 42.2% |
-| 8 | Hammer | 185 / 500 | 37.0% |
-| 9 | Dagger | 142 / 500 | 28.4% |
-| 10 | Chakram | 80 / 500 | 16.0% |
-| 11 | Bow | 3 / 500 | 0.6% |
+| 4 | Scythe | 324 / 500 | 64.8% |
+| 5 | Spear | 263 / 500 | 52.6% |
+| 6 | Lance | 254 / 500 | 50.8% |
+| 7 | Duplicator | 212 / 500 | 42.4% |
+| 8 | Hammer | 188 / 500 | 37.6% |
+| 9 | Dagger | 150 / 500 | 30.0% |
+| 10 | Chakram | 86 / 500 | 17.2% |
+| 11 | Bow | 5 / 500 | 1.0% |
 
 ## Matchup win-rate matrix
 
@@ -41,17 +41,17 @@ Each cell is the row weapon's percentage of wins against the column weapon, base
 
 | Weapon | Sword | Dagger | Spear | Axe | Hammer | Scythe | Chakram | Trident | Bow | Lance | Duplicator |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Sword | — | 96 | 98 | 64 | 100 | 96 | 96 | 48 | 100 | 94 | 100 |
-| Dagger | 4 | — | 26 | 24 | 2 | 0 | 92 | 2 | 100 | 28 | 6 |
-| Spear | 2 | 74 | — | 32 | 78 | 34 | 80 | 18 | 98 | 44 | 100 |
+| Sword | — | 96 | 96 | 64 | 100 | 96 | 96 | 48 | 100 | 94 | 100 |
+| Dagger | 4 | — | 42 | 24 | 2 | 0 | 92 | 2 | 100 | 28 | 6 |
+| Spear | 4 | 58 | — | 32 | 72 | 32 | 68 | 20 | 94 | 48 | 98 |
 | Axe | 36 | 76 | 68 | — | 96 | 96 | 88 | 58 | 100 | 76 | 100 |
-| Hammer | 0 | 98 | 22 | 4 | — | 0 | 100 | 0 | 100 | 46 | 0 |
-| Scythe | 4 | 100 | 66 | 4 | 100 | — | 98 | 4 | 100 | 74 | 96 |
-| Chakram | 4 | 8 | 20 | 12 | 0 | 2 | — | 0 | 100 | 14 | 0 |
-| Trident | 52 | 98 | 82 | 42 | 100 | 96 | 100 | — | 100 | 84 | 100 |
-| Bow | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | — | 4 | 0 |
-| Lance | 6 | 72 | 56 | 24 | 54 | 26 | 86 | 16 | 96 | — | 76 |
-| Duplicator | 0 | 94 | 0 | 0 | 100 | 4 | 100 | 0 | 100 | 24 | — |
+| Hammer | 0 | 98 | 28 | 4 | — | 0 | 100 | 0 | 100 | 46 | 0 |
+| Scythe | 4 | 100 | 68 | 4 | 100 | — | 98 | 4 | 100 | 74 | 96 |
+| Chakram | 4 | 8 | 32 | 12 | 0 | 2 | — | 0 | 100 | 14 | 0 |
+| Trident | 52 | 98 | 80 | 42 | 100 | 96 | 100 | — | 100 | 84 | 100 |
+| Bow | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | — | 4 | 0 |
+| Lance | 6 | 72 | 52 | 24 | 54 | 26 | 86 | 16 | 96 | — | 76 |
+| Duplicator | 0 | 94 | 2 | 0 | 100 | 4 | 100 | 0 | 100 | 24 | — |
 
 ## Pair-by-pair results and durations
 
@@ -60,7 +60,7 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 | Pairing | Wins (A–B) | Average (s) | Median (s) |
 |---|---:|---:|---:|
 | Sword–Dagger | 48–2 | 60.21 | 57.42 |
-| Sword–Spear | 49–1 | 45.21 | 45.66 |
+| Sword–Spear | 48–2 | 45.33 | 44.42 |
 | Sword–Axe | 32–18 | 44.14 | 41.52 |
 | Sword–Hammer | 50–0 | 49.42 | 49.03 |
 | Sword–Scythe | 48–2 | 45.19 | 45.44 |
@@ -69,7 +69,7 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 | Sword–Bow | 50–0 | 48.35 | 49.05 |
 | Sword–Lance | 47–3 | 56.08 | 53.17 |
 | Sword–Duplicator | 50–0 | 44.02 | 42.72 |
-| Dagger–Spear | 13–37 | 89.24 | 84.34 |
+| Dagger–Spear | 21–29 | 92.55 | 97.78 |
 | Dagger–Axe | 12–38 | 78.85 | 71.83 |
 | Dagger–Hammer | 1–49 | 95.50 | 93.13 |
 | Dagger–Scythe | 0–50 | 80.07 | 79.52 |
@@ -78,14 +78,14 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 | Dagger–Bow | 50–0 | 108.03 | 106.95 |
 | Dagger–Lance | 14–36 | 102.61 | 103.07 |
 | Dagger–Duplicator | 3–47 | 91.88 | 90.33 |
-| Spear–Axe | 16–34 | 56.78 | 57.38 |
-| Spear–Hammer | 39–11 | 75.93 | 75.18 |
-| Spear–Scythe | 17–33 | 65.61 | 65.86 |
-| Spear–Chakram | 40–10 | 83.82 | 76.27 |
-| Spear–Trident | 9–41 | 52.83 | 51.23 |
-| Spear–Bow | 49–1 | 89.97 | 83.70 |
-| Spear–Lance | 22–28 | 80.95 | 78.97 |
-| Spear–Duplicator | 50–0 | 63.93 | 61.05 |
+| Spear–Axe | 16–34 | 57.03 | 56.17 |
+| Spear–Hammer | 36–14 | 79.69 | 82.57 |
+| Spear–Scythe | 16–34 | 63.83 | 64.72 |
+| Spear–Chakram | 34–16 | 102.68 | 96.24 |
+| Spear–Trident | 10–40 | 53.47 | 53.70 |
+| Spear–Bow | 47–3 | 94.87 | 88.97 |
+| Spear–Lance | 24–26 | 83.57 | 85.01 |
+| Spear–Duplicator | 49–1 | 70.08 | 69.08 |
 | Axe–Hammer | 48–2 | 63.14 | 61.19 |
 | Axe–Scythe | 48–2 | 49.74 | 50.60 |
 | Axe–Chakram | 44–6 | 76.86 | 71.92 |
@@ -117,11 +117,11 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 
 ## Findings
 
-- **Sword leads at 89.2%** and won 49/50 against Spear, 48/50 against Dagger, Scythe, and Chakram, and 47/50 against Lance. It split almost evenly with Trident (24–26).
-- **Trident remains very strong at 85.4%**, winning 41/50 against Spear, 48/50 against Scythe, and 42/50 against Lance. It lost 24–26 to Sword and 21–29 to Axe.
-- **Axe is third at 79.4%** after its critical damage progression change. It won 38/50 against Lance and 29/50 against Trident, and swept Bow and Duplicator 50–0.
-- **Spear lands near the middle at 56.0%**. The much slower +3.6px reach growth removed its runaway advantage; it still beat Hammer 39–11, Chakram 40–10, and Duplicator 50–0, but lost 9–41 to Trident.
-- **Bow is the outlier at 0.6%**: just 3 wins in 500 fights. It won 2/50 against Lance and 1/50 against Spear, and lost all 50 fights against eight opponents. The faster arrow speed and shorter cooldown did not compensate for its weaknesses in this arena.
-- The results still show a top-heavy field: Sword, Trident, and Axe are above 79%, while Chakram and Bow are below 16%. Spear and Lance are the closest to the 50% mark.
+- **Sword leads at 89.0%** and won 48/50 against Dagger, Spear, Scythe, and Chakram, 47/50 against Lance, and 50/50 against Hammer, Bow, and Duplicator. It split with Trident (24–26).
+- **Trident is second at 85.2%**. It beat Spear 40–10, Scythe 48–2, and Lance 42–8. It lost 24–26 to Sword and 21–29 to Axe.
+- **Axe is third at 79.4%**. It won 38–12 against Lance and 29–21 against Trident, and swept Bow and Duplicator 50–0.
+- **Spear is now near the middle at 52.6%**. It beat Hammer 36–14, Chakram 34–16, and Duplicator 49–1, but lost to Trident 10–40, Axe 16–34, and Scythe 16–34. Its 80% slower reach growth prevents the former runaway scaling.
+- **Bow remains the clear outlier at 1.0%**: five wins in 500 fights (three against Spear and two against Lance), and no wins in its other eight matchups. Faster arrows and the shorter cooldown are not enough to make it competitive in this arena.
+- The field is still top-heavy: Sword, Trident, and Axe are above 79%; Spear and Lance are closest to even; Chakram is at 17.2%, and Bow at 1.0%.
 
-**Overall fight duration:** average 72.44 seconds, median 68.17 seconds, longest 197.62 seconds. No fight reached the 360-second cap.
+**Overall fight duration:** average 73.14 seconds, median 68.80 seconds, longest 243.47 seconds. No fight reached the 360-second cap.
