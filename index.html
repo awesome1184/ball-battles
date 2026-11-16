@@ -1406,6 +1406,7 @@ function drawWeapon(c,f){
  c.rotate(f.angle);
  c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
  c.scale(unit*(w.artScale||1)*(f.weaponScale||1),unit*(w.artScale||1)*(f.weaponScale||1));
+ if(w.id==='bow')c.translate(f.r-22,0);
  if(w.id==='spear')c.scale(f.spearLength||1,1);
  for(let y=0;y<sprite.rows.length;y++){
   const row=sprite.rows[y];
@@ -1509,7 +1510,7 @@ function draw(){
    case 'dagger': lines=['SPIN SPEED '+fixed(fighter?fighter.spin:w.spin*MATCH_RULES.spinMultiplier)+' rad/s']; break;
    case 'spear': lines=['REACH '+Math.round(fighter?fighter.reach*fighter.weaponScale:baseWeaponReach(w))+'px']; break;
    case 'axe': lines=['CRIT CHANCE '+fixed(fighter?fighter.critChance:3)+'%','CRIT DAMAGE '+fixed(fighter?fighter.critDamageMultiplier:1.5)+'×']; break;
-   case 'hammer': lines=['MAX SPIN / DAMAGE '+fixed(fighter?fighter.hammerMaxSpin:1)]; break;
+   case 'hammer': lines=['SPIN / DAMAGE '+fixed(fighter?fighter.hammerSpinSpeed:1)+' → '+fixed(fighter?fighter.hammerMaxSpin:1)]; break;
    case 'scythe':{
     const poison=opponents.reduce((sum,f)=>sum+(f.poisonDps||0),0);
     lines=['POISON DPS '+fixed(poison)];break;
