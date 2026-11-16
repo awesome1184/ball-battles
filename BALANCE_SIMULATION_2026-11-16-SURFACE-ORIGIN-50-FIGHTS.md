@@ -121,7 +121,7 @@ Wins are shown as **first-listed weapon wins – second-listed weapon wins**. Du
 - **Trident remains very strong at 85.4%**, winning 41/50 against Spear, 48/50 against Scythe, and 42/50 against Lance. It lost 24–26 to Sword and 21–29 to Axe.
 - **Axe is third at 79.4%** after its critical damage progression change. It won 38/50 against Lance and 29/50 against Trident, and swept Bow and Duplicator 50–0.
 - **Spear lands near the middle at 56.0%**. The much slower +3.6px reach growth removed its runaway advantage; it still beat Hammer 39–11, Chakram 40–10, and Duplicator 50–0, but lost 9–41 to Trident.
-- **Bow is the outlier at 0.6%**: just 3 wins in 500 fights. It won 2/50 against Lance and 1/50 against Spear, and lost all 50 fights against six opponents. The faster arrow speed and shorter cooldown did not compensate for its weaknesses in this arena.
+- **Bow is the outlier at 0.6%**: just 3 wins in 500 fights. It won 2/50 against Lance and 1/50 against Spear, and lost all 50 fights against eight opponents. The faster arrow speed and shorter cooldown did not compensate for its weaknesses in this arena.
 - The results still show a top-heavy field: Sword, Trident, and Axe are above 79%, while Chakram and Bow are below 16%. Spear and Lance are the closest to the 50% mark.
 
 **Overall fight duration:** average 72.44 seconds, median 68.17 seconds, longest 197.62 seconds. No fight reached the 360-second cap.
