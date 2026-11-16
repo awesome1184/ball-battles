@@ -1412,8 +1412,9 @@ function drawWeapon(c,f){
  c.beginPath();c.rect(-1000,-1000,2000,2000);c.arc(0,0,f.r+1.5,0,Math.PI*2,true);c.clip('evenodd');
  const spearBaseScale=w.id==='spear'?baseWeaponReach(w)/WEAPON_BASE_LENGTH:1;
  const pixelScale=unit*(w.artScale||1)*(f.weaponScale||1)*spearBaseScale;
- // Pixel sprites are authored from a haft at x=2; put that point exactly on the orb edge.
- c.translate(f.r-2*pixelScale,0);
+ const pixelLengthScale=w.id==='spear'?(f.spearLength||1):1;
+ // Pixel sprites are authored from a haft at x=2; keep that point exactly on the orb edge as Spear grows.
+ c.translate(f.r-2*pixelScale*pixelLengthScale,0);
  c.scale(pixelScale,pixelScale);
  if(w.id==='spear')c.scale(f.spearLength||1,BALANCE.spear.visualWidth||1.5);
  for(let y=0;y<sprite.rows.length;y++){
