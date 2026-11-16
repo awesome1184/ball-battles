@@ -499,7 +499,7 @@ const WEAPONS=[
  {id:'scythe',name:'Scythe',color:'#a1d17a',ballColor:'#77bd55',desc:'Each hit adds a poison stack to the enemy. Every stack deals 0.11 damage per second.',damage:1,reach:86,width:18,spin:3.05,hp:STARTING_HP,special:'adds +0.11 poison damage per second every hit',hitDelay:.68},
  {id:'chakram',name:'Chakram',color:'#e4c36c',ballColor:'#e4bd42',desc:'Every hit increases rotation speed by 4.75%, compounding with each strike.',damage:1,reach:86,width:18,spin:4.45,hp:STARTING_HP,special:'spins 4.75% faster every hit',hitDelay:.46},
  {id:'trident',name:'Trident',color:'#73c9c5',ballColor:'#37b9bf',desc:'Each hit expands its whirlpool by 8px and increases pull strength by 35.',damage:1,reach:86,width:20,spin:2.85,hp:STARTING_HP,special:'gains +8px pull radius and +35 pull strength every hit',hitDelay:.64},
- {id:'bow',name:'Bow',color:'#d6a6ed',ballColor:'#b8b8c9',desc:'Starts with three large arrows per volley. Every arrow that hits adds one projectile to future volleys, up to 10 arrows per volley.',damage:1,reach:86,width:7,spin:.7,hp:STARTING_HP,special:'starts with 3 arrows; each hit adds one, up to 10 per volley',projectile:true,hitDelay:1.65},
+ {id:'bow',name:'Bow',color:'#d6a6ed',ballColor:'#b8b8c9',desc:'Starts with three large arrows per volley. Every arrow that hits adds one projectile to future volleys, with no maximum.',damage:1,reach:86,width:7,spin:.7,hp:STARTING_HP,special:'starts with 3 arrows; each hit adds one more, with no cap',projectile:true,hitDelay:1.65},
  {id:'lance',name:'Lance',color:'#edd04d',ballColor:'#f1d761',desc:'Charges in the direction its lance is pointing, accelerating from a very slow start. Its larger weapon gives the thrust a more imposing silhouette.',damage:1,reach:86,width:13,spin:2.4,artScale:1.28,hp:STARTING_HP,special:'gains +2 charge damage every hit',hitDelay:.78},
  {id:'duplicator',name:'Duplicator',color:'#d92bbd',ballColor:'#e900d1',desc:'Every 6 successful team hits creates a full-health clone, up to 6 balls total. Clones deal 0.45 contact damage and screen near the main ball. If the main dies, the whole swarm is eliminated.',damage:1,reach:25,width:0,spin:0,hp:STARTING_HP,special:'creates one clone every 6 team hits, up to 6 balls',duplicator:true,hitDelay:.68}
 ];
@@ -515,7 +515,7 @@ const BALANCE={
  scythe:{cooldown:1.18,poison:.11},
  chakram:{cooldown:.93,spinGrowth:.0475},
  trident:{damage:1.07,cooldown:.85,pullRadiusPerHit:8,pullPowerPerHit:35},
- bow:{damage:.98,cooldown:1.2,maxVolley:10},
+ bow:{damage:.98,cooldown:1.2,maxVolley:Infinity},
  lance:{cooldown:.95,chargeDamagePerHit:2,chargeStartSpeed:16,chargeAcceleration:420,chargeMaxSpeed:440,chargeInterval:2.5},
  duplicator:{cloneDamage:.45,cloneDamageFloor:.45,screenPadding:15,cap:6,hitsPerClone:6}
 };
@@ -638,7 +638,7 @@ let soundOn=save.sound!==false;
 const canvas=$('arena-canvas');
 const ctx=canvas.getContext('2d');
 const W=740,H=750;
-const arena={x:90,y:60,w:560,h:560,r:5};
+const arena={x:202,y:172,w:336,h:336,r:5};
 let view='arena';
 
 function renderWallet(){$('coin-count').textContent=money(save.coins);}
